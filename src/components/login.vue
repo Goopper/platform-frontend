@@ -32,7 +32,7 @@ export default {
 <template>
   <div id="login_page">
     <div id="entry">
-      <div style="margin:144px 64px;">
+      <div>
         <img src="/src/assets/image_word.png" />
         <div id="other_login">
           <v-btn id="btn" prepend-icon="mdi-account-circle" variant="text" size="x-large" block>
@@ -45,17 +45,17 @@ export default {
           </v-btn>
           <v-btn id="btn" prepend-icon="mdi-account-circle" variant="text" size="x-large" block>
             QQ
-            <img style="left: 308px;" src="../assets/QQ_Icon.png" id="icon">
+            <img src="../assets/QQ_Icon.png" id="icon">
           </v-btn>
-          <hr style="margin: 16px 0 16px 0;" />
+          <hr/>
         </div>
         <div id="login">
           <v-sheet class="mx-auto" color="FAFAFA" min-width="180px">
-            <v-form fast-fail @submit.prevent style=" margin: 12px 0 12px 0; background-color: #FAFAFA;">
-              <p style="margin: 0 0 8px 0;">学号/工号 :</p>
+            <v-form id="inputs" fast-fail @submit.prevent>
+              <p>学号/工号 :</p>
               <v-text-field id="input" v-model="userid" :rules="userRole"
                 base-color="white" placeholder="请输入学号/工号(数字)" bg-color="white" color="white"></v-text-field>
-              <p style="margin: 0 0 8px 0;">密码 :</p>
+              <p>密码 :</p>
               <v-text-field id="input" v-model="password" :rules="passwordRole"
                 base-color="white" placeholder="请输入密码" bg-color="white" color="white"></v-text-field>
               <div id="button">
@@ -88,9 +88,17 @@ export default {
   flex-direction: column;
 }
 
+#entry > div{
+  margin:144px 64px;
+}
+
 #other_login {
   display: flex;
   flex-direction: column;
+}
+
+hr{
+  margin: 16px 0 16px 0;
 }
 
 #btn {
@@ -98,6 +106,13 @@ export default {
   border: 1px #e3e3e3 solid;
   background-color: #FFFFFF;
   position: relative;
+}
+
+#inputs{
+  margin: 12px 0 12px 0; background-color: #FAFAFA;
+}
+#inputs > p{
+  margin: 0 0 8px 0;
 }
 
 #button {
