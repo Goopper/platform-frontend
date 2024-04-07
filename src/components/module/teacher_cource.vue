@@ -31,7 +31,7 @@ export default {
     </div>
   </div>
 </template>
-<style>
+<style scoped>
 h4 {
   margin: 16px 0;
 }
@@ -39,6 +39,14 @@ h4 {
 .cource_state {
   width: 256px;
   margin: 0 16px;
+}
+
+#cource {
+  margin: 24px 128px 0 128px;
+}
+
+#choose_cource {
+  display: flex;
 }
 
 #create_cource {

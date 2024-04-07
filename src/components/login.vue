@@ -71,7 +71,7 @@ export default {
     </div>
   </div>
 </template>
-<style>
+<style scoped>
 #login_page {
   width: 100%;
   height: 100%;

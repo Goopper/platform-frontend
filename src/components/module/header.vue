@@ -26,7 +26,7 @@
     </div>
   </div>
 </template>
-<style>
+<style scoped>
 #header_list {
   padding: 0 32px 0 32px;
   height: 100px;

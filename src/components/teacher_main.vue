@@ -2,33 +2,29 @@
 import Header from './module/header.vue'
 import Teacher_main from './module/teacher_main.vue';
 import Teacher_cource from './module/teacher_cource.vue'
+import Edit_cource from './module/cource_page/blank_edit.vue'
 export default {
   components: {
     Header,
     Teacher_main,
-    Teacher_cource
+    Teacher_cource,
+    Edit_cource
   }
 }
 </script>
 <template>
   <div id="teacher_main">
     <Header />
-    <Teacher_main />
+    <!-- <Teacher_main /> -->
     <!-- <Teacher_cource/> -->
+    <Edit_cource />
   </div>
 </template>
-<style>
+<style scoped>
 #teacher_main {
   width: 100%;
   height: 100%;
   background-color: #FAFAFA;
 }
 
-#cource {
-  margin: 24px 128px 0 128px;
-}
-
-#choose_cource {
-  display: flex;
-}
 </style>

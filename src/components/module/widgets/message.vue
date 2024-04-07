@@ -8,7 +8,7 @@
     </div>
   </div>
 </template>
-<style>
+<style scoped>
 #one_msg {
   padding: 20px 0;
   border: 1px #e3e3e3 solid;

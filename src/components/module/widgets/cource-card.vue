@@ -17,7 +17,7 @@ export default {
     <v-card-subtitle id="card_subtitle">课程简介</v-card-subtitle>
   </v-card>
 </template>
-<style>
+<style scoped>
 #card {
   height: 300px;
   width: 240px;
