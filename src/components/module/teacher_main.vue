@@ -50,7 +50,7 @@ export default {
     </div>
   </div>
 </template>
-<style>
+<style scoped>
 #class {
   display: flex;
 }
