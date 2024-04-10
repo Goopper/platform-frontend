@@ -22,7 +22,8 @@ export default {
         this.isDis = false;
       }
     }
-  }
+  },
+  props:['step']
 }
 
 </script>

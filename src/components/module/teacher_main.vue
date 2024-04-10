@@ -24,7 +24,7 @@ export default {
       </div>
       <v-virtual-scroll :items="['1']" max-height="620">
         <div id="stu_detail">
-          <template v-for="item in 40">
+          <template v-for="item in 40" :key="item">
             <One_stu />
           </template>
         </div>
@@ -37,7 +37,7 @@ export default {
       </div>
       <div id="message">
         <v-infinite-scroll height="528" mode="manual" @load="jump" load-more-text="查看更多消息">
-          <template v-for="item in 20">
+          <template v-for="item in 20" :key="item">
             <Message />
           </template>
         </v-infinite-scroll>

@@ -40,7 +40,11 @@
   height: 76px;
   width: 76px;
 }
-
+@media (min-width: 768px) {
+  #navigation {
+    position: absolute;
+  }
+}
 #navigation {
   width: 100%;
   justify-content: center;

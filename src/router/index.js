@@ -1,10 +1,10 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import Login from '../components/login.vue'
-import Teacher_main from '../components/teacher_main.vue'
+import Teacher_page from '../components/teacher_page.vue'
 
 const routers = [
   {path:'/login',component:Login},
-  {path:'/',component:Teacher_main}
+  {path:'/',component:Teacher_page}
   
 ]
 
