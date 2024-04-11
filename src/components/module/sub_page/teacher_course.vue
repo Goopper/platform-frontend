@@ -1,8 +1,8 @@
 <script>
-import Cource_card from './widgets/cource-card.vue'
+import cource_card from '../widgets/course-card.vue'
 export default {
   components: {
-    Cource_card
+    cource_card
   }
 }
 </script>
@@ -20,13 +20,13 @@ export default {
     <div id="main_cource">
       <h4>使用中</h4>
       <div id="use_card">
-        <Cource_card />
-        <Cource_card />
+        <cource_card />
+        <cource_card />
       </div>
       <h4>待发布</h4>
       <div id="wait_card">
-        <Cource_card />
-        <Cource_card />
+        <cource_card />
+        <cource_card />
       </div>
     </div>
   </div>

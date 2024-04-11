@@ -1,7 +1,7 @@
 <script>
-import courceDet_edit from './edit_courceDet.vue';
-import edit_chapter_page from './edit_chapter_page.vue';
-import edit_subsection_page from './edit_subsection_page.vue';
+import edit_course_detail from '../course_page/edit_course_detail.vue';
+import edit_chapter_page from '../course_page/edit_chapter_page.vue';
+import edit_subsection_page from '../course_page/edit_subsection_page.vue';
 export default {
   data() {
     return {
@@ -41,7 +41,7 @@ export default {
     }
   },
   components: {
-    courceDet_edit,
+    edit_course_detail,
     edit_chapter_page,
     edit_subsection_page
 
@@ -65,7 +65,7 @@ export default {
         </v-stepper-header>
         <v-stepper-window style="margin: 0;">
           <v-stepper-window-item v-for="n in [1, 2]" :key="`${n}-content`">
-            <courceDet_edit />
+            <edit_course_detail />
             <div class="choose_btn" v-if="step == 0">
               <v-btn class="cancel" variant="outlined" density="compact">取消</v-btn>
               <v-btn id="save" variant="outlined" density="compact" @click="gotu">保存,进入下一步</v-btn>
@@ -101,8 +101,13 @@ export default {
 
             <div style="display: flex;flex-direction: column;width: 100%;">
               <div style="margin: 0 24px;">
-                <!-- <edit_chapter_page/> -->
-                <edit_subsection_page />
+
+                <!-- 编辑课程章页面 -->
+                <edit_chapter_page/>
+
+                <!-- 编辑课程任务页面 -->
+                <!-- <edit_subsection_page /> -->
+              
               </div>
               <div class="choose_btn" v-if="step == 1" style="margin-top: auto;">
                 <v-btn id="delete" variant="outlined" density="compact">删除本块</v-btn>

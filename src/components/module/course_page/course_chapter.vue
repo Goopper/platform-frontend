@@ -26,10 +26,12 @@ export default {
   <h3>{{ tasks.name }}</h3>
   <p style="margin: 32px 0;">{{ tasks.desc }}</p>
   <h3>任务目标 :</h3>
-  <div style="margin-top: 32px;">
+  <div style="margin:2em 3em">
     <div v-for="task in tasks.tasks" :key="task.id">
       <one_chapter_task :task="task" />
     </div>
   </div>
 </template>
-<style scoped></style>
+<style scoped>
+
+</style>

@@ -4,7 +4,7 @@ export default {
 }
 </script>
 <template >
-  <div id="annex">
+  <div id="annex" style="height: 64px;">
     <div id="filename" style=" display: flex; align-items: Center;">
       <div style="height: 40px;width: 40px; border-radius: 4px;border: 1px #e3e3e3 solid; margin-right: 40px;">
         <v-icon></v-icon>

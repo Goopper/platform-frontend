@@ -1,7 +1,7 @@
 <script>
-import cource_details from './cource_details.vue';  
-import cource_chapter from './cource_chapter.vue';
-import cource_task_annex from './cource_task_annex.vue';
+import cource_details from '../course_page/course_details.vue';  
+import cource_chapter from '../course_page/course_chapter.vue';
+import cource_task_annex from '../course_page/course_task_annex.vue';
 export default {
   data() {
     return {
@@ -66,7 +66,7 @@ export default {
 }
 </script>
 <template>
-  <div style="display: flex;justify-content: center; margin: 32px 0;height: 70%;">
+  <div style="display: flex;justify-content: center; margin: 32px 0;height: 82%;">
     <v-icon style="font-size: 32px;margin: 20px;">mdi-arrow-left</v-icon>
     <div style="background-color: white;border: 1px #e3e3e3 solid;width: 16%;">
       <v-list open-strategy="multiple" active-strategy="single-independent" style="padding: 0;">
@@ -87,11 +87,15 @@ export default {
     </div>
     <div style="background-color: white;width: 64%;;border: 1px #e3e3e3 solid;border-left: 0px;">
 
+      <!-- 课程详情页面 -->
       <!-- <cource_details :data="data" :cource="cource"/> -->
+
+      <!-- 课程章页面 -->
       <!-- <cource_chapter/> -->
+
+      <!-- 课程任务页面 -->
       <cource_task_annex/>
-      
-    
+
     </div>
   </div>
 </template>
