@@ -6,8 +6,8 @@ settings:
 
 dependencies:
   '@iconify-prerendered/vue-mdi':
-    specifier: ^0.23.1704178618
-    version: 0.23.1704178618(vue@3.4.21)
+    specifier: ^0.23.1712503462
+    version: 0.23.1712503462(vue@3.4.21)
   '@mdi/font':
     specifier: 7.0.96
     version: 7.0.96
@@ -260,8 +260,8 @@ packages:
     requiresBuild: true
     optional: true
 
-  /@iconify-prerendered/vue-mdi@0.23.1704178618(vue@3.4.21):
-    resolution: {integrity: sha512-jXLYRSU21+S53HzPGODXyA6uWPQYRdDWSpJ4NM+fLrFoYLJZeUPDBLeWY8IbCr58UAAIAWLR4uD7Q+cDsG+XCw==}
+  /@iconify-prerendered/vue-mdi@0.23.1712503462(vue@3.4.21):
+    resolution: {integrity: sha512-+M3lV7gU+Kfj+suQH563sf50TGl+1ZFlN8AjC2J/435y3gdq+L4WgwK+e0+w6hduL3HuNlmKEUkNkPXBrdHLHg==}
     peerDependencies:
       vue: ^3.0.0
     dependencies:
