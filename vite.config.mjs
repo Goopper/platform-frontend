@@ -3,6 +3,7 @@ import Components from 'unplugin-vue-components/vite'
 import Vue from '@vitejs/plugin-vue'
 import Vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
 import ViteFonts from 'unplugin-fonts/vite'
+import { VitePWA } from 'vite-plugin-pwa'
 
 // Utilities
 import { defineConfig } from 'vite'
@@ -25,6 +26,41 @@ export default defineConfig({
         }],
       },
     }),
+    VitePWA({
+      registerType: 'autoUpdate',
+      manifest: {
+        "name": 'PWA Demo',
+        "description": "A PWA demo built with Vite and vite pwa",
+        "theme_color": "#1f1f1f",
+        icons: [
+          {
+            src: 'logo.png',
+            sizes: '64x64',
+            type: 'image/png'
+          },
+          {
+            src: 'logo.png',
+            sizes: '192x192',
+            type: 'image/png'
+          },
+          {
+            src: 'logo.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'any'  
+          },
+          {
+            src: 'logo.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'maskable'
+          }
+        ]
+      },
+      devOptions: {
+        enabled: true
+      }
+    })
   ],
   define: { 'process.env': {} },
   resolve: {
