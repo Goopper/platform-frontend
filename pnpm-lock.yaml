@@ -9,8 +9,8 @@ dependencies:
     specifier: ^0.23.1704178618
     version: 0.23.1704178618(vue@3.4.21)
   '@mdi/font':
-    specifier: 7.0.96
-    version: 7.0.96
+    specifier: 7.4.47
+    version: 7.4.47
   axios:
     specifier: ^1.6.8
     version: 1.6.8
@@ -1485,8 +1485,8 @@ packages:
       '@jridgewell/sourcemap-codec': 1.4.15
     dev: true
 
-  /@mdi/font@7.0.96:
-    resolution: {integrity: sha512-rzlxTfR64hqY8yiBzDjmANfcd8rv+T5C0Yedv/TWk2QyAQYdc66e0kaN1ipmnYU3RukHRTRcBARHzzm+tIhL7w==}
+  /@mdi/font@7.4.47:
+    resolution: {integrity: sha512-43MtGpd585SNzHZPcYowu/84Vz2a2g31TvPMTm9uTiCSWzaheQySUcSyUH/46fPnuPQWof2yd0pGBtzee/IQWw==}
     dev: false
 
   /@nodelib/fs.scandir@2.1.5:
