@@ -1,7 +1,7 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import login from '@/components/login.vue'
 import teacher_page from '../components/teacher_page.vue'
-import student_page from '@/components/student_page.vue'
+import student_page from '@/views/StudentView.vue'
 
 //用户首页
 import teacher_main from '@/components/module/teacher_main.vue'

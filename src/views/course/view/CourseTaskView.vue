@@ -1,12 +1,12 @@
 <script>
-import base_annex from '../base_module/base_annex.vue'
+import one_annex from '../widgets/one_annex.vue'
 export default {
-  components: { base_annex },
+  components: { one_annex },
   data() {
     return {
       tab: null,
       "data": {
-        "id": 13,
+        "id": 1,
         "name": "测试任务11-仅题目",
         "content": "任务内容任务内容任务内容任务内容任务内容任务内容任务内容任务内容任务内容任务内容任务内容任务内容任务内容任务内容任务内容任务内容任务内容任务内容任务内容任务内容任务内容任务内容1",
         "status": false,
@@ -57,7 +57,7 @@ export default {
       <div>
         <v-virtual-scroll height="320px" :items="data.attachment">
           <template v-slot:default="{ item }">
-            <base_annex :annex="item" />
+            <one_annex :annex="item" />
           </template>
         </v-virtual-scroll>
       </div>

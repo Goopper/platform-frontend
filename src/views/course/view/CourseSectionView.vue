@@ -1,9 +1,10 @@
 <script>
+import one_chapter_task from '../widgets/one_chapter_task.vue'
 export default {
   data() {
     return {
       "tasks": {
-        "id": 7,
+        "id": 3,
         "name": "章节一: 测试章节11",
         "desc": "章节内容章节内容章节内容章节内容章节内容章节内容章节内容章节内容章节内容章节内容章节内容章节内容章节内容章节内容章节内容章节内容章节内容章节内容章节内容章节内容章节内容章节内容章节内容章节内容章节内容章节内容章节内容章节内容章节内容章节内容章节内容章节内容章节内容章节内容章节内容章节内容章节内容章节内容章节内容章节内容",
         "tasks": [
@@ -15,6 +16,9 @@ export default {
         ]
       }
     }
+  },
+  components: {
+    one_chapter_task
   }
 }
 </script>
@@ -24,14 +28,10 @@ export default {
   <h3>任务目标 :</h3>
   <div style="margin:2em 3em">
     <div v-for="task in tasks.tasks" :key="task.id">
-      <div id="box" style=" border: 1px solid #e3e3e3;">
-    <v-checkbox id="check" style="margin-top: auto;margin-bottom: auto;" label="task.name" v-model="task.status" readonly hide-details></v-checkbox>
-  </div>
+      <one_chapter_task :task="task" />
     </div>
   </div>
 </template>
 <style scoped>
-label{
-  margin-right: 32px;
-}
+
 </style>
