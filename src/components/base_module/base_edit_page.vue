@@ -1,7 +1,5 @@
 <script>
-import edit_course_detail from '../course_page/edit_course_detail.vue';
-import edit_chapter_page from '../course_page/edit_chapter_page.vue';
-import edit_subsection_page from '../course_page/edit_subsection_page.vue';
+import base_edit_list from './base_edit_list.vue';
 export default {
   data() {
     return {
@@ -40,11 +38,8 @@ export default {
       return true
     }
   },
-  components: {
-    edit_course_detail,
-    edit_chapter_page,
-    edit_subsection_page
-
+  components:{
+    base_edit_list
   }
 
 }
@@ -65,7 +60,7 @@ export default {
         </v-stepper-header>
         <v-stepper-window style="margin: 0;">
           <v-stepper-window-item v-for="n in [1, 2]" :key="`${n}-content`">
-            <edit_course_detail />
+            <router-view></router-view>
             <div class="choose_btn" v-if="step == 0">
               <v-btn class="cancel" variant="outlined" density="compact">取消</v-btn>
               <v-btn id="save" variant="outlined" density="compact" @click="gotu">保存,进入下一步</v-btn>
@@ -73,17 +68,7 @@ export default {
           </v-stepper-window-item>
           <v-stepper-window-item id="content" v-for="n in [1, 2]" :key="`${n}-content`" style="margin: 0;">
             <div style="width: 30%;">
-              <v-list open-strategy="multiple" active-strategy="single-independent" style="padding: 0;">
-                <v-list-group v-for="chapter in data" :key="chapter.id" :value="chapter.id" subgroup>
-                  <template v-slot:activator="{ props }">
-                    <v-list-item :title="chapter.name" v-bind="props">
-                    </v-list-item>
-                  </template>
-                  <v-list-item class="tile" v-for="task in chapter.tasks" :key="task.id" :title="task.name"
-                    :value="task.name">
-                  </v-list-item>
-                </v-list-group>
-              </v-list>
+             <base_edit_list/>
               <div id="add_content">
                 <v-menu id="open_btn" location="top right" width="120px" height="80px">
                   <template v-slot:activator="{ props }">
@@ -103,11 +88,11 @@ export default {
               <div style="margin: 0 24px;">
 
                 <!-- 编辑课程章页面 -->
-                <edit_chapter_page/>
+                <edit_chapter_page />
 
                 <!-- 编辑课程任务页面 -->
                 <!-- <edit_subsection_page /> -->
-              
+
               </div>
               <div class="choose_btn" v-if="step == 1" style="margin-top: auto;">
                 <v-btn id="delete" variant="outlined" density="compact">删除本块</v-btn>

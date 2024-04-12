@@ -37,15 +37,15 @@ export default {
         <div id="other_login">
           <v-btn id="btn" prepend-icon="mdi-account-circle" variant="text" size="x-large" block>
             GitHub
-            <img src="../assets/GitHub_Icon.png" id="icon">
+            <!-- <img src="../assets/GitHub_Icon.png" id="icon"> -->
           </v-btn>
           <v-btn id="btn" prepend-icon="mdi-account-circle" variant="text" size="x-large" block>
             WeChat
-            <img src="../assets/WX_Icon.png" id="icon">
+            <!-- <img src="../assets/WX_Icon.png" id="icon"> -->
           </v-btn>
           <v-btn id="btn" prepend-icon="mdi-account-circle" variant="text" size="x-large" block>
             QQ
-            <img src="../assets/QQ_Icon.png" id="icon">
+            <!-- <img src="../assets/QQ_Icon.png" id="icon"> -->
           </v-btn>
           <hr/>
         </div>
@@ -138,7 +138,7 @@ hr{
 
 #icon {
   width: 30px;
-  position: absolute;
+  /* position: absolute; */
   left: 310px;
 
 

@@ -1,11 +1,8 @@
 <script>
-import one_stu from '../widgets/one_stu.vue'
-import message from '../widgets/message.vue'
+import base_message from '../base_module/base_message.vue'
+import base_student_card from '../base_module/base_student_card.vue'
 export default {
-  components: {
-    one_stu,
-    message
-  }
+  components: { base_message, base_student_card },
 }
 </script>
 <template>
@@ -25,7 +22,7 @@ export default {
       <v-virtual-scroll :items="['1']" max-height="620">
         <div id="stu_detail">
           <template v-for="item in 40" :key="item">
-            <one_stu />
+            <base_student_card />
           </template>
         </div>
       </v-virtual-scroll>
@@ -38,7 +35,7 @@ export default {
       <div id="message">
         <v-infinite-scroll height="528" mode="manual" @load="jump" load-more-text="查看更多消息">
           <template v-for="item in 20" :key="item">
-            <message />
+            <base_message />
           </template>
         </v-infinite-scroll>
         <div id="jumpmsg_column">

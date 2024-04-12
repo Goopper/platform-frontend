@@ -1,8 +1,12 @@
 <script>
-import cource_card from '../widgets/course-card.vue'
+import router from '@/router';
+import base_course_card from '../base_module/base_course_card.vue'
 export default {
-  components: {
-    cource_card
+  components: { base_course_card },
+  methods:{
+    cource_detail(){
+      router.push('/course')
+    }
   }
 }
 </script>
@@ -20,13 +24,13 @@ export default {
     <div id="main_cource">
       <h4>使用中</h4>
       <div id="use_card">
-        <cource_card />
-        <cource_card />
+        <base_course_card @click="cource_detail"/>
+        <base_course_card />
       </div>
       <h4>待发布</h4>
       <div id="wait_card">
-        <cource_card />
-        <cource_card />
+        <base_course_card />
+        <base_course_card />
       </div>
     </div>
   </div>
