@@ -4,13 +4,13 @@ import { registerPlugins } from '@/plugins'
 // Components
 import App from './App.vue'
 
-// Composables
+// Composable
 import { createApp } from 'vue'
-import router from './router'
+
+// Themes
+import './assets/scss/global.scss'
 
 const app = createApp(App)
-
-app.use(router)
 
 registerPlugins(app)
 

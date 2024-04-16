@@ -29,31 +29,16 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       manifest: {
-        "name": 'PWA Demo',
-        "description": "A PWA demo built with Vite and vite pwa",
-        "theme_color": "#1f1f1f",
+        name: 'Goopper 计算机实训平台',
+        short_name: "Goopper",
+        description: "Goopper 计算机实训平台",
+        theme_color: "#1f1f1f",
         icons: [
           {
-            src: 'logo.png',
-            sizes: '64x64',
-            type: 'image/png'
-          },
-          {
-            src: 'logo.png',
-            sizes: '192x192',
-            type: 'image/png'
-          },
-          {
-            src: 'logo.png',
-            sizes: '512x512',
-            type: 'image/png',
-            purpose: 'any'  
-          },
-          {
-            src: 'logo.png',
-            sizes: '512x512',
-            type: 'image/png',
-            purpose: 'maskable'
+            src: 'logo.svg',
+            sizes: 'any',
+            type: 'image/svg+xml',
+            purpose: 'any'
           }
         ]
       },
@@ -78,13 +63,6 @@ export default defineConfig({
     ],
   },
   server: {
-    port: 3000,
-    proxy:{
-      '/api':{
-        target:'http://127.0.0.1:8080',
-        changeOrigin:true,
-        rewrite:(path)=>path.replace(/^\/api/,'')
-      }
-    }
+    port: 3000
   }
 })

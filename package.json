@@ -1,6 +1,7 @@
 {
   "name": "Goopper",
   "version": "0.0.0",
+  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -10,6 +11,7 @@
     "@iconify-prerendered/vue-mdi": "^0.23.1704178618",
     "@mdi/font": "7.0.96",
     "axios": "^1.6.8",
+    "mitt": "^3.0.1",
     "roboto-fontface": "*",
     "vue": "^3.4.0",
     "vue-router": "4",

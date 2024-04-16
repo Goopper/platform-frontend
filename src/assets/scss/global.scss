@@ -1,0 +1,32 @@
+:root {
+  --custom-primary: #383838;
+  --custom-secondary: #ffffff;
+  --custom-background: #fafafa;
+}
+
+body {
+    background-color: var(--custom-background) !important;
+}
+
+.toast-enter-active,
+.toast-leave-active {
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.toast-enter-from {
+  opacity: 0;
+  transform: translateX(200%);
+}
+
+.toast-leave-to {
+  opacity: 0;
+  transform: translateX(100%);
+}
+
+.toast {
+  position: absolute;
+  right: 1rem;
+  margin-left: 1rem;
+  top: 2rem;
+  z-index: 9999;
+}
