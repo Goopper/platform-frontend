@@ -1,13 +1,13 @@
 // Plugins
-import Components from 'unplugin-vue-components/vite'
-import Vue from '@vitejs/plugin-vue'
-import Vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
-import ViteFonts from 'unplugin-fonts/vite'
-import { VitePWA } from 'vite-plugin-pwa'
+import Components from 'unplugin-vue-components/vite';
+import Vue from '@vitejs/plugin-vue';
+import Vuetify, { transformAssetUrls } from 'vite-plugin-vuetify';
+import ViteFonts from 'unplugin-fonts/vite';
+import { VitePWA } from 'vite-plugin-pwa';
 
 // Utilities
-import { defineConfig } from 'vite'
-import { fileURLToPath, URL } from 'node:url'
+import { defineConfig } from 'vite';
+import { fileURLToPath, URL } from 'node:url';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -30,9 +30,9 @@ export default defineConfig({
       registerType: 'autoUpdate',
       manifest: {
         name: 'Goopper 计算机实训平台',
-        short_name: "Goopper",
-        description: "Goopper 计算机实训平台",
-        theme_color: "#1f1f1f",
+        short_name: 'Goopper',
+        description: 'Goopper 计算机实训平台',
+        theme_color: '#1f1f1f',
         icons: [
           {
             src: 'logo.svg',
@@ -65,4 +65,4 @@ export default defineConfig({
   server: {
     port: 3000
   }
-})
+});

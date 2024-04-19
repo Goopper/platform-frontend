@@ -1,17 +1,17 @@
 // Plugins
-import { registerPlugins } from '@/plugins'
+import { registerPlugins } from '@/plugins';
 
 // Components
-import App from './App.vue'
+import App from './App.vue';
 
 // Composable
-import { createApp } from 'vue'
+import { createApp } from 'vue';
 
 // Themes
-import './assets/scss/global.scss'
+import './assets/scss/global.scss';
 
-const app = createApp(App)
+const app = createApp(App);
 
-registerPlugins(app)
+registerPlugins(app);
 
-app.mount('#app')
+app.mount('#app');
