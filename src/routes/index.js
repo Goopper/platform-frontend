@@ -37,6 +37,7 @@ export const routes = [
       },
       {
         path: 'course',
+        component: () => import('@/views/common/course/CourseView.vue'),
         children: [
           {
             path: Role.ROLE_STUDENT.name,
@@ -50,8 +51,19 @@ export const routes = [
             component: () => import('@/views/teacher/TeacherCourseView.vue'),
             meta: {
               requireRole: Role.ROLE_TEACHER
-            }
-          }
+            },
+          },
+          {
+            path: 'create',
+            component: () => import('@/views/teacher/course/CourseCreateView.vue'),
+            meta: {
+              requireRole: Role.ROLE_TEACHER
+            },
+          },
+          {
+            path: 'detail',
+            component: () => import('@/views/common/course/CourseDetailView.vue'),
+          },
         ]
       },
       {
@@ -63,6 +75,6 @@ export const routes = [
   {
     // 404
     path: '/:pathMatch(.*)*',
-    redirect: '/login'
+    redirect: '/'
   }
 ];

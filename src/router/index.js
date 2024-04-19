@@ -1,7 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import { routes } from '@/routes';
 import { useUserStore } from '@/store/user';
-// import { isLoggedIn } from '@/utils/auth';
 import Role from '@/utils/role';
 import mitt from '@/plugins/mitt';
 import { clearLoginState } from '@/utils/auth';
@@ -34,8 +33,14 @@ router.beforeEach(async (to, from) => {
 
     // home redirect
     const currentRole = userStore.roleInfo;
-    if (to.path === '/' && currentRole) {
-      return currentRole.home;
+    if (currentRole) {
+      if (to.path === '/') {
+        return currentRole.home;
+      }
+      console.log(currentRole);
+      if (to.path === '/course') {
+        return '/course/'+currentRole.name;
+      }
     }
 
     // role check
@@ -48,7 +53,7 @@ router.beforeEach(async (to, from) => {
         roleId !== Role.ROLE_ADMIN.id
       ) {
         mitt.emit('showToast', { title: '无权访问！', color: 'error', icon: '$error' });
-        return '/';
+        return '/login';
       }
     }
   }

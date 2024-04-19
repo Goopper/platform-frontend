@@ -20,7 +20,7 @@
         <v-tab to="/">
           首页
         </v-tab>
-        <v-tab :to="'/course/'+roleName">
+        <v-tab to="/course">
           课程
         </v-tab>
         <v-tab to="/personal">
