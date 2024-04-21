@@ -31,15 +31,17 @@ router.beforeEach(async (to, from) => {
       await userStore.loadUserInfo();
     }
 
-    // home redirect
+    // role redirect
     const currentRole = userStore.roleInfo;
     if (currentRole) {
+      let uri = currentRole.name;
+      if (uri === 'admin') uri = 'teacher';
+      console.log('uri', uri);
       if (to.path === '/') {
-        return currentRole.home;
+        return '/home/'+uri;
       }
-      console.log(currentRole);
       if (to.path === '/course') {
-        return '/course/'+currentRole.name;
+        return '/course/'+uri;
       }
     }
 

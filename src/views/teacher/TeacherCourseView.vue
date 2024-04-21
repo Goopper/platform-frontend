@@ -1,16 +1,16 @@
 <template>
   <div>
-    Teacher's Course List
+    Teacher's Course List View
     <br>
     <router-link to="create">
       <a style="color:red">
-        Create
+        To Create
       </a>
     </router-link>
     <br>
     <router-link to="detail">
       <a style="color:red">
-        Detail
+        To Detail
       </a>
     </router-link>
   </div>
