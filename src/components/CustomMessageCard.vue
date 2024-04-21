@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <h1 />
+  <div class="hover:bg-primary hover:text-white cursor-pointer">
+    {{ message.sender.name }} &nbsp; {{ message.title }}-{{ message.content.substring(0, 2) }}
   </div>
 </template>
 
@@ -17,5 +17,4 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
 </style>

@@ -1,13 +1,16 @@
 <template>
-  <div>
-    <router-view />
-    <!-- message -->
-    <div
-      v-for="message in messageList" 
-      :key="message.id"
-    >
-      {{ message }}
-      <custom-message-card :message="message" />
+  <div class="flex">
+    <!-- start -->
+    <router-view class="sm:hidden grow mr-8" />
+    <!-- end -->
+    <div class="w-1/3 sm:w-full">
+      <!-- message -->
+      <div
+        v-for="message in messageList" 
+        :key="message.id"
+      >
+        <custom-message-card :message="message" />
+      </div>
     </div>
   </div>
 </template>
@@ -36,5 +39,4 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
 </style>
