@@ -54,6 +54,10 @@ body {
   background-color: var(--custom-secondary);
 }
 
+.bg-background {
+  background-color: var(--custom-background);
+}
+
 .hover\:bg-primary:hover {
   background-color: var(--custom-primary);
 }
