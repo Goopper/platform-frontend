@@ -6,6 +6,7 @@
       <!-- 选择课程 -->
       <div class="course-select">
         <v-select
+          v-model="selectedCourseName"
           label="选择课程"
           :items="CourseNameList"
           variant="outlined"
@@ -16,6 +17,7 @@
         <!-- 选择小组 -->
         <div class="group-select">
           <v-select
+            v-model="selectedGroupName"
             label="选择小组"
             :items="GroupNameList"
             variant="outlined"
@@ -25,6 +27,7 @@
         <!-- 排序顺序 -->
         <div class="sort-select">
           <v-select
+            v-model="selectedOrderName"
             label="选择排序"
             :items="OrderNameList"
             variant="outlined"
@@ -33,15 +36,41 @@
         </div>
       </div>
     </nav>
+    <!-- 学生信息卡片 -->
     <div class="course-students-card">
       <div
         v-for="studentCard in studentCardsList"
         :key="studentCard.id"
-      > 
+      >
         <div class="stu-cards">
-          <h1>{{ studentCard.name }}</h1>
-          <span>{{ studentCard.sectionName }}</span>
-          <span>{{ studentCard.lastUpdate }}</span>
+          <section>
+            <h1>{{ studentCard.name }}</h1>
+            <span>{{ groupName() }}</span>
+            <p>{{ studentCard.taskName }}</p>
+            <span>{{ timeAndSection(studentCard.lastUpdate, studentCard.sectionName) }}</span>
+          </section>
+          <div class="image-circular">
+            <img
+              src="/src/assets/img/avatar.png"
+              alt=""
+            >
+            <v-progress-circular
+              :model-value="(studentCard.finishedTask / studentCard.totalTask) * 100
+              "
+              :size="48"
+              :width="6"
+              :color="processColor(
+                (studentCard.finishedTask / studentCard.totalTask) * 100
+              )
+              "
+            >
+              {{
+                Math.floor(
+                  (studentCard.finishedTask / studentCard.totalTask) * 100
+                )
+              }}
+            </v-progress-circular>
+          </div>
         </div>
       </div>
     </div>
@@ -53,45 +82,113 @@ import { getCourseList, getGroupList, getStuentList } from '@/api/course';
 export default {
   name: 'TeacherHomeView',
   data: () => ({
-    studentCardsList: [],
     CourseNameList: [],
     GroupNameList: [],
     OrderNameList: [],
-    OrderList: [{ 'id': 1, 'name': '按id排序' }, {'id':2,'name':'按姓名排序'}],
+    CourseList: [],
+    GroupList: [],
+    OrderList: [
+      { id: 1, name: '按id排序' },
+      { id: 2, name: '按姓名排序' },
+    ],
     courseId: null,
     groupId: null,
+    OrderId: null,
+    selectedCourseName: null,
+    selectedGroupName: null,
+    selectedOrderName: null,
+    studentCardsList: [],
   }),
-  mounted(){
-    for(let i = 0; i < this.OrderList.length; i++) {
-      this.OrderNameList.push(this.OrderList[i].name);
-    }
+  watch: {
+    // 选择框选择后触发获取当前选择的id
+    selectedCourseName(CourseName) {
+      console.log(CourseName);
+      console.log(this.CourseList);
+      let course = this.CourseList.find((course) => course.name === CourseName);
+      this.courseId = course ? course.id : null;
+      this.fetchStudentList();
+    },
+    selectedGroupName(GroupName) {
+      let group = this.GroupList.find((group) => group.name === GroupName);
+      this.groupId = group ? group.id : null;
+      this.fetchStudentList();
+    },
+    selectedOrderName(OrderName) {
+      let order = this.OrderList.find((order) => order.name === OrderName);
+      this.OrderId = order ? order.id : null;
+      this.fetchStudentList();
+    },
+    //延迟获取组名称会提前值
+    async groupId(newGroupId) {
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    let group = this.GroupList.find(group => group.id === newGroupId);
+    this.groupNameValue = group ? group.name : null;
+  },
+  },
+  mounted() {
+    //对OrderList进行遍历，将name放入OrderNameList中,添加OrderId的默认值
+    this.OrderNameList = this.OrderList.map((order) => order.name);
+    this.OrderId = this.OrderList[0].id;
   },
   created() {
     // 获取教师的课程列表
     getCourseList().then((res) => {
-      const CourceList = [];
       for (let i = 0; i < res.data.length; i++) {
         this.CourseNameList.push(res.data[i].name);
-        CourceList.push(res.data[i]);
+        this.CourseList.push(res.data[i]);
       }
-      this.courseId = CourceList[0].id;
-
+      this.courseId = this.CourseList[0].id;
       // 获取教师的小组列表
       getGroupList().then((res) => {
-        const GroupList = [];
         for (let i = 0; i < res.data.length; i++) {
           this.GroupNameList.push(res.data[i].name);
-          GroupList.push(res.data[i]);
+          this.GroupList.push(res.data[i]);
         }
-        this.groupId = GroupList[0].id;
-
+        this.groupId = this.GroupList[0].id;
         // 获取教师的学生列表 实现方法 get方法传入三个参数有默认值,再可以通过选择框传入
-        getStuentList(this.courseId, this.groupId).then((res) => {
-          this.studentCardsList = res.data;
-          console.log(this.studentCardsList);
-        });
+        if (this.groupId && this.courseId && this.OrderId) {
+          this.fetchStudentList();
+        }
       });
     });
+  },
+  methods: {
+    //获取学生信息列表
+    fetchStudentList() {
+      getStuentList(this.courseId, this.groupId, this.OrderId).then((res) => {
+        this.studentCardsList = res.data;
+      });
+    },
+    //查询当前学生的小组名称
+    groupName() {
+      let name = this.GroupList.find((group) => group.id === this.groupId);
+      return name ? name.name : null;
+    },
+    //格式化时间和章节
+    timeAndSection(lastUpdate, section) {
+      let time = Math.ceil(
+        Math.abs(new Date() - new Date(lastUpdate)) /
+        (1000 * 60 * 60 * 24)
+      );
+      if (time == 19836) {
+        return `无上次记录 • ${section}`;
+      } else {
+        return `${time}天前 • ${section}`;
+      }
+
+    },
+    //进度条颜色
+    processColor(value) {
+      if (value < 25) {
+        return 'red';
+      } else if (value < 75) {
+        return 'orange';
+      } else if (value < 100) {
+        return 'blue';
+      } else {
+        return 'green';
+      }
+    },
   },
 };
 </script>
@@ -133,6 +230,68 @@ nav {
 .course-students-card {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
-  // grid-template-rows: 1fr 1fr 1fr;
+  grid-gap: 1em;
+}
+
+.stu-cards {
+  display: flex;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 1em;
+  width: 14em;
+  height: 100%;
+}
+
+.stu-cards:hover {
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+}
+
+// 图片和进度条
+.image-circular {
+  width: 24%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.image-circular>* {
+  max-width: 100%;
+}
+
+// 学生一些信息
+section {
+  width: 76%;
+}
+
+h1 {
+  font-size: 1.4em;
+}
+
+section span {
+  display: inline-block;
+  font-size: 0.8em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+section p {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+  font-size: 0.9em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
+  word-wrap: break-word;
+  line-height: 1em;
+  height: 4em;
+  max-width: 100%;
+}
+
+section span:first-of-type {
+  color: #666666;
 }
 </style>
