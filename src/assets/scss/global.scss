@@ -44,3 +44,24 @@ body {
 }
 
 // toast end
+
+
+.bg-primary {
+  background-color: var(--custom-primary);
+}
+
+.bg-secondary {
+  background-color: var(--custom-secondary);
+}
+
+.bg-background {
+  background-color: var(--custom-background);
+}
+
+.hover\:bg-primary:hover {
+  background-color: var(--custom-primary);
+}
+
+.v-tab__slider {
+  background-color: var(--custom-primary) !important;
+}

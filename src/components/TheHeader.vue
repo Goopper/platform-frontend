@@ -1,11 +1,11 @@
 <template>
   <div 
     id="the-header" 
-    class="flex items-center justify-between h-20 px-8"
+    class="flex items-center justify-between px-8"
   >
     <!-- logo -->
     <div
-      class="h-2/3 w-1/6"
+      class="h-2/3 w-1/6 sm:hidden grow"
     >
       <img
         class="h-full cursor-pointer"
@@ -15,21 +15,33 @@
       >
     </div>
     <!-- tab menu -->
-    <div class="flex items-center justify-center w-1/2">
-      <v-tabs>
-        <v-tab to="/">
+    <div class="flex items-center justify-center w-1/2 sm:w-full sm:h-full grow">
+      <v-tabs
+        class="sm:w-full"
+      >
+        <v-tab
+          class="sm:w-1/2"
+          to="/"
+        >
           首页
         </v-tab>
-        <v-tab to="/course">
+        <v-tab
+          class="sm:hidden"
+          to="/course"
+        >
           课程
         </v-tab>
-        <v-tab to="/personal">
+        <v-tab
+          class="sm:w-1/2"
+          to="/personal"
+        >
           个人中心
         </v-tab>
       </v-tabs>
     </div>
+    <!-- avatar -->
     <div
-      class="h-2/3 flex items-center justify-end w-1/6 space-x-2"
+      class="h-2/3 flex items-center justify-end w-1/6 space-x-2 sm:hidden grow"
     >
       <!-- message -->
       <v-badge 
@@ -133,5 +145,8 @@ export default {
 
 #the-header {
   background-color: var(--custom-secondary);
+  @media screen and (max-width: 768px) {
+    padding: 0 !important;
+  }
 }
 </style>
