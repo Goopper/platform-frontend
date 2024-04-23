@@ -1,11 +1,11 @@
 <template>
-  <div class="flex">
+  <div class="flex md:flex-col overflow-y-auto">
     <!-- start -->
-    <router-view class="sm:hidden grow mr-8" />
+    <router-view class="blg:flex-grow lg:mr-0 bmd:mr-8 lg:mb-8" />
     <!-- end -->
     <div
       id="message-card-area"
-      class="w-1/3 min-w-96 sm:w-full sm:min-w-0 border flex flex-col"
+      class="w-1/3 min-w-96 sm:w-full sm:min-w-0 border flex flex-col bg-secondary lg:w-full lg:grow lg:min-h-[640px]"
     >
       <!-- message -->
       <div class="grow overflow-y-auto">
@@ -59,16 +59,12 @@ export default {
 </script>
 
 <style lang="scss">
-#message-card-area {
-  background-color: var(--custom-secondary);
-}
-
 .v-badge__badge {
   bottom: calc(100% - 4px) !important;
   left: calc(100% - 4px) !important;
 }
 
 #message-card-action {
-  background-color: var(--custom-background);;
+  background-color: var(--custom-background);
 }
 </style>

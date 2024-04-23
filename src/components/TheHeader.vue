@@ -1,7 +1,7 @@
 <template>
   <div 
     id="the-header" 
-    class="flex items-center justify-between px-8"
+    class="flex items-center justify-between px-8 sm:border-t bsm:border-b"
   >
     <!-- logo -->
     <div
@@ -64,12 +64,13 @@
         {{ user.name }}
       </span>
       <!-- avatar -->
-      <img 
+      <v-avatar 
         id="avatar"
         alt="头像"
-        class="cursor-pointer h-full"
-        src="../assets/img/avatar/default.svg" 
-      >
+        size="48"
+        class="cursor-pointer"
+        :image="user.avatar" 
+      />
       <!-- hover menu -->
       <v-menu
         open-on-hover
