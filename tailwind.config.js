@@ -20,6 +20,9 @@ export default {
             'lg': {
                 'max': '1440px'
             },
+            '2lg': {
+                'max': '1680px'
+            },
             'bsm': {
                 'min': '769px'
             },
