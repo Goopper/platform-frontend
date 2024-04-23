@@ -15,7 +15,7 @@ export function getGroupList() {
     method: 'get'
   });
 }
-export function getStuentList(courseId = null, groupId = null, orderId = null) {
+export function getStudentList(courseId = null, groupId = null, orderId = null) {
   return request({
     url: `/student/${courseId}/${groupId}/${orderId}`,
     method: 'get'

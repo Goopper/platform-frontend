@@ -41,34 +41,33 @@
       <div
         v-for="studentCard in studentCardsList"
         :key="studentCard.id"
+        class="stu-cards"
       >
-        <div class="stu-cards">
-          <section>
-            <h1>{{ studentCard.name }}</h1>
-            <span>{{ groupName() }}</span>
-            <p>{{ studentCard.taskName }}</p>
-            <span>{{ timeAndSection(studentCard.lastUpdate, studentCard.sectionName) }}</span>
-          </section>
-          <div class="image-circular">
-            <img
-              src="/src/assets/img/avatar.png"
-              alt=""
-            >
-            <v-progress-circular
-              :model-value="processNumber(studentCard.finishedTask , studentCard.totalTask)
-              "
-              :size="48"
-              :width="6"
-              :color="processColor(
-                processNumber(studentCard.finishedTask , studentCard.totalTask)
-              )
-              "
-            >
-              {{
-                processNumber(studentCard.finishedTask , studentCard.totalTask)
-              }}
-            </v-progress-circular>
-          </div>
+        <section>
+          <h1>{{ studentCard.name }}</h1>
+          <span>{{ groupName() }}</span>
+          <p>{{ studentCard.taskName }}</p>
+          <span>{{ timeAndSection(studentCard.lastUpdate, studentCard.sectionName) }}</span>
+        </section>
+        <div class="image-circular">
+          <img
+            src="/src/assets/img/avatar.png"
+            alt=""
+          >
+          <v-progress-circular
+            :model-value="processNumber(studentCard.finishedTask, studentCard.totalTask)
+            "
+            :size="48"
+            :width="6"
+            :color="processColor(
+              processNumber(studentCard.finishedTask, studentCard.totalTask)
+            )
+            "
+          >
+            {{
+              processNumber(studentCard.finishedTask, studentCard.totalTask)
+            }}
+          </v-progress-circular>
         </div>
       </div>
     </div>
@@ -76,7 +75,7 @@
 </template>
 
 <script>
-import { getCourseList, getGroupList, getStuentList } from '@/api/course';
+import { getCourseList, getGroupList, getStudentList } from '@/api/course';
 export default {
   name: 'TeacherHomeView',
   data: () => ({
@@ -149,7 +148,7 @@ export default {
     //获取学生信息列表
     fetchStudentList() {
       if (this.groupId && this.courseId && this.OrderId) {
-        getStuentList(this.courseId, this.groupId, this.OrderId).then((res) => {
+        getStudentList(this.courseId, this.groupId, this.OrderId).then((res) => {
           if (this.OrderId === 2) {
             this.studentCardsList = res.data.sort((a, b) => {
               return a.name.localeCompare(b.name);
@@ -168,6 +167,9 @@ export default {
 
     //格式化时间和章节
     timeAndSection(lastUpdate, section) {
+      if (section === null) {
+        section = '无章节';
+      }
       let time = Math.ceil(
         Math.abs(new Date() - new Date(lastUpdate)) /
         (1000 * 60 * 60 * 24)
@@ -246,38 +248,64 @@ nav {
   height: calc(100% - 62px);
 }
 
-//缩小时改变大小
-@media (max-width: 1600px) {
-  .course-students-card {
-    grid-template-columns: 1fr 1fr 1fr;
-  }
-}
-@media (max-width: 1300px) {
-  .course-students-card {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-@media (max-height: 600px) {
-  .course-students-card {
-      overflow: auto;
-      height: 86%;
-  }
-}
-
-
 .stu-cards {
   display: flex;
   border: 1px solid #e0e0e0;
   border-radius: 4px;
   padding: 1em;
   width: 14em;
-  // height: 100%;
+  height: 11em;
 }
 
 .stu-cards:hover {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   cursor: pointer;
 }
+
+
+//缩小时改变大小
+@media (min-width: 820px) and (max-width: 1280px) {
+  .right-select {
+    width: 100%;
+    padding-left: 1.5em;
+  }
+
+  .course-select {
+    width: 70%;
+  }
+}
+@media (min-width: 820px) and (max-width: 1070px) {
+  .course-students-card {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}
+
+@media (max-width: 820px) {
+  .course-students-card {
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 0.5em;
+      height: calc(100% - 140px);
+  }
+  nav {
+    display: inline;
+  }
+  .right-select {
+    width: 100%;
+  }
+
+  .course-select {
+    width: 100%;
+  }
+}
+@media (max-width: 500px) {
+  .course-students-card{
+    grid-template-columns: 1fr;
+  }
+  .stu-cards{
+    width: 90%;
+  }
+}
+
 
 // 图片和进度条
 .image-circular {
