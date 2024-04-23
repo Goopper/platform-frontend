@@ -1,13 +1,12 @@
 <template>
-  <!-- temp view for dev -->
   <div>
-    <h1 />
+    message
   </div>
 </template>
 
 <script>
 export default {
-  name: 'TempView',
+  name: 'MessageView',
 };
 </script>
 

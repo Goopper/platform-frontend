@@ -66,11 +66,25 @@
       <!-- avatar -->
       <v-avatar 
         id="avatar"
-        alt="头像"
-        size="48"
         class="cursor-pointer"
-        :image="user.avatar" 
-      />
+        size="48"
+      >
+        <v-img
+          lazy-src="/default.jpg"
+          :src="user.avatar"
+          cover
+          alt="用户头像"
+        >
+          <template #placeholder>
+            <div class="d-flex align-center justify-center fill-height">
+              <v-progress-circular
+                color="grey-lighten-4"
+                indeterminate
+              />
+            </div>
+          </template>
+        </v-img>
+      </v-avatar>
       <!-- hover menu -->
       <v-menu
         open-on-hover
@@ -142,6 +156,11 @@ export default {
 .v-tab--selected {
   background-color: var(--custom-primary);
   color: var(--custom-secondary) !important;
+}
+
+.v-tab {
+  font-weight: bold;
+  font-size: 1.025em;
 }
 
 #the-header {

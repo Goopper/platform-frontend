@@ -15,6 +15,12 @@ export const useUserStore = defineStore('user', {
         setRole(role) {
             this.role = role;
         },
+        setAvatar(avatar) {
+            this.user.avatar = avatar;
+        },
+        setEmail(email) {
+            this.user.email = email;
+        },
         async loadUserInfo() {
             const me = (await getMyBasicInfo());
             if (me) {

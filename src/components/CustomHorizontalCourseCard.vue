@@ -5,8 +5,18 @@
         class="bg-default w-[128px] h-[128px]"
         aspect-ratio="1/1"
         alt="课程封面"
+        lazy-src="/default.jpg"
         :src="courseInfo.cover"
-      />
+      >
+        <template #placeholder>
+          <div class="d-flex align-center justify-center fill-height">
+            <v-progress-circular
+              color="grey-lighten-4"
+              indeterminate
+            />
+          </div>
+        </template>
+      </v-img>
     </div>
     <div class="flex flex-col flex-grow">
       <!-- name -->

@@ -1,13 +1,13 @@
 <template>
-  <!-- temp view for dev -->
   <div>
-    <h1 />
+    <the-password-modify-card class="mb-8" />
+    <the-device-list-card />
   </div>
 </template>
 
 <script>
 export default {
-  name: 'TempView',
+  name: 'SecurityView',
 };
 </script>
 

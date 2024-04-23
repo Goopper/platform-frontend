@@ -16,7 +16,7 @@
           :loading="githubLoading"
           size="large"
           block
-          variant="flat"
+          variant="flat"  
           @click="githubLogin"
         >
           GitHub
