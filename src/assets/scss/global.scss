@@ -58,6 +58,10 @@ body {
   background-color: var(--custom-background);
 }
 
+.bg-default {
+  background-color: #bdbdbd;
+}
+
 .hover\:bg-primary:hover {
   background-color: var(--custom-primary);
 }

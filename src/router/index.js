@@ -36,7 +36,6 @@ router.beforeEach(async (to, from) => {
     if (currentRole) {
       let uri = currentRole.name;
       if (uri === 'admin') uri = 'teacher';
-      console.log('uri', uri);
       if (to.path === '/') {
         return '/home/'+uri;
       }
