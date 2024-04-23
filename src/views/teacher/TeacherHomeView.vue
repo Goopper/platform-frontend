@@ -55,19 +55,17 @@
               alt=""
             >
             <v-progress-circular
-              :model-value="(studentCard.finishedTask / studentCard.totalTask) * 100
+              :model-value="processNumber(studentCard.finishedTask , studentCard.totalTask)
               "
               :size="48"
               :width="6"
               :color="processColor(
-                (studentCard.finishedTask / studentCard.totalTask) * 100
+                processNumber(studentCard.finishedTask , studentCard.totalTask)
               )
               "
             >
               {{
-                Math.floor(
-                  (studentCard.finishedTask / studentCard.totalTask) * 100
-                )
+                processNumber(studentCard.finishedTask , studentCard.totalTask)
               }}
             </v-progress-circular>
           </div>
@@ -88,7 +86,7 @@ export default {
     CourseList: [],
     GroupList: [],
     OrderList: [
-      { id: 1, name: '按id排序' },
+      { id: 1, name: '按学号排序' },
       { id: 2, name: '按姓名排序' },
     ],
     courseId: null,
@@ -96,14 +94,12 @@ export default {
     OrderId: null,
     selectedCourseName: null,
     selectedGroupName: null,
-    selectedOrderName: null,
+    selectedOrderName: '按学号排序',
     studentCardsList: [],
   }),
   watch: {
     // 选择框选择后触发获取当前选择的id
     selectedCourseName(CourseName) {
-      console.log(CourseName);
-      console.log(this.CourseList);
       let course = this.CourseList.find((course) => course.name === CourseName);
       this.courseId = course ? course.id : null;
       this.fetchStudentList();
@@ -118,12 +114,6 @@ export default {
       this.OrderId = order ? order.id : null;
       this.fetchStudentList();
     },
-    //延迟获取组名称会提前值
-    async groupId(newGroupId) {
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    let group = this.GroupList.find(group => group.id === newGroupId);
-    this.groupNameValue = group ? group.name : null;
-  },
   },
   mounted() {
     //对OrderList进行遍历，将name放入OrderNameList中,添加OrderId的默认值
@@ -137,6 +127,7 @@ export default {
         this.CourseNameList.push(res.data[i].name);
         this.CourseList.push(res.data[i]);
       }
+      this.selectedCourseName = this.CourseNameList[0];
       this.courseId = this.CourseList[0].id;
       // 获取教师的小组列表
       getGroupList().then((res) => {
@@ -145,6 +136,8 @@ export default {
           this.GroupList.push(res.data[i]);
         }
         this.groupId = this.GroupList[0].id;
+        this.selectedGroupName = this.GroupNameList[0];
+
         // 获取教师的学生列表 实现方法 get方法传入三个参数有默认值,再可以通过选择框传入
         if (this.groupId && this.courseId && this.OrderId) {
           this.fetchStudentList();
@@ -155,27 +148,44 @@ export default {
   methods: {
     //获取学生信息列表
     fetchStudentList() {
-      getStuentList(this.courseId, this.groupId, this.OrderId).then((res) => {
-        this.studentCardsList = res.data;
-      });
+      if (this.groupId && this.courseId && this.OrderId) {
+        getStuentList(this.courseId, this.groupId, this.OrderId).then((res) => {
+          if (this.OrderId === 2) {
+            this.studentCardsList = res.data.sort((a, b) => {
+              return a.name.localeCompare(b.name);
+            });
+          } else {
+            this.studentCardsList = res.data;
+          }
+        });
+      }
     },
     //查询当前学生的小组名称
     groupName() {
       let name = this.GroupList.find((group) => group.id === this.groupId);
       return name ? name.name : null;
     },
+
     //格式化时间和章节
     timeAndSection(lastUpdate, section) {
       let time = Math.ceil(
         Math.abs(new Date() - new Date(lastUpdate)) /
         (1000 * 60 * 60 * 24)
       );
-      if (time == 19836) {
+      if (time >= 10000) {
         return `无上次记录 • ${section}`;
       } else {
         return `${time}天前 • ${section}`;
       }
-
+    },
+    //去除任务进度有NAN和小数点
+    processNumber(lastTask, totalTask) {
+      let taskProcess = Math.floor((lastTask / totalTask) * 100);
+      if (isNaN(taskProcess)) {
+        return 0;
+      } else {
+        return Math.floor((lastTask / totalTask) * 100);
+      }
     },
     //进度条颜色
     processColor(value) {
@@ -195,10 +205,11 @@ export default {
 
 <style lang="scss" scoped>
 main {
-  padding: 32px;
+  padding: 2em;
   width: 100%;
   background-color: white;
   border: 1px solid #e0e0e0;
+  height: 100%;
 }
 
 //选择框
@@ -231,7 +242,28 @@ nav {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
   grid-gap: 1em;
+  overflow: auto;
+  height: calc(100% - 62px);
 }
+
+//缩小时改变大小
+@media (max-width: 1600px) {
+  .course-students-card {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}
+@media (max-width: 1300px) {
+  .course-students-card {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media (max-height: 600px) {
+  .course-students-card {
+      overflow: auto;
+      height: 86%;
+  }
+}
+
 
 .stu-cards {
   display: flex;
@@ -239,7 +271,7 @@ nav {
   border-radius: 4px;
   padding: 1em;
   width: 14em;
-  height: 100%;
+  // height: 100%;
 }
 
 .stu-cards:hover {
