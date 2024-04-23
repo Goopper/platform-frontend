@@ -51,7 +51,7 @@
         </section>
         <div class="image-circular">
           <img
-            src="/src/assets/img/avatar.png"
+            :src="CheckImage(studentCard.avatar)"
             alt=""
           >
           <v-progress-circular
@@ -201,6 +201,15 @@ export default {
         return 'green';
       }
     },
+    //检查图片是否为默认
+    CheckImage(avatar) {
+      console.log(avatar);
+      if (avatar === '/default.jpg') {
+       return avatar;
+      } else {
+        return 'https://xxx'+avatar;
+      }
+    },
   },
 };
 </script>
@@ -232,11 +241,13 @@ nav {
 
 .group-select {
   width: 80%;
+  min-width: 11em;
   padding-right: 1.5em;
 }
 
 .sort-select {
   width: 55%;
+  min-width: 8em;
 }
 
 // 课程学生卡片
@@ -257,10 +268,10 @@ nav {
   height: 11em;
 }
 
-.stu-cards:hover {
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  cursor: pointer;
-}
+// .stu-cards:hover {
+//   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+//   cursor: pointer;
+// }
 
 
 //缩小时改变大小
@@ -313,6 +324,9 @@ nav {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  img{
+    border-radius: 2em;
+  }
 }
 
 .image-circular>* {
