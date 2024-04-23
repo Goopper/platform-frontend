@@ -41,33 +41,36 @@
       <div
         v-for="studentCard in studentCardsList"
         :key="studentCard.id"
-        class="stu-cards"
       >
-        <section>
-          <h1>{{ studentCard.name }}</h1>
-          <span>{{ groupName() }}</span>
-          <p>{{ studentCard.taskName }}</p>
-          <span>{{ timeAndSection(studentCard.lastUpdate, studentCard.sectionName) }}</span>
-        </section>
-        <div class="image-circular">
-          <img
-            :src="CheckImage(studentCard.avatar)"
-            alt=""
-          >
-          <v-progress-circular
-            :model-value="processNumber(studentCard.finishedTask, studentCard.totalTask)
-            "
-            :size="48"
-            :width="6"
-            :color="processColor(
-              processNumber(studentCard.finishedTask, studentCard.totalTask)
-            )
-            "
-          >
-            {{
-              processNumber(studentCard.finishedTask, studentCard.totalTask)
-            }}
-          </v-progress-circular>
+        <div class="stu-cards">
+          <section>
+            <h1>{{ studentCard.name }}</h1>
+            <span>{{ groupName() }}</span>
+            <p>{{ studentCard.taskName }}</p>
+            <span>{{
+              timeAndSection(studentCard.lastUpdate, studentCard.sectionName)
+            }}</span>
+          </section>
+          <div class="image-circular">
+            <img
+              :src="studentCard.avatar"
+              alt=""
+            >
+            <v-progress-circular
+              :model-value="
+                processNumber(studentCard.finishedTask, studentCard.totalTask)
+              "
+              :size="48"
+              :width="6"
+              :color="
+                processColor(
+                  processNumber(studentCard.finishedTask, studentCard.totalTask)
+                )
+              "
+            >
+              {{ processNumber(studentCard.finishedTask, studentCard.totalTask) }}
+            </v-progress-circular>
+          </div>
         </div>
       </div>
     </div>
@@ -148,15 +151,17 @@ export default {
     //获取学生信息列表
     fetchStudentList() {
       if (this.groupId && this.courseId && this.OrderId) {
-        getStudentList(this.courseId, this.groupId, this.OrderId).then((res) => {
-          if (this.OrderId === 2) {
-            this.studentCardsList = res.data.sort((a, b) => {
-              return a.name.localeCompare(b.name);
-            });
-          } else {
-            this.studentCardsList = res.data;
+        getStudentList(this.courseId, this.groupId, this.OrderId).then(
+          (res) => {
+            if (this.OrderId === 2) {
+              this.studentCardsList = res.data.sort((a, b) => {
+                return a.name.localeCompare(b.name);
+              });
+            } else {
+              this.studentCardsList = res.data;
+            }
           }
-        });
+        );
       }
     },
     //查询当前学生的小组名称
@@ -171,8 +176,7 @@ export default {
         section = '无章节';
       }
       let time = Math.ceil(
-        Math.abs(new Date() - new Date(lastUpdate)) /
-        (1000 * 60 * 60 * 24)
+        Math.abs(new Date() - new Date(lastUpdate)) / (1000 * 60 * 60 * 24)
       );
       if (time >= 10000) {
         return `无上次记录 • ${section}`;
@@ -199,15 +203,6 @@ export default {
         return 'blue';
       } else {
         return 'green';
-      }
-    },
-    //检查图片是否为默认
-    CheckImage(avatar) {
-      console.log(avatar);
-      if (avatar === '/default.jpg') {
-       return avatar;
-      } else {
-        return 'https://xxx'+avatar;
       }
     },
   },
@@ -254,6 +249,7 @@ nav {
 .course-students-card {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr 1fr;
   grid-gap: 1em;
   overflow: auto;
   height: calc(100% - 62px);
@@ -268,11 +264,9 @@ nav {
   height: 11em;
 }
 
-// .stu-cards:hover {
-//   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-//   cursor: pointer;
-// }
-
+.stu-cards:hover {
+  cursor: pointer;
+}
 
 //缩小时改变大小
 @media (min-width: 820px) and (max-width: 1280px) {
@@ -285,9 +279,13 @@ nav {
     width: 70%;
   }
 }
-@media (min-width: 820px) and (max-width: 1070px) {
+
+@media (min-width: 820px) and (max-width: 1600px) {
   .course-students-card {
     grid-template-columns: 1fr 1fr 1fr;
+  }
+  .right-select{
+    width: 44%;
   }
 }
 
@@ -295,28 +293,37 @@ nav {
   .course-students-card {
     grid-template-columns: 1fr 1fr;
     grid-gap: 0.5em;
-      height: calc(100% - 140px);
+    height: calc(100% - 140px);
   }
   nav {
     display: inline;
   }
+  .stu-cards {
+    width: 70%;
+  }
   .right-select {
     width: 100%;
-  }
 
+    .group-select {
+      min-width: 0;
+    }
+    .sort-select {
+      min-width: 0;
+    }
+  }
   .course-select {
     width: 100%;
   }
 }
 @media (max-width: 500px) {
-  .course-students-card{
+  .course-students-card {
     grid-template-columns: 1fr;
   }
-  .stu-cards{
+
+  .stu-cards {
     width: 90%;
   }
 }
-
 
 // 图片和进度条
 .image-circular {
@@ -324,12 +331,13 @@ nav {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  img{
+
+  img {
     border-radius: 2em;
   }
 }
 
-.image-circular>* {
+.image-circular > * {
   max-width: 100%;
 }
 
