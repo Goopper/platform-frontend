@@ -20,3 +20,17 @@ export function getLearnedPerformanceByYear(year) {
         method: 'get'
     });
 }
+
+export function getAllLearningCourse() {
+    return request({
+        url: '/student/course/current/all',
+        method: 'get'
+    });
+}
+
+export function getAllSelectableCourses() {
+    return request({
+        url: '/student/course',
+        method: 'get'
+    });
+}
