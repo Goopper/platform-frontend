@@ -327,7 +327,7 @@ export default {
       console.log('删除课程', courseId);
       deleteCourse(100000000);
     },
-  },
+  }, 
 };
 </script>
 
