@@ -46,8 +46,9 @@
       <!-- message -->
       <v-badge 
         v-if="hasNewMessage" 
-        color="error" 
+        color="error"
         dot 
+        @click="$router.push('/personal/message')" 
       >
         <v-icon
           icon="mdi-bell-outline"
@@ -58,6 +59,7 @@
         v-else
         icon="mdi-bell-outline"
         size="large"
+        @click="$router.push('/personal/message')"
       />
       <!-- username -->
       <span class="text-h6">
