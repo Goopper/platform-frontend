@@ -54,7 +54,7 @@ router.beforeEach(async (to, from) => {
         roleId !== Role.ROLE_ADMIN.id
       ) {
         mitt.emit('showToast', { title: '无权访问！', color: 'error', icon: '$error' });
-        return '/login';
+        return '/login'; 
       }
     }
   }
