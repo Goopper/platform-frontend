@@ -3,8 +3,9 @@ import mitt from '@/plugins/mitt';
 import { getLoginState } from '@/utils/auth';
 
 export function request(config) {
+    const baseURL = import.meta.env.VITE_BACKEND_BASE_URL;
     const instance = axios.create({
-        baseURL: 'http://100.116.150.108:8888',
+        baseURL: baseURL || 'http://100.116.150.108:8888',
         timeout: 30000,
         headers: {
             'G-Authorization': getLoginState(),
