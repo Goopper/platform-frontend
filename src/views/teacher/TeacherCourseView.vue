@@ -26,11 +26,11 @@
       </router-link>
     </nav>
     <!-- 使用课程 -->
+    <h1>使用中</h1>
     <div
       v-if="isShowUse"
       id="use-course"
     >
-      <h1>使用中</h1>
       <!-- 课程卡片 -->
       <div class="use-box">
         <div
@@ -78,6 +78,8 @@
                                 v-model="applyGroups"
                                 variant="outlined"
                                 :items="GroupList"
+                                item-title="name"
+                                item-value="id"
                                 label="选择小组"
                                 multiple
                                 clearable
@@ -119,12 +121,25 @@
         </div>
       </div>
     </div>
-    <!-- 待发布课程 -->
     <div
-      v-show="isShowDraft"
+      v-else
+      class="p-4 flex flex-col justify-center items-center "
+    >
+      <v-icon
+        size="100px"
+        class="text-gray-400 mt-8"
+        icon="mdi-signal-off"
+      />
+      <p class="font-bold text-lg text-gray-400">
+        无课程
+      </p>
+    </div>
+    <!-- 待发布课程 -->
+    <h1>待发布</h1>
+    <div
+      v-if="isShowDraft"
       id="draft-course"
     >
-      <h1>待发布</h1>
       <div class="use-box">
         <div
           v-for="DraftCourse in DraftCourseList"
@@ -163,9 +178,7 @@
                     </v-list-item>
                     <!-- 编辑 -->
                     <v-list-item>
-                      <router-link
-                        :to="{ path: 'create', query: { id: DraftCourse.id } }"
-                      >
+                      <router-link :to="{ path: 'create', query: { id: DraftCourse.id } }">
                         <v-btn> 📃编辑 </v-btn>
                       </router-link>
                     </v-list-item>
@@ -225,6 +238,19 @@
         </div>
       </div>
     </div>
+    <div
+      v-else
+      class="p-4 flex flex-col justify-center items-center "
+    >
+      <v-icon
+        size="100px"
+        class="text-gray-400 mt-8"
+        icon="mdi-signal-off"
+      />
+      <p class="font-bold text-lg text-gray-400">
+        无课程
+      </p>
+    </div>
   </main>
 </template>
 
@@ -257,16 +283,29 @@ export default {
       //展示使用中和待发布
       isShowUse: true,
       isShowDraft: true,
+      isShowCouese: false
     };
   },
   // 监听两个输入框
   watch: {
     searchCourseName() {
-      getTeacherCourseList(1, this.searchCourseName).then((res) => {
-        this.UseCourseList = res.data;
-      });
       getTeacherCourseList(2, this.searchCourseName).then((res) => {
+        console.log(this.searchCourseName);
+        this.UseCourseList = res.data;
+        if (this.UseCourseList.length === 0) {
+          this.isShowUse = false;
+        }else{
+          this.isShowUse = true;
+        }
+      });
+
+      getTeacherCourseList(1, this.searchCourseName).then((res) => {
         this.DraftCourseList = res.data;
+        if (this.UseCourseList.length === 0) {
+          this.isShowDraft = false;
+        }else{
+          this.isShowDraft = true;
+        }
       });
     },
     selectedState() {
@@ -293,7 +332,7 @@ export default {
     });
     getGroupList().then((res) => {
       for (let i = 0; i < res.data.length; i++) {
-        this.GroupList.push(res.data[i].name);
+        this.GroupList.push(res.data[i]);
       }
     });
   },
@@ -320,14 +359,20 @@ export default {
     },
     //应用到小组
     applyGroupList(courseId) {
-      applyGroup(courseId, this.applyGroups + 1000);
+      const groups = new FormData();
+      const groupsId = [];
+      this.applyGroups.forEach(group => {
+        groupsId.push(group.id.toString());
+      });
+      groups.append('groupIds', groupsId);
+      applyGroup(courseId, groups);
     },
     //删除课程
     deleteCourse(courseId) {
-      console.log('删除课程', courseId);
-      deleteCourse(100000000);
+      // console.log('删除课程', courseId);
+      deleteCourse(courseId);
     },
-  }, 
+  },
 };
 </script>
 
@@ -343,6 +388,7 @@ main {
 //导航栏
 nav {
   display: flex;
+
   .course-input {
     flex: 4;
     background-color: white;
@@ -368,6 +414,7 @@ h1 {
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
   grid-gap: 1em;
   height: 18em;
+
   //一个课程卡片
   .use-card {
     width: 13em;
@@ -430,8 +477,10 @@ h1 {
 .use-type {
   background-color: $sucess;
 }
+
 .v-list {
   padding: 0;
+
   .v-list-item {
     padding: 0;
     padding-inline: 0.5em;
@@ -444,21 +493,25 @@ h1 {
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
   }
 }
+
 @media (max-width: 1200px) {
   .use-box {
     grid-template-columns: 1fr 1fr 1fr 1fr;
   }
 }
+
 @media (max-width: 950px) {
   .use-box {
     grid-template-columns: 1fr 1fr 1fr;
   }
 }
+
 @media (max-width: 720px) {
   nav {
     .course-input {
       flex: 1;
     }
+
     .state-select {
       margin: 0 0.25em;
     }
@@ -466,22 +519,27 @@ h1 {
 
   .use-box {
     grid-template-columns: 1fr;
+
     .use-card {
       display: flex;
       width: auto;
     }
+
     .title-more {
       display: flex;
       justify-content: space-between;
     }
+
     .course-info {
       padding: 0 0.5em;
       width: 80%;
     }
+
     p {
       display: -webkit-box;
       -webkit-box-orient: vertical;
-      -webkit-line-clamp: 3; /* 修改这里 */
+      -webkit-line-clamp: 3;
+      /* 修改这里 */
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: pre-wrap;
@@ -489,6 +547,7 @@ h1 {
       max-width: 80%;
     }
   }
+
   .v-btn {
     display: none;
   }
