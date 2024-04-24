@@ -1,7 +1,7 @@
 <template>
-  <div class="flex">
+  <div class="flex sm:flex-col">
     <!-- menu -->
-    <div class="w-[15%] mr-8">
+    <div class="w-[15%] min-w-[140px] sm:w-auto bsm:mr-8 sm:mr-0">
       <v-tabs
         color="primary"
         direction="vertical"

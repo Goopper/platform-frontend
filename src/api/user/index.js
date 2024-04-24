@@ -1,4 +1,3 @@
-import { data } from 'autoprefixer';
 import { request } from '..';
 
 export function getMyBasicInfo() {

@@ -7,7 +7,6 @@ import { VitePWA } from 'vite-plugin-pwa';
 
 // Utilities
 import { defineConfig } from 'vite';
-import { fileURLToPath, URL } from 'node:url';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -50,7 +49,7 @@ export default defineConfig({
   define: { 'process.env': {} },
   resolve: {
     alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url))
+      '@': new URL('./src', import.meta.url).pathname
     },
     extensions: [
       '.js',

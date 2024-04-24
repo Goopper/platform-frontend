@@ -1,9 +1,11 @@
 <template>
   <div class="flex flex-col">
-    <div class="mt-4 w-full">
+    <!-- md -->
+    <div class="mt-4 w-full md:hidden">
       <v-text-field
         v-model="title"
-        label="消息标题筛选"
+        label="消息标题筛选(点击搜索图标进行搜索)"
+        :loading="loading"
         density="compact"
         append-inner-icon="mdi-magnify"
         variant="outlined"
@@ -11,7 +13,9 @@
         @click:append-inner="searchMessage"
       >
         <template #append>
-          <v-tabs v-model="type">
+          <v-tabs
+            v-model="type"
+          >
             <v-tab
               :value="null"
               @click="searchMessage"
@@ -30,6 +34,44 @@
         </template>
       </v-text-field>
     </div>
+    <!-- bmd -->
+    <div class="mt-4 mb-4 w-full bmd:hidden">
+      <v-text-field
+        v-model="title"
+        label="消息标题筛选(点击搜索图标进行搜索)"
+        :loading="loading"
+        density="compact"
+        append-inner-icon="mdi-magnify"
+        variant="outlined"
+        clearable
+        @click:append-inner="searchMessage"
+      >
+        <template #loader>
+          <v-progress-linear
+            indeterminate
+          />
+        </template>
+      </v-text-field>
+      <v-tabs
+        v-model="type"
+      >
+        <v-tab
+          :value="null"
+          @click="searchMessage"
+        >
+          全部
+        </v-tab>
+        <v-tab
+          v-for="messageType in types"
+          :key="messageType.id"
+          :value="messageType.id"
+          @click="searchMessage"
+        >
+          {{ messageType.name }}
+        </v-tab>
+      </v-tabs>
+    </div>
+    <!-- messages -->
     <div class="flex-grow overflow-y-auto">
       <div
         v-if="messages.length>0 && !loading"
@@ -61,10 +103,12 @@
         type="paragraph"
       />
     </div>
+    <!-- pager -->
     <v-pagination
       v-model="page"
       :length="totalPage"
     />
+    <!-- dialog -->
     <v-dialog
       v-model="dialog"
       persistent
@@ -73,7 +117,6 @@
       <v-card
         color="white"
       >
-        <!-- title -->
         <div class="m-4 mb-0 flex justify-between items-center">
           <!-- user info -->
           <div class="flex items-center">
@@ -120,6 +163,14 @@
             发送日期：{{ sendDate }}
           </p>
         </v-card-text>
+        <v-card-actions v-if="targetMessage.typeId === typeCorrectId">
+          <v-btn
+            variant="flat"
+            class="ms-auto"
+            text="前往批改作业"
+            @click="handleMessageToCorrect"
+          />
+        </v-card-actions>
       </v-card>
     </v-dialog>
   </div>
@@ -137,6 +188,7 @@ export default {
     messages: [],
     title: '',
     types: MessageType.ALL,
+    typeCorrectId: MessageType.CORRECT.id,
     type: null,
     loading: true,
     dialog: false,
@@ -167,6 +219,9 @@ export default {
       receiveOneMessage(targetId).then(() => {
         this.targetMessage.isRead = true;
       });
+    },
+    handleMessageToCorrect() {
+      this.$router.push('/teacher/correct');
     }
   }
 };

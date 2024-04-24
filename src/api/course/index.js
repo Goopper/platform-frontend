@@ -1,5 +1,3 @@
-import { data } from 'autoprefixer';
-import mitt from '@/plugins/mitt';
 import { request } from '..';
 
 //获取课程列表

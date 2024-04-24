@@ -16,12 +16,13 @@ export function request(config) {
         console.log(err);
         if (err.response) {
             const data = err.response.data;
+            const status = err.response.status;
             // error code 400: invalid request
             if (data.code === 400) {
                 mitt.emit('showToast', { title: data.message, color: 'error', icon: '$error', duration: 2000 });
             }
             // error code 403: unauthorized, redirect to login page
-            if (data.code === 403) {
+            if (status === 403) {
                 mitt.emit('showToast', { title: '未登陆或登陆过期，请重新登陆', color: 'error', icon: '$error', duration: 2000 });
                 window.location.href = '/login';
             }   

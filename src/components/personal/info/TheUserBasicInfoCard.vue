@@ -8,7 +8,7 @@
     </p>
     <div
       id="basic-info-grid"
-      class="grid grid-cols-4"
+      class="grid grid-cols-4 sm:grid-cols-2"
     >
       <span>
         <v-icon
