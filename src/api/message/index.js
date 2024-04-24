@@ -13,3 +13,10 @@ export function getMessageList(page = 1, title = null, typeId = null) {
         method: 'get'
     });
 }
+
+export function receiveOneMessage(id) {
+    return request({
+        url: `/message/receive/${id}`,
+        method: 'get'
+    });
+}

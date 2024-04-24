@@ -1,5 +1,8 @@
 <template>
-  <div class="hover:bg-primary hover:text-white cursor-pointer px-6 py-4 flex justify-between items-center">
+  <div
+    class="hover:bg-primary hover:text-white cursor-pointer px-6 py-4 flex justify-between items-center"
+    @click="handleCardClick"
+  >
     <div class="flex justify-start items-center w-1/5">
       <v-badge
         v-if="isRead === false"
@@ -42,6 +45,7 @@ export default {
       required: true,
     },
   },
+  emits: ['messageCardClick'],
   computed: {
     isRead() {
       return this.message.isRead;
@@ -50,6 +54,11 @@ export default {
       return MessageType.getTypeById(this.message.typeId);
     }
   },
+  methods: {
+    handleCardClick() {
+      this.$emit('messageCardClick', this.message);
+    }
+  }
 };
 </script>
 

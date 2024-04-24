@@ -12,6 +12,10 @@ export const routes = [
     component: () => import('@/views/oauth/GitHubOAuthCallbackView.vue')
   },
   {
+    path: '/oauth/bind/github',
+    component: () => import('@/views/oauth/bind/GitHubOAuthBindView.vue')
+  },
+  {
     path: '/',
     component: () => import('@/views/MainView.vue'),
     children: [
@@ -69,6 +73,20 @@ export const routes = [
       {
         path: 'personal',
         component: () => import('@/views/common/PersonalCenterView.vue'),
+        children: [
+          {
+            path: '',
+            component: () => import('@/views/common/personal/InfoView.vue'),
+          },
+          {
+            path: 'security',
+            component: () => import('@/views/common/personal/SecurityView.vue'),
+          },
+          {
+            path: 'message',
+            component: () => import('@/views/common/personal/MessageView.vue'),
+          }
+        ]
       }
     ]
   },
