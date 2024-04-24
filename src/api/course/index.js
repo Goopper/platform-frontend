@@ -1,4 +1,5 @@
-import { name } from 'eslint-plugin-vue/lib/meta';
+import { data } from 'autoprefixer';
+import mitt from '@/plugins/mitt';
 import { request } from '..';
 
 //获取课程列表
@@ -48,10 +49,42 @@ export function getCourseInfo(courseId) {
   });
 }
 
-//删除课程
-export function deleteCourse(courseId) {
+// 应用到小组
+export async function applyGroup(courseId, groupsId) {
+  const err = await request({
+    url: `/course/apply/${courseId}`,
+    method: 'post',
+    data: {
+      groupsId
+    }
+  });
+  if (err == '200') {
+    mitt.emit('showToast', { title: '应用成功', color: 'success', icon: '$success' });
+  } else {
+    mitt.emit('showToast', { title: '应用失败', color: 'error', icon: '$error' });
+  }
+}
+//创建课程
+export function createCourse(course) {
   return request({
+    url: '/course',
+    method: 'post',
+    data: {
+      course
+    }
+  });
+
+}
+
+//删除课程
+export async function deleteCourse(courseId) {
+  const err = await request({
     url: `/course/${courseId}`,
     method: 'delete'
   });
+  if (err == '200') {
+    mitt.emit('showToast', { title: '删除成功', color: 'success', icon: '$success' });
+  } else{
+    mitt.emit('showToast', { title: '删除失败', color: 'error', icon: '$error' });
+  }
 }
