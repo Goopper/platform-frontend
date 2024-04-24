@@ -45,13 +45,7 @@
         variant="outlined"
         clearable
         @click:append-inner="searchMessage"
-      >
-        <template #loader>
-          <v-progress-linear
-            indeterminate
-          />
-        </template>
-      </v-text-field>
+      />
       <v-tabs
         v-model="type"
       >
