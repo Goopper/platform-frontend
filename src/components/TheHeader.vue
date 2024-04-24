@@ -104,6 +104,7 @@
             <v-btn
               variant="text"
               block
+              @click="$router.push('/personal')"
             >
               设置
             </v-btn>

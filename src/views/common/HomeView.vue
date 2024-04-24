@@ -16,6 +16,7 @@
           <custom-message-card
             class="border-b"
             :message="message"
+            @message-card-click="handleMessageCardClick"
           />
         </div>
       </div>
@@ -26,17 +27,74 @@
         <v-btn
           variant="flat"
           append-icon="mdi-arrow-right-bold"
-          @click="$router.push('/message')"
+          @click="$router.push('/personal/message')"
         >
           查看更多
         </v-btn>
       </div>
     </div>
+    <v-dialog
+      v-model="dialog"
+      persistent
+      max-width="500"
+    >
+      <v-card
+        color="white"
+      >
+        <!-- title -->
+        <div class="m-4 mb-0 flex justify-between items-center">
+          <!-- user info -->
+          <div class="flex items-center">
+            <v-avatar 
+              id="avatar"
+              class="cursor-pointer"
+              size="32"
+            >
+              <v-img
+                lazy-src="/default.jpg"
+                :src="targetMessage.sender.avatar"
+                cover
+                alt="用户头像"
+              >
+                <template #placeholder>
+                  <div class="d-flex align-center justify-center fill-height">
+                    <v-progress-circular
+                      color="grey-lighten-4"
+                      indeterminate
+                    />
+                  </div>
+                </template>
+              </v-img>
+            </v-avatar>
+            <span class="text-gray-500 ml-2 text-lg">
+              {{ targetMessage.sender.name }}
+            </span>
+          </div>
+          <!-- close icon -->
+          <v-icon
+            icon="mdi-close"
+            @click="handleMessageClose"
+          />
+        </div>
+        <v-card-text>
+          <p class="font-bold text-lg">
+            {{ targetMessage.title }}
+          </p>
+          <p
+            class="mt-2 whitespace-pre-wrap"
+            v-text="targetMessage.content"
+          />
+          <p class="text-sm mt-4 mb-2 text-gray-500">
+            发送日期：{{ sendDate }}
+          </p>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
 <script>
-import { getMessageList } from '@/api/message';
+import { getMessageList, receiveOneMessage } from '@/api/message';
 import { useUserStore } from '@/store/user';
 
 export default {
@@ -44,16 +102,34 @@ export default {
   data: () => ({
     userStore: useUserStore(),
     messageList: [],
+    targetMessage: {},
+    dialog: false
   }),
   computed: {
     user() {
       return this.userStore.userInfo;
     },
+    sendDate() {
+      return this.targetMessage.date.replace('T', ' ');
+    }
   },
   created() {
     getMessageList().then(res => { 
       this.messageList = res.data;
     });
+  },
+  methods: {
+    handleMessageCardClick(message) {
+      this.targetMessage = message;
+      this.dialog = true;
+    },
+    handleMessageClose() {
+      this.dialog = false;
+      const targetId = this.targetMessage.id;
+      receiveOneMessage(targetId).then(() => {
+        this.targetMessage.isRead = true;
+      });
+    }
   },
 };
 </script>
