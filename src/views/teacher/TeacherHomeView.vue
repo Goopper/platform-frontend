@@ -68,7 +68,9 @@
                 )
               "
             >
-              {{ processNumber(studentCard.finishedTask, studentCard.totalTask) }}
+              {{
+                processNumber(studentCard.finishedTask, studentCard.totalTask)
+              }}
             </v-progress-circular>
           </div>
         </div>
@@ -249,7 +251,7 @@ nav {
 .course-students-card {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
-    grid-template-rows: 1fr 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr 1fr;
   grid-gap: 1em;
   overflow: auto;
   height: calc(100% - 62px);
@@ -284,7 +286,7 @@ nav {
   .course-students-card {
     grid-template-columns: 1fr 1fr 1fr;
   }
-  .right-select{
+  .right-select {
     width: 44%;
   }
 }
