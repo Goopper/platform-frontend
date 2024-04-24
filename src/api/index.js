@@ -3,8 +3,9 @@ import mitt from '@/plugins/mitt';
 import { getLoginState } from '@/utils/auth';
 
 export function request(config) {
+    console.log(process.env);
     const instance = axios.create({
-        baseURL: 'http://100.116.150.108:8888',
+        baseURL: process.env.BASE_URL || 'http://100.116.150.108:8888',
         timeout: 30000,
         headers: {
             'G-Authorization': getLoginState(),
