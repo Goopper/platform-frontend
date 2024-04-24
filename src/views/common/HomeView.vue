@@ -88,6 +88,14 @@
             发送日期：{{ sendDate }}
           </p>
         </v-card-text>
+        <v-card-actions v-if="targetMessage.typeId === typeCorrectId">
+          <v-btn
+            variant="flat"
+            class="ms-auto"
+            text="前往批改作业"
+            @click="handleMessageToCorrect"
+          />
+        </v-card-actions>
       </v-card>
     </v-dialog>
   </div>
@@ -96,11 +104,13 @@
 <script>
 import { getMessageList, receiveOneMessage } from '@/api/message';
 import { useUserStore } from '@/store/user';
+import MessageType from '@/utils/message-type';
 
 export default {
   name: 'HomeView',
   data: () => ({
     userStore: useUserStore(),
+    typeCorrectId: MessageType.CORRECT.id,
     messageList: [],
     targetMessage: {},
     dialog: false
@@ -129,6 +139,9 @@ export default {
       receiveOneMessage(targetId).then(() => {
         this.targetMessage.isRead = true;
       });
+    },
+    handleMessageToCorrect() {
+      this.$router.push('/teacher/correct');
     }
   },
 };

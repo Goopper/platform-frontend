@@ -15,7 +15,7 @@
     </div>
     <div class="flex justify-center items-center">
       <v-avatar
-        class="cursor-pointer"
+        class="cursor-pointer w-full"
         size="168"
         @click="handleAvatarClick"
       >
