@@ -7,7 +7,7 @@ import { VitePWA } from 'vite-plugin-pwa';
 
 // Utilities
 import { defineConfig } from 'vite';
-
+import { fileURLToPath, URL } from 'node:url';
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
@@ -49,7 +49,7 @@ export default defineConfig({
   define: { 'process.env': {} },
   resolve: {
     alias: {
-      '@': new URL('./src', import.meta.url).pathname
+      '@': fileURLToPath(new URL('./src', import.meta.url))
     },
     extensions: [
       '.js',
