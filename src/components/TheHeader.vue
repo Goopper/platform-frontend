@@ -113,7 +113,7 @@
             <v-btn
               variant="text"
               block
-              @click="logout"
+              @click="handleLogoutClick"
             >
               退出登录
             </v-btn>
@@ -126,6 +126,8 @@
 </template>
 
 <script>
+import { logout } from '@/api/access';
+import { getMessageList } from '@/api/message';
 import mitt from '@/plugins/mitt';
 import { useUserStore } from '@/store/user';
 
@@ -145,11 +147,32 @@ export default {
       return name || '';
     }
   },
+  created() {
+    mitt.on('hasNewMessage', () => {
+      this.hasNewMessage = true;
+    });
+    mitt.on('noNewMessage', () => {
+      this.hasNewMessage = false;
+    });
+    getMessageList().then((res) => {
+      if (res.data && res.data.length > 0) {
+        res.data.forEach((item) => {
+          if (!item.isRead) {
+            mitt.emit('hasNewMessage');
+            return;
+          }
+        });
+      } else {
+        mitt.emit('noNewMessage');
+      }
+    });
+  },
   methods: {
-    logout() {
+    handleLogoutClick() {
+      logout();
       mitt.emit('unauthorized');
     }
-  }
+  },
 };
 </script>
 

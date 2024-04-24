@@ -46,7 +46,7 @@
             text="确认"
             :loading="loading"
             :disabled="loading"
-            @click="logoutDevice"
+            @click="confirmLogoutDevice"
           />
           <v-btn
             variant="outlined"
@@ -61,7 +61,9 @@
 </template>
 
 <script>
+import { logoutDevice } from '@/api/access';
 import { getAllDevices } from '@/api/user';
+import mitt from '@/plugins/mitt';
 import parseUserAgent from '@/utils/ua';
 
 export default {
@@ -74,26 +76,47 @@ export default {
     targetOS: {}
   }),
   created() {
-    getAllDevices().then(res => {
-      const devices = res.data;
-      for (let i = 0; i < devices.length; i++) {
-        const device = devices[i];
-        const deviceInfo = parseUserAgent(device.name);
-        this.devices.push({
-          device,
-          deviceInfo
-        });
-      }
-    });
+    this.loadDevices();
   },
   methods: {
-    logoutDevice() {
-      console.log(this.info);
+    async confirmLogoutDevice() {
+      this.loading = true;
+      const deviceId = this.targetDevice.device.id;
+      const result = await logoutDevice(deviceId);
+      if (result) {
+        mitt.emit('showToast', {
+          title: '登出设备成功！',
+          color: 'success',
+          icon: '$success',
+        });
+        this.loadDevices();
+      } else {
+        mitt.emit('showToast', {
+          title: '登出设备失败！',
+          color: 'error',
+          icon: '$error',
+        });
+      }
+      // logoutDevice()
+      this.loading = false;
     },
     handleLogoutClick(info) {
       this.targetDevice = info.device;
       this.targetOS = info.OS;
       this.dialog = true;
+    },
+    loadDevices() {
+      getAllDevices().then(res => {
+        const devices = res.data;
+        for (let i = 0; i < devices.length; i++) {
+          const device = devices[i];
+          const deviceInfo = parseUserAgent(device.name);
+          this.devices.push({
+            device,
+            deviceInfo
+          });
+        }
+      });
     }
   }
 };

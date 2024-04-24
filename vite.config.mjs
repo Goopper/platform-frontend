@@ -46,9 +46,6 @@ export default defineConfig({
       }
     })
   ],
-  optimizeDeps: {
-    include: ['autoprefixer', 'postcss']
-  },
   define: { 'process.env': {} },
   resolve: {
     alias: {

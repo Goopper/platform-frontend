@@ -1,9 +1,11 @@
 <template>
   <div class="flex flex-col">
+    <!-- md -->
     <div class="mt-4 w-full md:hidden">
       <v-text-field
         v-model="title"
-        label="消息标题筛选"
+        label="消息标题筛选(点击搜索图标进行搜索)"
+        :loading="loading"
         density="compact"
         append-inner-icon="mdi-magnify"
         variant="outlined"
@@ -32,16 +34,24 @@
         </template>
       </v-text-field>
     </div>
+    <!-- bmd -->
     <div class="mt-4 mb-4 w-full bmd:hidden">
       <v-text-field
         v-model="title"
-        label="消息标题筛选"
+        label="消息标题筛选(点击搜索图标进行搜索)"
+        :loading="loading"
         density="compact"
         append-inner-icon="mdi-magnify"
         variant="outlined"
         clearable
         @click:append-inner="searchMessage"
-      />
+      >
+        <template #loader>
+          <v-progress-linear
+            indeterminate
+          />
+        </template>
+      </v-text-field>
       <v-tabs
         v-model="type"
       >
@@ -61,6 +71,7 @@
         </v-tab>
       </v-tabs>
     </div>
+    <!-- messages -->
     <div class="flex-grow overflow-y-auto">
       <div
         v-if="messages.length>0 && !loading"
@@ -92,10 +103,12 @@
         type="paragraph"
       />
     </div>
+    <!-- pager -->
     <v-pagination
       v-model="page"
       :length="totalPage"
     />
+    <!-- dialog -->
     <v-dialog
       v-model="dialog"
       persistent

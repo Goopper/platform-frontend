@@ -39,18 +39,18 @@
           </p>
           <div class="flex justify-start items-center">
             <v-icon icon="mdi-sign-direction" />
-            {{ currentCourse.lastSectionName }}
+            {{ latestLearnedInfo.section }}
           </div>
           <div class="flex justify-start items-start mt-2">
             <v-icon icon="mdi-format-list-bulleted" />
             <span>
-              {{ currentCourse.lastTaskName }}
+              {{ latestLearnedInfo.task }}
             </span>
           </div>
         </div>
         <div class="flex flex-grow justify-between items-end">
           <p class="text-gray-500 text-sm">
-            最后学习日期：{{ currentCourse.lastLearningDate.substring(0,10) }}
+            最后学习日期：{{ latestLearnedInfo.date }}
           </p>
           <v-btn variant="outlined">
             继续学习
@@ -59,7 +59,10 @@
       </div>
     </div>
     <!-- year lean performance -->
-    <div class="bg-secondary p-4 border flex flex-col mt-8">
+    <div
+      v-if="allYears && allYears.length !== 0"
+      class="bg-secondary p-4 border flex flex-col mt-8"
+    >
       <p class="text-2xl font-bold mb-4">
         {{ currentYear }}年学习情况
       </p>
@@ -92,6 +95,20 @@
         </div>
       </div>
     </div>
+    <!-- empty view -->
+    <div
+      v-else
+      class="bg-secondary p-4 border flex flex-col justify-center items-center h-full"
+    >
+      <v-icon
+        size="100px"
+        class="text-gray-400 mt-8"
+        icon="mdi-signal-off"
+      />
+      <p class="font-bold text-lg text-gray-400">
+        无学习记录
+      </p>
+    </div>
   </div>
 </template>
 
@@ -119,14 +136,30 @@ export default {
       if (!this.currentCourse) return 0;
       let pg = ((this.currentCourse.finishedTask / this.currentCourse.totalTask) * 100).toFixed(2);
       return pg;
+    },
+    latestLearnedInfo() {
+      if (!this.currentCourse.lastLearningDate) {
+        return {
+          date: '暂无学习记录',
+          section: '暂无学习记录',
+          task: '暂无学习记录',
+        };
+      }
+      return {
+        date: this.currentCourse.lastLearningDate.substring(0, 10),
+        section: this.currentCourse.lastSectionName,
+        task: this.currentCourse.lastTaskName,
+      };
     }
   },
   created() {
     const currentYear = new Date().getFullYear();
     this.currentYear = currentYear;
     this.currentYearDaysCount = (currentYear % 4 === 0 && currentYear % 100 !== 0) || currentYear % 400 === 0 ? 366 : 365;
-    getCurrentCourse().then(res => { 
+    getCurrentCourse().then(res => {
       this.currentCourse = res.data;
+    }).catch(err => {
+      mitt.emit('showToast', { title: '无学习记录', color: 'warning', icon: '$warning' });
     });
     getAllLearnedYears().then(res => {
       this.allYears = res.data.reverse();

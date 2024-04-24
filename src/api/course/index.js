@@ -1,4 +1,3 @@
-import { name } from 'eslint-plugin-vue/lib/meta';
 import { request } from '..';
 
 //获取课程列表

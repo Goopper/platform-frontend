@@ -9,15 +9,27 @@
     >
       <!-- message -->
       <div class="grow overflow-y-auto">
-        <div
-          v-for="message in messageList"
-          :key="message.id" 
-        >
+        <div v-if="messageList.length > 0">
           <custom-message-card
+            v-for="message in messageList"
+            :key="message.id" 
             class="border-b"
             :message="message"
             @message-card-click="handleMessageCardClick"
           />
+        </div>
+        <div
+          v-else
+          class="flex items-center flex-col"
+        >
+          <v-icon
+            size="100px"
+            class="text-gray-400 mt-8"
+            icon="mdi-message-off-outline"
+          />
+          <p class="font-bold text-lg text-gray-400">
+            暂时没有消息
+          </p>
         </div>
       </div>
       <div
