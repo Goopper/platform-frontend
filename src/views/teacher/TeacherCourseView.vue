@@ -50,7 +50,9 @@
             <div class="course-info">
               <div class="title-more">
                 <h2>{{ UseCourse.name }}</h2>
-                <v-menu open-on-click>
+                <v-menu
+                  open-on-click
+                >
                   <template #activator="{ props }">
                     <div
                       v-bind="props"
@@ -72,7 +74,10 @@
                           </v-btn>
                         </template>
                         <template #default="{ isActive }">
-                          <v-card title="选择小组">
+                          <v-card
+                            title="选择小组"
+                            color="white"
+                          >
                             <v-card-text>
                               <v-combobox
                                 v-model="applyGroups"
@@ -88,7 +93,6 @@
                             <v-card-actions>
                               <v-spacer />
                               <v-btn
-                                color="white"
                                 text
                                 @click="isActive.value = false"
                               >
@@ -96,9 +100,11 @@
                               </v-btn>
                               <v-btn
                                 id="apply-sucess"
-                                color="white"
                                 text
-                                @click="applyGroupList(UseCourse.id)"
+                                @click="
+                                  applyGroupList(UseCourse.id),
+                                  (isActive.value = false)
+                                "
                               >
                                 确定
                               </v-btn>
@@ -123,7 +129,7 @@
     </div>
     <div
       v-else
-      class="p-4 flex flex-col justify-center items-center "
+      class="p-4 flex flex-col justify-center items-center"
     >
       <v-icon
         size="100px"
@@ -178,7 +184,9 @@
                     </v-list-item>
                     <!-- 编辑 -->
                     <v-list-item>
-                      <router-link :to="{ path: 'create', query: { id: DraftCourse.id } }">
+                      <router-link
+                        :to="{ path: 'create', query: { id: DraftCourse.id } }"
+                      >
                         <v-btn> 📃编辑 </v-btn>
                       </router-link>
                     </v-list-item>
@@ -195,7 +203,10 @@
                         </template>
                         <!-- 弹框样式 -->
                         <template #default="{ isActive }">
-                          <v-card title="确认删除">
+                          <v-card
+                            title="确认删除"
+                            color="white"
+                          >
                             <v-card-text>
                               你确定要删除
                               {{ DraftCourse.name }} 吗？
@@ -204,7 +215,6 @@
                               <v-spacer />
                               <!-- 取消 -->
                               <v-btn
-                                color="white"
                                 text
                                 @click="isActive.value = false"
                               >
@@ -213,7 +223,6 @@
                               <!-- 确认 -->
                               <v-btn
                                 id="delete-sucess"
-                                color="white"
                                 text
                                 @click="
                                   deleteCourse(DraftCourse.id),
@@ -240,7 +249,7 @@
     </div>
     <div
       v-else
-      class="p-4 flex flex-col justify-center items-center "
+      class="p-4 flex flex-col justify-center items-center"
     >
       <v-icon
         size="100px"
@@ -263,6 +272,7 @@ import {
   getCourseInfo,
   createCourse,
 } from '@/api/course';
+import mitt from 'mitt';
 export default {
   name: 'TeacherCourseView',
   data() {
@@ -283,7 +293,7 @@ export default {
       //展示使用中和待发布
       isShowUse: true,
       isShowDraft: true,
-      isShowCouese: false
+      isShowCouese: false,
     };
   },
   // 监听两个输入框
@@ -294,7 +304,7 @@ export default {
         this.UseCourseList = res.data;
         if (this.UseCourseList.length === 0) {
           this.isShowUse = false;
-        }else{
+        } else {
           this.isShowUse = true;
         }
       });
@@ -303,7 +313,7 @@ export default {
         this.DraftCourseList = res.data;
         if (this.UseCourseList.length === 0) {
           this.isShowDraft = false;
-        }else{
+        } else {
           this.isShowDraft = true;
         }
       });
@@ -361,11 +371,19 @@ export default {
     applyGroupList(courseId) {
       const groups = new FormData();
       const groupsId = [];
-      this.applyGroups.forEach(group => {
+      this.applyGroups.forEach((group) => {
         groupsId.push(group.id.toString());
       });
-      groups.append('groupIds', groupsId);
-      applyGroup(courseId, groups);
+      if (this.applyGroups.length == 0) {
+        mitt.emit('showToast', {
+          title: '输入组为空',
+          color: 'error',
+          icon: '$error',
+        });
+      } else {
+        groups.append('groupIds', groupsId);
+        applyGroup(courseId, groups);
+      }
     },
     //删除课程
     deleteCourse(courseId) {

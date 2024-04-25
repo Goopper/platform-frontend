@@ -51,7 +51,10 @@
         v-for="studentCard in studentCardsList"
         :key="studentCard.id"
       >
-        <div class="stu-cards">
+        <div
+          class="stu-cards"
+          @click="goStudentDetail(studentCard.id)"
+        >
           <section>
             <h1>{{ studentCard.name }}</h1>
             <span>{{ groupName() }}</span>
@@ -211,6 +214,16 @@ export default {
       } else {
         return 'green';
       }
+    },
+    //跳转到学生详情页
+    goStudentDetail(StudentId) {
+      this.$router.push({
+        path: '/teacher/student/detail',
+        query: {
+          StudentId,
+          courseId:this.courseId
+        },
+      });
     },
   },
 };

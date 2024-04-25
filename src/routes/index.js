@@ -95,6 +95,13 @@ export const routes = [
           requireRole: Role.ROLE_TEACHER
         }
       },
+      {
+        path: 'teacher/student/detail',
+        component: () => import('@/views/teacher/StudentDetailView.vue'),
+        meta: {
+          requireRole: Role.ROLE_TEACHER
+        }
+      }
     ]
   },
   {

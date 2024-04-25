@@ -49,6 +49,22 @@ export function getCourseInfo(courseId) {
   });
 }
 
+//教师获取学生最近学习的课程(传入学生id)
+export function getStudentRecentCourse(studentId) {
+  return request({
+    url: `/student/course/current/${studentId}`,
+    method: 'get'
+  });
+}
+
+//获取当前章节任务列表
+export function getCourseTaskList(courseId) {
+  return request({
+    url: `/course/tree/${courseId}`,
+    method:'get'
+  });
+}
+
 // 应用到小组
 export async function applyGroup(courseId, groupsId) {
   const err = await request({
