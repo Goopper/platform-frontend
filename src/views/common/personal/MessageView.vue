@@ -171,7 +171,7 @@
 </template>
 
 <script>
-import { getMessageList, receiveOneMessage } from '@/api/message';
+import { getMessageList, getMessageTypes, receiveOneMessage } from '@/api/message';
 import MessageType from '@/utils/message-type';
 
 export default {
@@ -195,11 +195,16 @@ export default {
   },
   created() {
     this.searchMessage();
+    getMessageTypes().then(res => {
+      this.types = res.data;
+    });
   },
   methods: {
     searchMessage() {
       getMessageList(this.page, this.title, this.type).then(res => {
-        this.messages = res.data;
+        this.messages = res.data.list;
+        this.page = res.data.page;
+        this.totalPage = res.data.totalPage;
         this.loading = false;
       });
     },

@@ -20,3 +20,10 @@ export function receiveOneMessage(id) {
         method: 'get'
     });
 }
+
+export function getMessageTypes() {
+    return request({
+        url: '/message/type',
+        method: 'get'
+    });
+}

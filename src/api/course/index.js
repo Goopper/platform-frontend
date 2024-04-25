@@ -99,3 +99,11 @@ export async function deleteCourse(courseId) {
   } else {
   }
 }
+
+// 获取课程类型
+export function getCourseType() {
+  return request({
+    url: '/course/type',
+    method: 'get'
+  });
+}
