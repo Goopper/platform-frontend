@@ -14,7 +14,7 @@
         v-model="selectedState"
         class="state-select"
         label="状态"
-        :items="['所有', '使用中', '待发布']"
+        :items="['所有', '使用中', '草稿']"
         variant="outlined"
         density="compact"
         hide-details
@@ -141,7 +141,7 @@
       </p>
     </div>
     <!-- 待发布课程 -->
-    <h1>待发布</h1>
+    <h1>草稿</h1>
     <div
       v-if="isShowDraft"
       id="draft-course"
@@ -285,7 +285,7 @@ export default {
       stateNameList: [],
       courseState: {
         2: '使用中',
-        1: '待发布',
+        1: '草稿',
       },
       course: [],
       searchCourseName: null,
@@ -311,7 +311,7 @@ export default {
 
       getTeacherCourseList(1, this.searchCourseName).then((res) => {
         this.draftCourseList = res.data;
-        if (this.usingCourseList.length === 0) {
+        if (this.draftCourseList.length === 0) {
           this.isShowDraft = false;
         } else {
           this.isShowDraft = true;
@@ -322,7 +322,7 @@ export default {
       if (this.selectedState === '使用中') {
         this.isShowUsing = true;
         this.isShowDraft = false;
-      } else if (this.selectedState === '待发布') {
+      } else if (this.selectedState === '草稿') {
         this.isShowDraft = true;
         this.isShowUsing = false;
       } else {
