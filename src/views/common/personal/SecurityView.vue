@@ -1,7 +1,8 @@
 <template>
   <div>
+    <the-logout-card class="mb-8" />
     <the-password-modify-card class="mb-8" />
-    <the-device-list-card />
+    <the-device-list-card class="mb-8" />
   </div>
 </template>
 

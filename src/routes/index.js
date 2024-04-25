@@ -85,6 +85,13 @@ export const routes = [
           {
             path: 'message',
             component: () => import('@/views/common/personal/MessageView.vue'),
+          },
+          {
+            path: 'statistics',
+            component: () => import('@/views/common/personal/StatisticView.vue'),
+            meta: {
+              requireRole: Role.ROLE_TEACHER
+            }
           }
         ]
       },
@@ -96,8 +103,8 @@ export const routes = [
         }
       },
       {
-        path: 'teacher/student/detail',
-        component: () => import('@/views/teacher/StudentDetailView.vue'),
+        path: 'teacher/student/performance',
+        component: () => import('@/views/teacher/StudentPerformanceView.vue'),
         meta: {
           requireRole: Role.ROLE_TEACHER
         }

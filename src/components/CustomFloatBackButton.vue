@@ -1,6 +1,6 @@
 <template>
   <v-btn
-    class="absolute left-36 top-28"
+    class="absolute left-12 top-28"
     variant="text"
     size="48"
     icon="mdi-arrow-left"

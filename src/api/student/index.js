@@ -42,3 +42,17 @@ export function getAllSelectableCourses(typeId, name) {
         method: 'get'
     });
 }
+
+export function teacherGetStudentLearningPerformance(name, page, groupId, courseTypeId) {
+    let url = `/statistic/performance/student?studentName=${name}&page=${page}`;
+    if (groupId) {
+        url += `&groupId=${groupId}`;
+    }
+    if (courseTypeId) {
+        url += `&courseTypeId=${courseTypeId}`;
+    }
+    return request({
+        url: url,
+        method: 'get'
+    });
+}

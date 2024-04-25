@@ -135,6 +135,7 @@ export default {
     progress() {
       if (!this.currentCourse) return 0;
       let pg = ((this.currentCourse.finishedTask / this.currentCourse.totalTask) * 100).toFixed(2);
+      if (isNaN(pg)) return 0;
       return pg;
     },
     latestLearnedInfo() {
