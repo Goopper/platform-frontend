@@ -216,11 +216,11 @@ export default {
       }
     },
     //跳转到学生详情页
-    goStudentDetail(StudentId) {
+    goStudentDetail(studentId) {
       this.$router.push({
         path: '/teacher/student/detail',
         query: {
-          StudentId,
+          studentId,
           courseId:this.courseId
         },
       });
