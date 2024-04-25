@@ -43,12 +43,14 @@
     </div>
     <div class="flex-grow overflow-y-auto">
       <v-data-table
-        class="h-full"
+        class="h-full border"
         fixed-footer
         fixed-header
         theme="light"
-        variant="outlined"
         hover
+        :headers="headers"
+        items-per-page="10"
+        :items="studentPerformanceList"
         :loading="loading"
       >
         <template #loading>
@@ -100,8 +102,40 @@ export default {
     currentPage: 1,
     totalPage: 1,
     studentPerformanceList: [],
-    loading: true
+    loading: true,
+    headers: [
+      {
+        title: '学生姓名',
+        value: 'name',
+        sortable: false,
+      },
+      {
+        title: '小组',
+        value: 'groupName',
+        sortable: false,
+      },
+      {
+        title: '课程',
+        value: 'courseName',
+        sortable: false,
+      },
+      {
+        title: '总任务',
+        value: 'totalTask',
+        sortable: false,
+      },
+      {
+        title: '已完成的任务',
+        value: 'finishedTask',
+        sortable: false,
+      }
+    ]
   }),
+  watch: {
+    currentPage() {
+      this.searchStudentPerformance();
+    }
+  },
   created() {
     getCourseType().then(res => {
       if (res) {
@@ -121,8 +155,7 @@ export default {
       const res = await teacherGetStudentLearningPerformance(this.studentName, this.currentPage, this.selectedGroupId, this.selectedCourseTypeId);
       if (res) {
         this.studentPerformanceList = res.data.list;
-        this.totalPage = res.data.pages;
-        this.currentPage = res.data.page;
+        this.totalPage = res.data.totalPage;
       }
       this.loading = false;
     }

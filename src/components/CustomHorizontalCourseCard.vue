@@ -1,8 +1,8 @@
 <template>
   <div class="border bg-secondary mb-4 p-4 flex gap-4">
-    <div class="w-[128px] h-[128px]">
+    <div class="w-[130px] h-[130px]">
       <v-img
-        class="bg-default w-[128px] h-[128px]"
+        class="bg-default w-[130px] h-[130px]"
         aspect-ratio="1/1"
         alt="课程封面"
         lazy-src="/default.jpg"
@@ -32,13 +32,12 @@
         </v-chip>
       </div>
       <!-- desc -->
-      <p class="flex-grow">
+      <p class="flex-grow overflow-hidden text-overflow-ellipsis whitespace-normal line-clamp-2">
         {{ courseInfo.desc }}
       </p>
       <!-- progress -->
       <div
         v-if="showProgress"
-        class="mt-4"
       >
         <span>
           目前学习进度：{{ course.finishedTask }}/{{ course.totalTask }}
@@ -65,6 +64,7 @@
           color="primary"
           variant="flat"
           size="small"
+          @click="handleSelectCourse"
         >
           开始学习
         </v-btn>
@@ -87,6 +87,7 @@ export default {
       required: true
     }
   },
+  emits: ['selectCourse'],
   data: () => ({
     courseInfo: {}
   }),
@@ -105,10 +106,11 @@ export default {
     } else {
       this.courseInfo = this.course;
     }
+  },
+  methods: {
+    handleSelectCourse() {
+      this.$emit('selectCourse', this.courseInfo);
+    }
   }
 };
 </script>
-
-<style lang="scss" scoped>
-
-</style>
