@@ -1,4 +1,3 @@
-import { data } from 'autoprefixer';
 import { request } from '..';
 import mitt from '@/plugins/mitt';
 
@@ -99,4 +98,12 @@ export async function deleteCourse(courseId) {
     mitt.emit('showToast', { title: '删除成功', color: 'success', icon: '$success' });
   } else {
   }
+}
+
+// 获取课程类型
+export function getCourseType() {
+  return request({
+    url: '/course/type',
+    method: 'get'
+  });
 }
