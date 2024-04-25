@@ -90,13 +90,14 @@ export function createCourse(course) {
 
 //删除课程
 export async function deleteCourse(courseId) {
-  const err = await request({
+  const msg = await request({
     url: `/course/${courseId}`,
     method: 'delete'
   });
-  if (err == '200') {
+  if (msg.code == '200') {
     mitt.emit('showToast', { title: '删除成功', color: 'success', icon: '$success' });
   } else {
+    mitt.emit('showToast', { title: '删除失败', color: 'error', icon: '$error' });
   }
 }
 

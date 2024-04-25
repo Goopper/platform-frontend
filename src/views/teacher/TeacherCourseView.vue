@@ -28,28 +28,28 @@
     <!-- 使用课程 -->
     <h1>使用中</h1>
     <div
-      v-if="isShowUse"
-      id="use-course"
+      v-if="isShowUsing"
+      id="using-course"
     >
       <!-- 课程卡片 -->
-      <div class="use-box">
+      <div class="using-box">
         <div
-          v-for="UseCourse in UseCourseList"
-          :key="UseCourse.id"
+          v-for="usingCourse in usingCourseList"
+          :key="usingCourse.id"
         >
           <!-- 一个课程卡片 -->
           <div
-            class="use-card"
-            @click="goToDetail(UseCourse.id)"
+            class="using-card"
+            @click="goToDetail(usingCourse.id)"
           >
             <img
-              :src="UseCourse.cover"
+              :src="usingCourse.cover"
               alt=""
             >
             <!-- 课程详细 -->
             <div class="course-info">
               <div class="title-more">
-                <h2>{{ UseCourse.name }}</h2>
+                <h2>{{ usingCourse.name }}</h2>
                 <v-menu
                   open-on-click
                 >
@@ -82,7 +82,7 @@
                               <v-combobox
                                 v-model="applyGroups"
                                 variant="outlined"
-                                :items="GroupList"
+                                :items="groupList"
                                 item-title="name"
                                 item-value="id"
                                 label="选择小组"
@@ -99,10 +99,10 @@
                                 取消
                               </v-btn>
                               <v-btn
-                                id="apply-sucess"
+                                id="apply-success"
                                 text
                                 @click="
-                                  applyGroupList(UseCourse.id),
+                                  applyGroupList(usingCourse.id),
                                   (isActive.value = false)
                                 "
                               >
@@ -120,8 +120,8 @@
                   </v-list>
                 </v-menu>
               </div>
-              <span class="use-type">{{ CourseState[1] }}</span>
-              <p>{{ UseCourse.type }} {{ UseCourse.desc }}</p>
+              <span class="using-type">{{ courseState[2] }}</span>
+              <p>{{ usingCourse.type }} {{ usingCourse.desc }}</p>
             </div>
           </div>
         </div>
@@ -146,23 +146,23 @@
       v-if="isShowDraft"
       id="draft-course"
     >
-      <div class="use-box">
+      <div class="using-box">
         <div
-          v-for="DraftCourse in DraftCourseList"
-          :key="DraftCourse.id"
+          v-for="draftCourse in draftCourseList"
+          :key="draftCourse.id"
           class="course-cards"
         >
           <div
-            class="use-card"
-            @click="goToDetail(DraftCourse.id)"
+            class="using-card"
+            @click="goToDetail(draftCourse.id)"
           >
             <img
-              :src="DraftCourse.cover"
+              :src="draftCourse.cover"
               alt=""
             >
             <div class="course-info">
               <div class="title-more">
-                <h2>{{ DraftCourse.name }}</h2>
+                <h2>{{ draftCourse.name }}</h2>
                 <!-- 更多框 -->
                 <v-menu open-on-click>
                   <!-- 按钮展示更多框 -->
@@ -178,14 +178,14 @@
                   <v-list>
                     <!-- 复制 -->
                     <v-list-item>
-                      <v-btn @click="copyCourse(DraftCourse.id)">
+                      <v-btn @click="copyCourse(draftCourse.id)">
                         ✒复制
                       </v-btn>
                     </v-list-item>
                     <!-- 编辑 -->
                     <v-list-item>
                       <router-link
-                        :to="{ path: 'create', query: { id: DraftCourse.id } }"
+                        :to="{ path: 'create', query: { id: draftCourse.id } }"
                       >
                         <v-btn> 📃编辑 </v-btn>
                       </router-link>
@@ -209,7 +209,7 @@
                           >
                             <v-card-text>
                               你确定要删除
-                              {{ DraftCourse.name }} 吗？
+                              {{ draftCourse.name }} 吗？
                             </v-card-text>
                             <v-card-actions>
                               <v-spacer />
@@ -222,10 +222,10 @@
                               </v-btn>
                               <!-- 确认 -->
                               <v-btn
-                                id="delete-sucess"
+                                id="delete-success"
                                 text
                                 @click="
-                                  deleteCourse(DraftCourse.id),
+                                  deleteCourse(draftCourse.id),
                                   (isActive.value = false)
                                 "
                               >
@@ -240,8 +240,8 @@
                   </v-list>
                 </v-menu>
               </div>
-              <span class="draft-type">{{ CourseState[2] }}</span>
-              <p>{{ DraftCourse.type }} {{ DraftCourse.desc }}</p>
+              <span class="draft-type">{{ courseState[1] }}</span>
+              <p>{{ draftCourse.type }} {{ draftCourse.desc }}</p>
             </div>
           </div>
         </div>
@@ -277,23 +277,23 @@ export default {
   name: 'TeacherCourseView',
   data() {
     return {
-      CourseList: [],
-      GroupList: [],
+      courseList: [],
+      groupList: [],
       applyGroups: [],
-      UseCourseList: [],
-      DraftCourseList: [],
-      StateNameList: [],
-      CourseState: {
+      usingCourseList: [],
+      draftCourseList: [],
+      stateNameList: [],
+      courseState: {
         2: '使用中',
         1: '待发布',
       },
-      Course: [],
+      course: [],
       searchCourseName: null,
       selectedState: null,
       //展示使用中和待发布
-      isShowUse: true,
+      isShowUsing: true,
       isShowDraft: true,
-      isShowCouese: false,
+      isShowCourse: false,
     };
   },
   // 监听两个输入框
@@ -301,17 +301,17 @@ export default {
     searchCourseName() {
       getTeacherCourseList(2, this.searchCourseName).then((res) => {
         console.log(this.searchCourseName);
-        this.UseCourseList = res.data;
-        if (this.UseCourseList.length === 0) {
-          this.isShowUse = false;
+        this.usingCourseList = res.data;
+        if (this.usingCourseList.length === 0) {
+          this.isShowUsing = false;
         } else {
-          this.isShowUse = true;
+          this.isShowUsing = true;
         }
       });
 
       getTeacherCourseList(1, this.searchCourseName).then((res) => {
-        this.DraftCourseList = res.data;
-        if (this.UseCourseList.length === 0) {
+        this.draftCourseList = res.data;
+        if (this.usingCourseList.length === 0) {
           this.isShowDraft = false;
         } else {
           this.isShowDraft = true;
@@ -320,50 +320,61 @@ export default {
     },
     selectedState() {
       if (this.selectedState === '使用中') {
-        this.isShowUse = true;
+        this.isShowUsing = true;
         this.isShowDraft = false;
       } else if (this.selectedState === '待发布') {
         this.isShowDraft = true;
-        this.isShowUse = false;
+        this.isShowUsing = false;
       } else {
         this.isShowDraft = true;
-        this.isShowUse = true;
+        this.isShowUsing = true;
       }
     },
   },
   created() {
-    //待发布课程
+ //待发布课程
     getTeacherCourseList(1, '').then((res) => {
-      this.DraftCourseList = res.data;
+      if(res.data.length.length === 0){
+        this.isShowDraft = false;
+      }else{
+        this.draftCourseList = res.data;
+      }
     });
     //使用中课程
     getTeacherCourseList(2, '').then((res) => {
-      this.UseCourseList = res.data;
-    });
-    getGroupList().then((res) => {
-      for (let i = 0; i < res.data.length; i++) {
-        this.GroupList.push(res.data[i]);
+      
+      if(res.data.length.length === 0){
+        this.isShowUsing = false;
+      } else {
+        this.usingCourseList = res.data;
       }
     });
+    
+    getGroupList().then((res) => {
+      for (let i = 0; i < res.data.length; i++) {
+        this.groupList.push(res.data[i]);
+      }
+    });
+    
   },
   methods: {
     //跳转到课程详情页
-    goToDetail(Courseid) {
-      this.$router.push({ path: 'detail', query: { id: Courseid } });
+    goToDetail(courseId) {
+      this.$router.push({ path: 'detail', query: { id: courseId } });
     },
     //跳转到创建&修改课程页
-    goToCreate(Courseid) {
-      this.$router.push({ path: 'create', query: { id: Courseid } });
+    goToCreate(courseId) {
+      this.$router.push({ path: 'create', query: { id: courseId } });
     },
     //复制课程
     copyCourse(courseId) {
-      console.log(this.Course);
+      console.log(this.course);
       getCourseInfo(courseId).then((res) => {
         this.Course = res.data;
       });
 
       console.log(this.courseId);
-      createCourse(this.Course).then((res) => {
+      createCourse(this.course).then((res) => {
         console.log(res);
       });
     },
@@ -396,7 +407,7 @@ export default {
 
 <style lang="scss" scoped>
 $warn: #fb8c00;
-$sucess: #4caf50;
+$success: #4caf50;
 
 main {
   width: 100%;
@@ -426,7 +437,7 @@ h1 {
 }
 
 // 使用中的所有课程卡片
-.use-box {
+.using-box {
   overflow: auto;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
@@ -434,7 +445,7 @@ h1 {
   height: 18em;
 
   //一个课程卡片
-  .use-card {
+  .using-card {
     width: 13em;
     border: 1px solid #e0e0e0;
     padding: 1em;
@@ -483,7 +494,7 @@ h1 {
   }
 }
 
-.use-card:hover {
+.using-card:hover {
   cursor: pointer;
 }
 
@@ -492,8 +503,8 @@ h1 {
   background-color: $warn;
 }
 
-.use-type {
-  background-color: $sucess;
+.using-type {
+  background-color: $success;
 }
 
 .v-list {
@@ -507,19 +518,19 @@ h1 {
 
 // 响应式
 @media (max-width: 1600px) {
-  .use-box {
+  .using-box {
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
   }
 }
 
 @media (max-width: 1200px) {
-  .use-box {
+  .using-box {
     grid-template-columns: 1fr 1fr 1fr 1fr;
   }
 }
 
 @media (max-width: 950px) {
-  .use-box {
+  .using-box {
     grid-template-columns: 1fr 1fr 1fr;
   }
 }
@@ -535,10 +546,10 @@ h1 {
     }
   }
 
-  .use-box {
+  .using-box {
     grid-template-columns: 1fr;
 
-    .use-card {
+    .using-card {
       display: flex;
       width: auto;
     }

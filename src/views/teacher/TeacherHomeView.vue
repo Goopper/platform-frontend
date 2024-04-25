@@ -44,8 +44,8 @@
     </nav>
     <!-- 学生信息卡片 -->
     <div
-      v-if="studentCardsList.length > 0"
-      class="course-students-card "
+      v-if="showStudentCards"
+      class="course-students-card"
     >
       <div
         v-for="studentCard in studentCardsList"
@@ -119,6 +119,7 @@ export default {
     groupId: null,
     orderId: null,
     studentCardsList: [],
+    showStudentCards: true,
   }),
   watch: {
     // 选择框选择后触发获取当前选择的id
@@ -139,10 +140,15 @@ export default {
   created() {
     // 获取教师的课程列表
     getCourseList().then((res) => {
-      for (let i = 0; i < res.data.length; i++) {
-        this.CourseList.push(res.data[i]);
+      if (res.data.length === 0) {
+        return (this.showStudentCards = false);
+      } else {
+        for (let i = 0; i < res.data.length; i++) {
+          this.CourseList.push(res.data[i]);
+        }
+        this.courseId = this.CourseList[0].id;
       }
-      this.courseId = this.CourseList[0].id;
+
       // 获取教师的小组列表
       getGroupList().then((res) => {
         for (let i = 0; i < res.data.length; i++) {
@@ -221,7 +227,7 @@ export default {
         path: '/teacher/student/detail',
         query: {
           studentId,
-          courseId:this.courseId
+          courseId: this.courseId,
         },
       });
     },
