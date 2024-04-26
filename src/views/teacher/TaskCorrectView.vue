@@ -58,8 +58,15 @@
             无附件
           </p>
         </div>
-        <div v-else>
-          attachments
+        <div
+          v-else
+          class="max-h-[150px] overflow-y-auto flex flex-col gap-4"
+        >
+          <custom-attachment-card
+            v-for="attachment in answer.attachments"
+            :key="attachment.id"
+            :attachment="attachment"
+          />
         </div>
       </div>
       <!-- comment area -->

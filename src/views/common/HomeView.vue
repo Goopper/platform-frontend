@@ -91,6 +91,12 @@
         <v-card-text>
           <p class="font-bold text-lg">
             {{ targetMessage.title }}
+            <span
+              v-if="targetMessage.typeId === typeCorrectId && targetMessage.isRead"
+              class="font-bold text-green-600"
+            >
+              (作业已批改)
+            </span>
           </p>
           <p
             class="mt-2 whitespace-pre-wrap"
