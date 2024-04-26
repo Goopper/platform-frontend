@@ -53,6 +53,20 @@
         :items="studentPerformanceList"
         :loading="loading"
       >
+        <template #headers="{ columns }">
+          <tr class="bg-primary-important text-white">
+            <template
+              v-for="column in columns"
+              :key="column.key"
+            >
+              <td>
+                <span
+                  class="mr-2 text-lg font-black"
+                >{{ column.title }}</span>
+              </td>
+            </template>
+          </tr>
+        </template>
         <template #loading>
           <v-skeleton-loader type="table-row@10" />
         </template>
@@ -69,6 +83,7 @@
         <template #bottom>
           <v-pagination
             v-model="currentPage"
+            class="border-t"
             :length="totalPage"
           />
         </template>

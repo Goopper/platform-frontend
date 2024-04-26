@@ -100,7 +100,7 @@
             发送日期：{{ sendDate }}
           </p>
         </v-card-text>
-        <v-card-actions v-if="targetMessage.typeId === typeCorrectId">
+        <v-card-actions v-if="targetMessage.typeId === typeCorrectId && !targetMessage.isRead">
           <v-btn
             variant="flat"
             class="ms-auto"
@@ -137,7 +137,7 @@ export default {
   },
   created() {
     getMessageList().then(res => { 
-      this.messageList = res.data;
+      this.messageList = res.data.list;
     });
   },
   methods: {
@@ -147,24 +147,22 @@ export default {
     },
     handleMessageClose() {
       this.dialog = false;
+      if (this.targetMessage.typeId === this.typeCorrectId) {
+        return;
+      }
       const targetId = this.targetMessage.id;
       receiveOneMessage(targetId).then(() => {
         this.targetMessage.isRead = true;
       });
     },
     handleMessageToCorrect() {
-      this.$router.push('/teacher/correct');
+      this.$router.push(`/teacher/correct/${this.targetMessage.id}`);
     }
   },
 };
 </script>
 
 <style lang="scss">
-.v-badge__badge {
-  bottom: calc(100% - 4px) !important;
-  left: calc(100% - 4px) !important;
-}
-
 #message-card-action {
   background-color: var(--custom-background);
 }

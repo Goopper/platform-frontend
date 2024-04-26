@@ -45,14 +45,15 @@
     >
       <!-- message -->
       <v-badge 
-        v-if="hasNewMessage" 
+        v-if="hasNewMessage"
+        id="badge" 
         color="error"
         dot 
-        @click="$router.push('/personal/message')" 
       >
         <v-icon
-          icon="mdi-bell-outline"
+          icon="mdi-bell-outline" 
           size="large"
+          @click="$router.push('/personal/message')"
         />
       </v-badge>
       <v-icon
@@ -157,8 +158,9 @@ export default {
       this.hasNewMessage = false;
     });
     getMessageList().then((res) => {
-      if (res.data && res.data.length > 0) {
-        res.data.forEach((item) => {
+      const messages = res.data.list;
+      if (messages && messages.length > 0) {
+        messages.forEach((item) => {
           if (!item.isRead) {
             mitt.emit('hasNewMessage');
             return;
@@ -193,6 +195,13 @@ export default {
   background-color: var(--custom-secondary);
   @media screen and (max-width: 768px) {
     padding: 0 !important;
+  }
+}
+
+.v-badge {
+  span {
+    bottom: calc(100% - 8px);
+    left: calc(100% - 8px);
   }
 }
 </style>
