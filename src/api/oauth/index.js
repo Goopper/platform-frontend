@@ -44,3 +44,10 @@ export function bindOAuth(providerName, oauthId, oauthName, isRebind = false) {
         data: formData
     });
 }
+
+export function unbindOAuth(providerName) {
+    return request({
+        url: `/oauth/unbind/${providerName}`,
+        method: 'post'
+    });
+}

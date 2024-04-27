@@ -64,3 +64,10 @@ export function updateMyPassword(oldPassword, newPassword) {
         method: 'put'
     });
 }
+//老师获取学生详细信息
+export function getStudentInfo(studentId) {
+  return request({
+    url: `/user/${studentId}`,
+    method: 'get'
+  });
+}

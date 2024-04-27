@@ -21,16 +21,45 @@ export function getLearnedPerformanceByYear(year) {
     });
 }
 
-export function getAllLearningCourse() {
+export function getAllLearningCourse(typeId, name) {
+    let url = `/student/course/current/all?name=${name}`;
+    if (typeId) {
+        url += `&typeId=${typeId}`;
+    }
     return request({
-        url: '/student/course/current/all',
+        url: url,
         method: 'get'
     });
 }
 
-export function getAllSelectableCourses() {
+export function getAllSelectableCourses(typeId, name) {
+    let url = `/student/course?name=${name}`;
+    if (typeId) {
+        url += `&typeId=${typeId}`;
+    }
     return request({
-        url: '/student/course',
+        url: url,
         method: 'get'
+    });
+}
+
+export function teacherGetStudentLearningPerformance(name, page, groupId, courseTypeId) {
+    let url = `/statistic/performance/student?studentName=${name}&page=${page}`;
+    if (groupId) {
+        url += `&groupId=${groupId}`;
+    }
+    if (courseTypeId) {
+        url += `&courseTypeId=${courseTypeId}`;
+    }
+    return request({
+        url: url,
+        method: 'get'
+    });
+}
+
+export function manualSelectCourse(courseId) {
+    return request({
+        url: `/course/select/${courseId}`,
+        method: 'post'
     });
 }

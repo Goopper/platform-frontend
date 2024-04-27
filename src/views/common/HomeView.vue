@@ -1,14 +1,14 @@
 <template>
   <div class="flex md:flex-col overflow-y-auto">
     <!-- start -->
-    <router-view class="blg:flex-grow lg:mr-0 bmd:mr-8 lg:mb-8" />
+    <router-view class="blg:flex-grow lg:mr-0 sm:mb-2 bmd:mr-8 lg:mb-8" />
     <!-- end -->
     <div
       id="message-card-area"
-      class="w-1/3 min-w-96 sm:w-full sm:min-w-0 border flex flex-col bg-secondary lg:w-full lg:grow lg:min-h-[640px]"
+      class="w-1/3 min-w-96 sm:w-full sm:min-w-0 sm:mb-2 border flex flex-col bg-secondary lg:w-full lg:grow lg:min-h-[640px]"
     >
       <!-- message -->
-      <div class="grow overflow-y-auto">
+      <div class="grow overflow-y-auto sm:max-h-[400px]">
         <div v-if="messageList.length > 0">
           <custom-message-card
             v-for="message in messageList"
@@ -91,6 +91,12 @@
         <v-card-text>
           <p class="font-bold text-lg">
             {{ targetMessage.title }}
+            <span
+              v-if="targetMessage.typeId === typeCorrectId && targetMessage.isRead"
+              class="font-bold text-green-600"
+            >
+              (作业已批改)
+            </span>
           </p>
           <p
             class="mt-2 whitespace-pre-wrap"
@@ -100,7 +106,7 @@
             发送日期：{{ sendDate }}
           </p>
         </v-card-text>
-        <v-card-actions v-if="targetMessage.typeId === typeCorrectId">
+        <v-card-actions v-if="targetMessage.typeId === typeCorrectId && !targetMessage.isRead">
           <v-btn
             variant="flat"
             class="ms-auto"
@@ -137,7 +143,7 @@ export default {
   },
   created() {
     getMessageList().then(res => { 
-      this.messageList = res.data;
+      this.messageList = res.data.list;
     });
   },
   methods: {
@@ -147,24 +153,22 @@ export default {
     },
     handleMessageClose() {
       this.dialog = false;
+      if (this.targetMessage.typeId === this.typeCorrectId) {
+        return;
+      }
       const targetId = this.targetMessage.id;
       receiveOneMessage(targetId).then(() => {
         this.targetMessage.isRead = true;
       });
     },
     handleMessageToCorrect() {
-      this.$router.push('/teacher/correct');
+      this.$router.push(`/teacher/correct/${this.targetMessage.id}`);
     }
   },
 };
 </script>
 
 <style lang="scss">
-.v-badge__badge {
-  bottom: calc(100% - 4px) !important;
-  left: calc(100% - 4px) !important;
-}
-
 #message-card-action {
   background-color: var(--custom-background);
 }

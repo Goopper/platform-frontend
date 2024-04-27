@@ -85,16 +85,30 @@ export const routes = [
           {
             path: 'message',
             component: () => import('@/views/common/personal/MessageView.vue'),
+          },
+          {
+            path: 'statistics',
+            component: () => import('@/views/common/personal/StatisticView.vue'),
+            meta: {
+              requireRole: Role.ROLE_TEACHER
+            }
           }
         ]
       },
       {
-        path: 'teacher/correct',
+        path: 'teacher/correct/:messageId',
         component: () => import('@/views/teacher/TaskCorrectView.vue'),
         meta: {
           requireRole: Role.ROLE_TEACHER
         }
       },
+      {
+        path: 'teacher/student/performance',
+        component: () => import('@/views/teacher/StudentPerformanceView.vue'),
+        meta: {
+          requireRole: Role.ROLE_TEACHER
+        }
+      }
     ]
   },
   {

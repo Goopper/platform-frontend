@@ -50,12 +50,28 @@ body {
   background-color: var(--custom-primary);
 }
 
+.bg-primary-important {
+  background-color: var(--custom-primary) !important;
+}
+
 .bg-secondary {
+  background-color: var(--custom-secondary);
+}
+
+.bg-secondary-message {
+  background-color: var(--custom-secondary);
+}
+
+.bg-secondary-actions {
   background-color: var(--custom-secondary);
 }
 
 .bg-background {
   background-color: var(--custom-background);
+}
+
+.bg-background-important {
+  background-color: var(--custom-background) !important;
 }
 
 .bg-default {

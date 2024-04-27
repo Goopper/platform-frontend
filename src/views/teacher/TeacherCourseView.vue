@@ -14,7 +14,7 @@
         v-model="selectedState"
         class="state-select"
         label="状态"
-        :items="['所有', '使用中', '待发布']"
+        :items="['所有', '使用中', '草稿']"
         variant="outlined"
         density="compact"
         hide-details
@@ -26,31 +26,33 @@
       </router-link>
     </nav>
     <!-- 使用课程 -->
+    <h1>使用中</h1>
     <div
-      v-if="isShowUse"
-      id="use-course"
+      v-if="isShowUsing"
+      id="using-course"
     >
-      <h1>使用中</h1>
       <!-- 课程卡片 -->
-      <div class="use-box">
+      <div class="using-box">
         <div
-          v-for="UseCourse in UseCourseList"
-          :key="UseCourse.id"
+          v-for="usingCourse in usingCourseList"
+          :key="usingCourse.id"
         >
           <!-- 一个课程卡片 -->
           <div
-            class="use-card"
-            @click="goToDetail(UseCourse.id)"
+            class="using-card"
+            @click="goToDetail(usingCourse.id)"
           >
             <img
-              :src="UseCourse.cover"
+              :src="usingCourse.cover"
               alt=""
             >
             <!-- 课程详细 -->
             <div class="course-info">
               <div class="title-more">
-                <h2>{{ UseCourse.name }}</h2>
-                <v-menu open-on-click>
+                <h2>{{ usingCourse.name }}</h2>
+                <v-menu
+                  open-on-click
+                >
                   <template #activator="{ props }">
                     <div
                       v-bind="props"
@@ -72,12 +74,17 @@
                           </v-btn>
                         </template>
                         <template #default="{ isActive }">
-                          <v-card title="选择小组">
+                          <v-card
+                            title="选择小组"
+                            color="white"
+                          >
                             <v-card-text>
                               <v-combobox
                                 v-model="applyGroups"
                                 variant="outlined"
-                                :items="GroupList"
+                                :items="groupList"
+                                item-title="name"
+                                item-value="id"
                                 label="选择小组"
                                 multiple
                                 clearable
@@ -86,17 +93,18 @@
                             <v-card-actions>
                               <v-spacer />
                               <v-btn
-                                color="white"
                                 text
                                 @click="isActive.value = false"
                               >
                                 取消
                               </v-btn>
                               <v-btn
-                                id="apply-sucess"
-                                color="white"
+                                id="apply-success"
                                 text
-                                @click="applyGroupList(UseCourse.id)"
+                                @click="
+                                  applyGroupList(usingCourse.id),
+                                  (isActive.value = false)
+                                "
                               >
                                 确定
                               </v-btn>
@@ -112,36 +120,49 @@
                   </v-list>
                 </v-menu>
               </div>
-              <span class="use-type">{{ CourseState[1] }}</span>
-              <p>{{ UseCourse.type }} {{ UseCourse.desc }}</p>
+              <span class="using-type">{{ courseState[2] }}</span>
+              <p>{{ usingCourse.type }} {{ usingCourse.desc }}</p>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <!-- 待发布课程 -->
     <div
-      v-show="isShowDraft"
+      v-else
+      class="p-4 flex flex-col justify-center items-center"
+    >
+      <v-icon
+        size="100px"
+        class="text-gray-400 mt-8"
+        icon="mdi-signal-off"
+      />
+      <p class="font-bold text-lg text-gray-400">
+        无课程
+      </p>
+    </div>
+    <!-- 待发布课程 -->
+    <h1>草稿</h1>
+    <div
+      v-if="isShowDraft"
       id="draft-course"
     >
-      <h1>待发布</h1>
-      <div class="use-box">
+      <div class="using-box">
         <div
-          v-for="DraftCourse in DraftCourseList"
-          :key="DraftCourse.id"
+          v-for="draftCourse in draftCourseList"
+          :key="draftCourse.id"
           class="course-cards"
         >
           <div
-            class="use-card"
-            @click="goToDetail(DraftCourse.id)"
+            class="using-card"
+            @click="goToDetail(draftCourse.id)"
           >
             <img
-              :src="DraftCourse.cover"
+              :src="draftCourse.cover"
               alt=""
             >
             <div class="course-info">
               <div class="title-more">
-                <h2>{{ DraftCourse.name }}</h2>
+                <h2>{{ draftCourse.name }}</h2>
                 <!-- 更多框 -->
                 <v-menu open-on-click>
                   <!-- 按钮展示更多框 -->
@@ -157,14 +178,14 @@
                   <v-list>
                     <!-- 复制 -->
                     <v-list-item>
-                      <v-btn @click="copyCourse(DraftCourse.id)">
+                      <v-btn @click="copyCourse(draftCourse.id)">
                         ✒复制
                       </v-btn>
                     </v-list-item>
                     <!-- 编辑 -->
                     <v-list-item>
                       <router-link
-                        :to="{ path: 'create', query: { id: DraftCourse.id } }"
+                        :to="{ path: 'create', query: { id: draftCourse.id } }"
                       >
                         <v-btn> 📃编辑 </v-btn>
                       </router-link>
@@ -182,16 +203,18 @@
                         </template>
                         <!-- 弹框样式 -->
                         <template #default="{ isActive }">
-                          <v-card title="确认删除">
+                          <v-card
+                            title="确认删除"
+                            color="white"
+                          >
                             <v-card-text>
                               你确定要删除
-                              {{ DraftCourse.name }} 吗？
+                              {{ draftCourse.name }} 吗？
                             </v-card-text>
                             <v-card-actions>
                               <v-spacer />
                               <!-- 取消 -->
                               <v-btn
-                                color="white"
                                 text
                                 @click="isActive.value = false"
                               >
@@ -199,11 +222,10 @@
                               </v-btn>
                               <!-- 确认 -->
                               <v-btn
-                                id="delete-sucess"
-                                color="white"
+                                id="delete-success"
                                 text
                                 @click="
-                                  deleteCourse(DraftCourse.id),
+                                  deleteCourse(draftCourse.id),
                                   (isActive.value = false)
                                 "
                               >
@@ -218,12 +240,25 @@
                   </v-list>
                 </v-menu>
               </div>
-              <span class="draft-type">{{ CourseState[2] }}</span>
-              <p>{{ DraftCourse.type }} {{ DraftCourse.desc }}</p>
+              <span class="draft-type">{{ courseState[1] }}</span>
+              <p>{{ draftCourse.type }} {{ draftCourse.desc }}</p>
             </div>
           </div>
         </div>
       </div>
+    </div>
+    <div
+      v-else
+      class="p-4 flex flex-col justify-center items-center"
+    >
+      <v-icon
+        size="100px"
+        class="text-gray-400 mt-8"
+        icon="mdi-signal-off"
+      />
+      <p class="font-bold text-lg text-gray-400">
+        无课程
+      </p>
     </div>
   </main>
 </template>
@@ -237,103 +272,142 @@ import {
   getCourseInfo,
   createCourse,
 } from '@/api/course';
+import mitt from 'mitt';
 export default {
   name: 'TeacherCourseView',
   data() {
     return {
-      CourseList: [],
-      GroupList: [],
+      courseList: [],
+      groupList: [],
       applyGroups: [],
-      UseCourseList: [],
-      DraftCourseList: [],
-      StateNameList: [],
-      CourseState: {
+      usingCourseList: [],
+      draftCourseList: [],
+      stateNameList: [],
+      courseState: {
         2: '使用中',
-        1: '待发布',
+        1: '草稿',
       },
-      Course: [],
+      course: [],
       searchCourseName: null,
       selectedState: null,
       //展示使用中和待发布
-      isShowUse: true,
+      isShowUsing: true,
       isShowDraft: true,
+      isShowCourse: false,
     };
   },
   // 监听两个输入框
   watch: {
     searchCourseName() {
-      getTeacherCourseList(1, this.searchCourseName).then((res) => {
-        this.UseCourseList = res.data;
-      });
       getTeacherCourseList(2, this.searchCourseName).then((res) => {
-        this.DraftCourseList = res.data;
+        console.log(this.searchCourseName);
+        this.usingCourseList = res.data;
+        if (this.usingCourseList.length === 0) {
+          this.isShowUsing = false;
+        } else {
+          this.isShowUsing = true;
+        }
+      });
+
+      getTeacherCourseList(1, this.searchCourseName).then((res) => {
+        this.draftCourseList = res.data;
+        if (this.draftCourseList.length === 0) {
+          this.isShowDraft = false;
+        } else {
+          this.isShowDraft = true;
+        }
       });
     },
     selectedState() {
       if (this.selectedState === '使用中') {
-        this.isShowUse = true;
+        this.isShowUsing = true;
         this.isShowDraft = false;
-      } else if (this.selectedState === '待发布') {
+      } else if (this.selectedState === '草稿') {
         this.isShowDraft = true;
-        this.isShowUse = false;
+        this.isShowUsing = false;
       } else {
         this.isShowDraft = true;
-        this.isShowUse = true;
+        this.isShowUsing = true;
       }
     },
   },
   created() {
-    //待发布课程
+ //待发布课程
     getTeacherCourseList(1, '').then((res) => {
-      this.DraftCourseList = res.data;
+      if(res.data.length.length === 0){
+        this.isShowDraft = false;
+      }else{
+        this.draftCourseList = res.data;
+      }
     });
     //使用中课程
     getTeacherCourseList(2, '').then((res) => {
-      this.UseCourseList = res.data;
-    });
-    getGroupList().then((res) => {
-      for (let i = 0; i < res.data.length; i++) {
-        this.GroupList.push(res.data[i].name);
+      
+      if(res.data.length.length === 0){
+        this.isShowUsing = false;
+      } else {
+        this.usingCourseList = res.data;
       }
     });
+    
+    getGroupList().then((res) => {
+      for (let i = 0; i < res.data.length; i++) {
+        this.groupList.push(res.data[i]);
+      }
+    });
+    
   },
   methods: {
     //跳转到课程详情页
-    goToDetail(Courseid) {
-      this.$router.push({ path: 'detail', query: { id: Courseid } });
+    goToDetail(courseId) {
+      this.$router.push({ path: 'detail', query: { id: courseId } });
     },
     //跳转到创建&修改课程页
-    goToCreate(Courseid) {
-      this.$router.push({ path: 'create', query: { id: Courseid } });
+    goToCreate(courseId) {
+      this.$router.push({ path: 'create', query: { id: courseId } });
     },
     //复制课程
     copyCourse(courseId) {
-      console.log(this.Course);
+      console.log(this.course);
       getCourseInfo(courseId).then((res) => {
         this.Course = res.data;
       });
 
       console.log(this.courseId);
-      createCourse(this.Course).then((res) => {
+      createCourse(this.course).then((res) => {
         console.log(res);
       });
     },
     //应用到小组
     applyGroupList(courseId) {
-      applyGroup(courseId, this.applyGroups + 1000);
+      const groups = new FormData();
+      const groupsId = [];
+      this.applyGroups.forEach((group) => {
+        groupsId.push(group.id.toString());
+      });
+      if (this.applyGroups.length == 0) {
+        mitt.emit('showToast', {
+          title: '输入组为空',
+          color: 'error',
+          icon: '$error',
+        });
+      } else {
+        groups.append('groupIds', groupsId);
+        applyGroup(courseId, groups);
+      }
     },
     //删除课程
     deleteCourse(courseId) {
-      console.log('删除课程', courseId);
-      deleteCourse(100000000);
+      // console.log('删除课程', courseId);
+      deleteCourse(courseId);
     },
-  }, 
+  },
 };
 </script>
 
 <style lang="scss" scoped>
 $warn: #fb8c00;
-$sucess: #4caf50;
+$success: #4caf50;
 
 main {
   width: 100%;
@@ -343,6 +417,7 @@ main {
 //导航栏
 nav {
   display: flex;
+
   .course-input {
     flex: 4;
     background-color: white;
@@ -362,14 +437,15 @@ h1 {
 }
 
 // 使用中的所有课程卡片
-.use-box {
+.using-box {
   overflow: auto;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
   grid-gap: 1em;
   height: 18em;
+
   //一个课程卡片
-  .use-card {
+  .using-card {
     width: 13em;
     border: 1px solid #e0e0e0;
     padding: 1em;
@@ -418,7 +494,7 @@ h1 {
   }
 }
 
-.use-card:hover {
+.using-card:hover {
   cursor: pointer;
 }
 
@@ -427,11 +503,13 @@ h1 {
   background-color: $warn;
 }
 
-.use-type {
-  background-color: $sucess;
+.using-type {
+  background-color: $success;
 }
+
 .v-list {
   padding: 0;
+
   .v-list-item {
     padding: 0;
     padding-inline: 0.5em;
@@ -440,48 +518,57 @@ h1 {
 
 // 响应式
 @media (max-width: 1600px) {
-  .use-box {
+  .using-box {
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
   }
 }
+
 @media (max-width: 1200px) {
-  .use-box {
+  .using-box {
     grid-template-columns: 1fr 1fr 1fr 1fr;
   }
 }
+
 @media (max-width: 950px) {
-  .use-box {
+  .using-box {
     grid-template-columns: 1fr 1fr 1fr;
   }
 }
+
 @media (max-width: 720px) {
   nav {
     .course-input {
       flex: 1;
     }
+
     .state-select {
       margin: 0 0.25em;
     }
   }
 
-  .use-box {
+  .using-box {
     grid-template-columns: 1fr;
-    .use-card {
+
+    .using-card {
       display: flex;
       width: auto;
     }
+
     .title-more {
       display: flex;
       justify-content: space-between;
     }
+
     .course-info {
       padding: 0 0.5em;
       width: 80%;
     }
+
     p {
       display: -webkit-box;
       -webkit-box-orient: vertical;
-      -webkit-line-clamp: 3; /* 修改这里 */
+      -webkit-line-clamp: 3;
+      /* 修改这里 */
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: pre-wrap;
@@ -489,6 +576,7 @@ h1 {
       max-width: 80%;
     }
   }
+
   .v-btn {
     display: none;
   }
