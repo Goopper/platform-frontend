@@ -44,6 +44,7 @@
         append-inner-icon="mdi-magnify"
         variant="outlined"
         clearable
+        hide-details
         @click:append-inner="searchMessage"
       />
       <v-tabs

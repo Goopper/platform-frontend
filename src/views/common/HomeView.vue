@@ -1,14 +1,14 @@
 <template>
   <div class="flex md:flex-col overflow-y-auto">
     <!-- start -->
-    <router-view class="blg:flex-grow lg:mr-0 bmd:mr-8 lg:mb-8" />
+    <router-view class="blg:flex-grow lg:mr-0 sm:mb-2 bmd:mr-8 lg:mb-8" />
     <!-- end -->
     <div
       id="message-card-area"
-      class="w-1/3 min-w-96 sm:w-full sm:min-w-0 border flex flex-col bg-secondary lg:w-full lg:grow lg:min-h-[640px]"
+      class="w-1/3 min-w-96 sm:w-full sm:min-w-0 sm:mb-2 border flex flex-col bg-secondary lg:w-full lg:grow lg:min-h-[640px]"
     >
       <!-- message -->
-      <div class="grow overflow-y-auto">
+      <div class="grow overflow-y-auto sm:max-h-[400px]">
         <div v-if="messageList.length > 0">
           <custom-message-card
             v-for="message in messageList"

@@ -1,7 +1,7 @@
 <template>
   <div class="h-screen flex flex-col">
-    <the-header class="sm:order-last min-h-20 h-20" />
-    <router-view class="py-8 px-32 sm:p-4 flex-grow overflow-y-auto lg:px-8" />
+    <the-header class="sm:order-last max-h-20" />
+    <router-view class="bsm:py-8 bsm:px-32 flex-grow overflow-y-auto lg:px-8 sm:px-2 sm:py-0 sm:pt-2" />
   </div>
 </template>
 

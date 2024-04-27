@@ -1,9 +1,10 @@
 <template>
   <div class="flex flex-col">
     <custom-float-back-button />
-    <div class="flex gap-6">
+    <div class="flex gap-6 sm:block">
       <v-text-field
         v-model="studentName"
+        bg-color="white"
         variant="outlined"
         label="学生姓名模糊查询"
         density="compact"
@@ -12,6 +13,7 @@
         v-model="selectedGroupId"
         flat
         :items="groups"
+        bg-color="white"
         item-title="name"
         item-value="id"
         no-data-text="没有小组"
@@ -21,6 +23,7 @@
       />
       <v-select
         v-model="selectedCourseTypeId"
+        bg-color="white"
         flat
         :items="courseTypeList"
         item-title="name"
@@ -59,7 +62,7 @@
               v-for="column in columns"
               :key="column.key"
             >
-              <td>
+              <td class="min-w-[150px]">
                 <span
                   class="mr-2 text-lg font-black"
                 >{{ column.title }}</span>
@@ -86,6 +89,11 @@
             class="border-t"
             :length="totalPage"
           />
+        </template>
+        <template #item.id="{ item }">
+          <span :style="{ color: getColor(item) }">
+            {{ getRate(item) }}
+          </span>
         </template>
       </v-data-table>
     </div>
@@ -125,6 +133,11 @@ export default {
         sortable: false,
       },
       {
+        title: '学号',
+        value: 'studentNumber',
+        sortable: false,
+      },
+      {
         title: '小组',
         value: 'groupName',
         sortable: false,
@@ -142,6 +155,18 @@ export default {
       {
         title: '已完成的任务',
         value: 'finishedTask',
+        sortable: false,
+      },
+      {
+        title: '完成率 (%)',
+        value: item => {
+          const rate = item.finishedTask / item.totalTask;
+          if (isNaN(rate)) {
+            return 0.00;
+          }
+          return (rate * 100).toFixed(2);
+        },
+        key: 'id',
         sortable: false,
       }
     ]
@@ -173,6 +198,26 @@ export default {
         this.totalPage = res.data.totalPage;
       }
       this.loading = false;
+    },
+    getRate(item) {
+      if (!item) {
+        return '0.00%';
+      }
+      const rate = item.finishedTask / item.totalTask;
+      if (isNaN(rate)) {
+        return '0.00%';
+      }
+      return `${(rate * 100).toFixed(2)}%`;
+    },
+    getColor(item) {
+      const rate = item.finishedTask / item.totalTask;
+      if (rate >= 0.8) {
+        return 'green';
+      } else if (rate >= 0.6) {
+        return 'orange';
+      } else {
+        return 'red';
+      }
     }
   }
 };

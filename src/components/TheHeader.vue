@@ -17,7 +17,7 @@
     <!-- tab menu -->
     <div class="flex items-center justify-center w-1/2 sm:w-full sm:h-full grow">
       <v-tabs
-        class="sm:w-full"
+        class="sm:w-full sm:h-full"
       >
         <v-tab
           class="sm:w-1/2"
