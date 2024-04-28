@@ -6,7 +6,7 @@
     <!-- 一个课程卡片 @click是跳转到课程详情页面 -->
     <div
       class="using-card"
-      @click="goToDetail(courseInfo.id,courseInfo.name)"
+      @click="goToDetail(courseInfo.id, courseInfo.name)"
     >
       <img
         :src="courseInfo.cover"
@@ -34,13 +34,17 @@
                   max-width="360"
                 >
                   <template #activator="{ props: activatorProps }">
-                    <v-btn v-bind="activatorProps">
+                    <v-btn
+                      block
+                      variant="text"
+                      v-bind="activatorProps"
+                    >
                       🔮应用到小组
                     </v-btn>
                   </template>
                   <template #default="{ isActive }">
                     <v-card
-                      title="选择小组"
+                      :title="`应用到${courseInfo.name}`"
                       color="white"
                     >
                       <v-card-text>
@@ -80,34 +84,75 @@
               </v-list-item>
               <!-- 停用 -->
               <v-list-item class="d-flex justify-center">
-                <v-btn @click="deactivate_course(courseInfo.id)">
-                  🚫停用
-                </v-btn>
+                <v-dialog
+                  persistent
+                  max-width="300"
+                >
+                  <template #activator="{ props: activatorProps }">
+                    <v-btn
+                      block
+                      variant="text"
+                      v-bind="activatorProps"
+                    >
+                      🚫停用
+                    </v-btn>
+                  </template>
+                  <template #default="{ isActive }">
+                    <v-card
+                      title="是否停用" 
+                      color="white"
+                    >
+                      <v-card-text>
+                        你确定要停用"{{ courseInfo.name }}"吗？
+                      </v-card-text>
+                      <v-card-actions>
+                        <v-spacer />
+                        <v-btn
+                          text
+                          @click="isActive.value = false"
+                        >
+                          取消
+                        </v-btn>
+                        <v-btn
+                          id="apply-success"
+                          text
+                          @click="
+                            deactivate_course(courseInfo.id),
+                            (isActive.value = false)
+                          "
+                        >
+                          确定
+                        </v-btn>
+                      </v-card-actions>
+                    </v-card>
+                  </template>
+                </v-dialog>
               </v-list-item>
             </v-list>
             <!-- 草稿的按钮 -->
             <v-list v-else-if="state.name === '草稿'">
-              <v-list-item>
-                <v-btn
-                  block
-                  variant="text"
-                  @click="publishCourse(courseInfo.id)"
-                >
-                  📤发布
-                </v-btn>
-                <v-list-item>
+              <v-dialog
+                persistent
+                max-width="290"
+              >
+                <template #activator="{ props: activatorProps }">
                   <v-btn
                     block
                     variant="text"
-                    @click="copyCourse(courseInfo.id)"
+                    v-bind="activatorProps"
+                    @click="dialogTitle = '发布课程', dialogText = '需发布',calledInterface=() => publishCourse(courseInfo.id)"
+                  >
+                    📤发布
+                  </v-btn>
+                  <v-btn
+                    block
+                    variant="text"
+                    v-bind="activatorProps"
+                    @click="dialogTitle = '复制课程', dialogText = '是否需要复制',calledInterface=() => copyCourse(courseInfo.id)"
                   >
                     ✒复制
                   </v-btn>
-                </v-list-item>
-                <v-list-item>
-                  <router-link
-                    :to="{ path: 'create', query: { id: courseInfo.id } }"
-                  >
+                  <router-link :to="{ path: 'create', query: { id: courseInfo.id } }">
                     <v-btn
                       block
                       variant="text"
@@ -115,92 +160,119 @@
                       📃编辑
                     </v-btn>
                   </router-link>
-                </v-list-item>
-                <v-list-item>
-                  <v-dialog
-                    persistent
-                    max-width="290"
+                  <v-btn
+                    block
+                    variant="text"
+                    v-bind="activatorProps"
+                    @click="dialogTitle = '删除课程', dialogText = '确认是否删除',calledInterface=() => deleteCourse(courseInfo.id)"
                   >
-                    <template #activator="{ props: activatorProps }">
+                    🚫删除
+                  </v-btn>
+                </template>
+                <template #default="{ isActive }">
+                  <v-card
+                    :title="dialogTitle"
+                    color="white"
+                  >
+                    <v-card-text>
+                      {{ dialogText }}"{{ courseInfo.name }}"课程吗？
+                    </v-card-text>
+                    <v-card-actions>
+                      <v-spacer />
                       <v-btn
-                        block
-                        variant="text"
-                        v-bind="activatorProps"
+                        text
+                        @click="isActive.value = false"
                       >
-                        🚫删除
+                        取消
                       </v-btn>
-                    </template>
-                    <template #default="{ isActive }">
-                      <v-card
-                        title="确认删除"
-                        color="white"
+                      <v-btn
+                        text
+                        @click="
+                          calledInterface() , (isActive.value = false)
+                        "
                       >
-                        <v-card-text>
-                          你确定要删除
-                          {{ courseInfo.name }} 吗？
-                        </v-card-text>
-                        <v-card-actions>
-                          <v-spacer />
-                          <v-btn
-                            text
-                            @click="isActive.value = false"
-                          >
-                            取消
-                          </v-btn>
-                          <v-btn
-                            id="delete-success"
-                            text
-                            @click="
-                              deleteCourse(courseInfo.id), (isActive.value = false)
-                            "
-                          >
-                            确定
-                          </v-btn>
-                        </v-card-actions>
-                      </v-card>
-                    </template>
-                  </v-dialog>
-                </v-list-item>
-              </v-list-item>
+                        确定
+                      </v-btn>
+                    </v-card-actions>
+                  </v-card>
+                </template>
+              </v-dialog>
             </v-list>
+            <!-- 已禁用的按钮 -->
             <v-list v-else>
               <v-list-item>
-                <v-btn
-                  block
-                  variant="text"
-                  @click="enableCourse(courseInfo.id)"
+                <v-dialog
+                  persistent
+                  max-width="290"
                 >
-                  ⭕启用课程
-                </v-btn>
+                  <template #activator="{ props: activatorProps }">
+                    <v-btn
+                      block
+                      variant="text"
+                      v-bind="activatorProps"
+                      @click="dialogTitle = '启用课程', dialogText = '确认要启用',calledInterface=() => enableCourse(courseInfo.id)"
+                    >
+                      ⭕启用课程
+                    </v-btn>
+                    <v-btn
+                      block
+                      variant="text"
+                      v-bind="activatorProps"
+                      @click="dialogTitle = '删除课程', dialogText = '确认是否删除',calledInterface=() => deleteCourse(courseInfo.id)"
+                    >
+                      🚫删除
+                    </v-btn>
+                  </template>
+                  <template #default="{ isActive }">
+                    <v-card
+                      :title="dialogTitle"
+                      color="white"
+                    >
+                      <v-card-text>
+                        {{ dialogText }}"{{ courseInfo.name }}"课程吗？
+                      </v-card-text>
+                      <v-card-actions>
+                        <v-spacer />
+                        <v-btn
+                          text
+                          @click="isActive.value = false"
+                        >
+                          取消
+                        </v-btn>
+                        <v-btn
+                          text
+                          @click="
+                            calledInterface(), (isActive.value = false)
+                          "
+                        >
+                          确定
+                        </v-btn>
+                      </v-card-actions>
+                    </v-card>
+                  </template>
+                </v-dialog>
               </v-list-item>
             </v-list>
           </v-menu>
         </div>
-        <span
-          v-if="state.name === '草稿'"
-          class="draft-state"
-        >
-          {{ state.name }}
+        <span>
+          {{ courseInfo.type }}
         </span>
-        <span
-          v-else-if="state.name === '使用中'"
-          class="using-state"
-        >
-          {{ state.name }}
-        </span>
-        <span
-          v-else
-          class="deactivated-state"
-        >
-          {{ state.name }}
-        </span>
-        <p>{{ courseInfo.type }},{{ courseInfo.desc }}</p>
+        <p>{{ courseInfo.desc }}</p>
       </div>
     </div>
   </div>
 </template>
 <script>
-import { getGroupList, applyGroup, deleteCourse,copyCourse,publishCourse,deactivateCourse,enableCourse } from '@/api/course';
+import {
+  getGroupList,
+  applyGroup,
+  deleteCourse,
+  copyCourse,
+  publishCourse,
+  deactivateCourse,
+  enableCourse,
+} from '@/api/course';
 export default {
   name: 'CustomCourseCard',
   props: {
@@ -215,7 +287,7 @@ export default {
   },
   data: () => ({
     // 小组列表
-    groupList: null,
+    groupList: [],
     // 添加小组
     applyGroups: [],
     //是否有课程
@@ -225,18 +297,19 @@ export default {
     isDeactivated: false,
     isDraft: false,
   }),
-  methods: {
+  created() {
     //获取所有小组
-    getGroupList() {
-      getGroupList().then((res) => {
-        for (let i = 0; i < res.data.length; i++) {
-          this.groupList.push(res.data[i]);
-        }
-      });
-    },
+    getGroupList().then((res) => {
+      this.groupList = res.data;
+    });
+  },
+  methods: {
     //跳转到课程详情页
-    goToDetail(courseId,courseName) {
-      this.$router.push({ path: 'detail', query: { id: courseId , name:courseName} });
+    goToDetail(courseId, courseName) {
+      this.$router.push({
+        path: 'detail',
+        query: { id: courseId, name: courseName },
+      });
     },
     //跳转到创建&修改课程页
     goToCreate(courseId) {
@@ -297,10 +370,6 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-$warn: #fb8c00;
-$success: #4caf50;
-$error: red;
-
 .using-card {
   width: 13em;
   height: 17em;
@@ -318,6 +387,9 @@ $error: red;
   h2 {
     font-weight: 600;
     padding: 0.5em 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .title-more {
@@ -327,10 +399,11 @@ $error: red;
   }
 
   span {
-    color: white;
     font-size: 0.7em;
     padding: 0.25em 0.5em;
     border-radius: 10px;
+    background-color: #383838;
+    color: white;
   }
 
   p {
@@ -344,19 +417,9 @@ $error: red;
     max-width: 100%;
   }
 }
+
 .using-card:hover {
   cursor: pointer;
-}
-
-.draft-state{
-  background-color: $warn;
-}
-
-.using-state{
-  background-color: $success;
-}
-.deactivated-state{
-  background-color: $error;
 }
 
 .v-list {
@@ -364,35 +427,48 @@ $error: red;
 
   .v-list-item {
     padding: 0;
-    padding-inline: 0.5em;
   }
 }
-@media (max-width: 720px) {
+
+@media (max-width: 520px) {
   .using-card {
-      display: flex;
-      width: auto;
-    }
+    display: flex;
+    width: 80%;
+    height: auto;
+  }
 
-    .title-more {
-      display: flex;
-      justify-content: space-between;
-    }
+  .title-more {
+    display: flex;
+    justify-content: space-between;
+  }
 
-    .course-info {
-      padding: 0 0.5em;
-      width: 80%;
-    }
+  .course-info {
+    padding: 0 0.5em;
+    width: 80%;
+  }
 
-    p {
-      display: -webkit-box;
-      -webkit-box-orient: vertical;
-      -webkit-line-clamp: 3;
-      /* 修改这里 */
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: pre-wrap;
-      word-wrap: break-word;
-      max-width: 80%;
-    }
+  p {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    /* 限制行数为3行 */
+    -webkit-box-orient: vertical;
+    /* 设置布局为垂直 */
+    overflow: hidden;
+    /* 隐藏多余的文本 */
+    text-overflow: ellipsis;
+    /* 多余的文本显示为省略号 */
+    white-space: pre-wrap;
+    /* 保留空白和换行 */
+    word-wrap: break-word;
+    /* 允许单词换行 */
+    height: auto;
+    /* 高度自适应 */
+    font-size: 1em;
+    width: 80%;
+  }
+}
+
+.v-list {
+  padding: 0.25em;
 }
 </style>

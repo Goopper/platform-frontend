@@ -98,7 +98,7 @@
         icon="mdi-signal-off"
       />
       <p class="font-bold text-lg text-gray-400">
-        无课程
+        无学生
       </p>
     </div>
   </main>
@@ -141,7 +141,7 @@ export default {
     // 获取教师的课程列表
     getCourseList().then((res) => {
       if (res.data.length === 0) {
-        return (this.showStudentCards = false);
+        this.showStudentCards = false;
       } else {
         for (let i = 0; i < res.data.length; i++) {
           this.CourseList.push(res.data[i]);
@@ -169,13 +169,19 @@ export default {
       if (this.groupId && this.courseId && this.orderId) {
         getStudentList(this.courseId, this.groupId, this.orderId).then(
           (res) => {
-            if (this.orderId === 2) {
+            if(res.data.length === 0) {
+              this.showStudentCards = false;
+            } else {
+              this.showStudentCards = true;
+              if (this.orderId === 2) {
               this.studentCardsList = res.data.sort((a, b) => {
                 return a.name.localeCompare(b.name);
               });
             } else {
               this.studentCardsList = res.data;
             }
+            }
+            
           }
         );
       }
@@ -310,16 +316,16 @@ nav {
   }
 }
 
-@media (min-width: 820px) and (max-width: 1600px) {
+@media (min-width: 1024px) and (max-width: 1600px) {
   .course-students-card {
     grid-template-columns: 1fr 1fr 1fr;
-  }
+  } 
   .right-select {
     width: 44%;
   }
 }
 
-@media (max-width: 820px) {
+@media (max-width: 1024px) {
   .course-students-card {
     grid-template-columns: 1fr 1fr;
     grid-gap: 0.5em;

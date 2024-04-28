@@ -1,7 +1,9 @@
 <template>
   <main>
     <!-- 返回上一页 -->
-    <custom-float-back-button />
+    <div class="back-button">
+      <custom-float-back-button />
+    </div>
     <!-- 主要 -->
     <div
       v-if="studentInfo"
@@ -27,7 +29,65 @@
           </div>
           <!-- 修改按钮 -->
           <div class="modify-button">
-            <v-btn> 修改用户密码 </v-btn>
+            <v-dialog
+              persistent
+              max-width="300"
+            >
+              <template #activator="{ props: activatorProps }">
+                <v-btn
+                  v-bind="activatorProps"
+                >
+                  修改用户密码
+                </v-btn>
+              </template>
+              <template #default="{ isActive }">
+                <v-card
+                  title="输入密码" 
+                  color="white"
+                >
+                  <v-card-text>
+                    <v-text-field
+                      v-model="password"
+                      :rules="passwordRules"
+                      density="comfortable"
+                      variant="outlined"
+                      label="请输入新密码"
+                      type="text"
+                    />
+                    <v-text-field
+                      v-model="confirmPassword"
+                      :rules="confirmPasswordRules"
+                      density="comfortable"
+                      variant="outlined"
+                      label="再次输入新密码"
+                      type="text"
+                    />
+                  </v-card-text>
+                  <v-card-actions>
+                    <v-spacer />
+                    <v-btn
+                      text
+                      @click="
+                        password = '',
+                        confirmPassword = '',
+                        isActive.value = false"
+                    >
+                      取消
+                    </v-btn>
+                    <v-btn
+                      id="apply-success"
+                      text
+                      @click="
+                        changePassword(),
+                        (isActive.value = false)
+                      "
+                    >
+                      确定
+                    </v-btn>
+                  </v-card-actions>
+                </v-card>
+              </template>
+            </v-dialog>
             <v-menu
               open-on-click
               class="menu"
@@ -66,6 +126,7 @@
       <div class="course-list">
         <CustomCourseListVue 
           :course-id="courseId"
+          :student-id="studentInfo.id"
         />
       </div>
     </div>
@@ -74,9 +135,10 @@
 <script>
 import CustomHorizontalCourseCard from '@/components/CustomHorizontalCourseCard.vue';
 import CustomCourseListVue from '@/components/course/CustomCourseList.vue';
-import { getStudentRecentCourse } from '@/api/course';
+import { changePassword, getStudentRecentCourse } from '@/api/course';
 import { getStudentInfo } from '@/api/user';
 import CustomFloatBackButton from '@/components/CustomFloatBackButton.vue';
+import mitt from '@/plugins/mitt';
 export default {
   name: 'StudentDetailView',
   components: {
@@ -91,12 +153,21 @@ export default {
       courseDetail: null,
       studentInfo: null,
       CourseTreeList: [],
+      // 密码相关
+      password: '',
+      confirmPassword: '',
+      passwordRules: [
+        value => !!value || '密码是必填项'
+    ],
+      confirmPasswordRules: [
+        value => !!value || '确认密码是必填项',
+        value => value === this.password || '两次输入的密码不一致',
+    ],
     };
   },
   created() {
     this.studentId = this.$route.query.studentId;
     this.courseId = this.$route.query.courseId;
-    console.log(this.studentId);
     // 获取学生学习进度详情
     getStudentRecentCourse(this.studentId).then((res) => {
       this.courseDetail = res.data;
@@ -106,6 +177,19 @@ export default {
     });
   },
   methods: {
+    //修改密码
+    changePassword() {
+      if (this.password !== this.confirmPassword) {
+        mitt.emit('showToast', { title: '密码不一致', color: 'error', icon: '$error' });
+      } else {
+        const fromPassword = new FormData();
+        const fromUid = new FormData();
+        console.log(fromPassword.get('password'));
+        fromPassword.append('password', this.password);
+        fromUid.append('uid', this.studentInfo.id);
+        changePassword(fromUid, fromPassword);
+      }
+    },
     //清空课程进度
     emptyCourseProgress() {
       this.courseDetail.finishedTask = 0;
@@ -134,6 +218,7 @@ main {
 // 头像
 img {
   width: 16%;
+  height: 16%;
   border-radius: 5em;
 }
 //学生名字
@@ -178,6 +263,24 @@ strong {
   border: 1px solid #e0e0e0;
   > * {
     height: 100%;
+  }
+}
+@media (max-width: 800px) {
+  .student-info{
+    padding-left: 20px;
+  }
+}
+@media (max-width: 770px){
+  .back-button{
+    display: none;
+  }
+}
+@media (max-width: 600px) {
+  img{
+    display: none;
+  }
+  .basic-info .v-icon{
+    display: none;
   }
 }
 </style>

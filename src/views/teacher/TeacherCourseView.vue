@@ -58,6 +58,7 @@
         size="100px"
         class="text-gray-400 mt-8"
         icon="mdi-signal-off"
+        @click="$router.go(0);"
       />
       <p class="font-bold text-lg text-gray-400">
         无课程
@@ -212,13 +213,18 @@ h1 {
   }
 }
 
-@media (max-width: 950px) {
+@media (max-width: 1120px) {
   .using-box {
     grid-template-columns: 1fr 1fr 1fr;
   }
 }
+@media (max-width: 920px) {
+  .using-box {
+    grid-template-columns: 1fr 1fr;
+  }
+}
 
-@media (max-width: 720px) {
+@media (max-width: 520px) {
   nav {
     .course-input {
       flex: 1;

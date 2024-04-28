@@ -1,4 +1,3 @@
-import { data } from 'autoprefixer';
 import { request } from '..';
 import mitt from '@/plugins/mitt';
 
@@ -164,5 +163,28 @@ export async function enableCourse(courseId) {
     mitt.emit('showToast', { title: '启用成功', color: 'success', icon: '$success' });
   } else {
     mitt.emit('showToast', { title: '启用失败', color: 'error', icon: '$error' });
+  }
+}
+//获取学生课程进度详情
+export function getStudentCourseProgress(courseId, studentId) {
+  return request({
+    url: `/student/course/${studentId}/${courseId}`,
+    method: 'get'
+  });
+}
+//修改密码
+export async function changePassword(uid, password) {
+  const res = await request({
+    url: '/user/student/password',
+    method: 'put',
+    data: {
+      uid,
+      password
+    }
+  });
+  if (res.code == '200') {
+    mitt.emit('showToast', { title: '修改成功', color: 'success', icon: '$success' });
+  } else {
+    mitt.emit('showToast', { title: '修改失败', color: 'error', icon: '$error' });
   }
 }
