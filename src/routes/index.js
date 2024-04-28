@@ -67,6 +67,20 @@ export const routes = [
           {
             path: 'detail',
             component: () => import('@/views/common/course/CourseDetailView.vue'),
+            children: [
+              {
+                path: '',
+                component: () => import('@/views/common/course/CourseInfoView.vue'),
+              },
+              {
+                path: 'task',
+                component: () => import('@/views/common/course/CourseTaskView.vue'),
+              },
+              {
+                path: 'section',
+                component: () => import('@/views/common/course/CourseSectionView.vue'),
+              }
+            ]
           },
         ]
       },
@@ -105,6 +119,13 @@ export const routes = [
       {
         path: 'teacher/student/performance',
         component: () => import('@/views/teacher/StudentPerformanceView.vue'),
+        meta: {
+          requireRole: Role.ROLE_TEACHER
+        }
+      },
+      {
+        path: 'teacher/student/detail',
+        component: () => import('@/views/teacher/StudentDetailView.vue'),
         meta: {
           requireRole: Role.ROLE_TEACHER
         }

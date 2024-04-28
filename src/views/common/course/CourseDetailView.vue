@@ -2,56 +2,38 @@
   <!-- temp view for dev -->
   <main>
     <!-- 返回上一页 -->
-    <v-icon>
-      mdi-arrow-left
-    </v-icon>
+    
+    <custom-float-back-button />
     <!-- 课程列表 -->
-    <v-list
-      bg-color="white"
-      class="course-aside"
-    >
-      <v-list-item title="测试课程1" />
-      <v-list-group
-        v-for="chapter in CourseTreeList"
-        :key="chapter.id"
-        :subgroup="chapter.tasks && chapter.tasks.length ? '' : null"
-      >
-        <template #activator="{props}">
-          <v-list-item
-            :title="chapter.name"
-            v-bind="props"
-          />
-        </template>
-        <v-list-item 
-          v-for="task in chapter.tasks"
-          :key="task.id"
-          :title="task.name"
-        />
-      </v-list-group>
-    </v-list>
-
-    <!-- 展示的课程,章节,任务详情 -->
-    <div class="show-detail">
-      1111
+    <div class="course-list">
+      <CustomCourseList 
+        v-if="courseId && courseName"
+        :course-id="courseId"
+        :course-name="courseName"
+      />
     </div>
+    <!-- 展示的课程,章节,任务详情 -->
+    <router-view />
   </main>
 </template>
 
 <script>
-import { getCourseTaskList } from '@/api/course';
+import CustomCourseList from '@/components/course/CustomCourseList.vue';
+import CustomFloatBackButton from '@/components/CustomFloatBackButton.vue';
 export default {
   name: 'CourseDetailView',
+  components: {
+    CustomCourseList,
+    CustomFloatBackButton,
+  },
   data() {
     return {
       courseId: this.$route.query.id,
-      CourseTreeList :[]
+      courseName:this.$route.query.name,
     };
   },
   created() {
-    getCourseTaskList(this.courseId).then((res) => {
-      console.log(res.data);
-      this.CourseTreeList=res.data;
-    });
+
   }
 };
 </script>
@@ -61,11 +43,15 @@ export default {
     display: flex;
     height: 98%;
   }
-  .course-aside{
-    flex: 1;
-    border: 1px solid #e0e0e0;
-  }
   .show-detail{
     flex: 4;
+  }
+  .course-list{
+    width: 20%;
+    height: 90%;
+    border: 1px solid #e0e0e0;
+    > *{
+      height: 100%;
+    }
   }
 </style>
