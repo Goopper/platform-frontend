@@ -1,6 +1,6 @@
 <template>
   <div
-    class="hover:bg-primary hover:text-white cursor-pointer px-6 py-4 flex justify-between items-center"
+    class="bg-secondary-message hover:bg-primary hover:text-white cursor-pointer px-6 py-4 flex justify-between items-center"
     @click="handleCardClick"
   >
     <div class="flex justify-start items-center w-1/5">

@@ -56,3 +56,10 @@ export function teacherGetStudentLearningPerformance(name, page, groupId, course
         method: 'get'
     });
 }
+
+export function manualSelectCourse(courseId) {
+    return request({
+        url: `/course/select/${courseId}`,
+        method: 'post'
+    });
+}

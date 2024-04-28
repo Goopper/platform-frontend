@@ -1,9 +1,10 @@
 <template>
   <div class="flex flex-col">
     <custom-float-back-button />
-    <div class="flex gap-6">
+    <div class="flex gap-6 sm:block">
       <v-text-field
         v-model="studentName"
+        bg-color="white"
         variant="outlined"
         label="学生姓名模糊查询"
         density="compact"
@@ -12,6 +13,7 @@
         v-model="selectedGroupId"
         flat
         :items="groups"
+        bg-color="white"
         item-title="name"
         item-value="id"
         no-data-text="没有小组"
@@ -21,6 +23,7 @@
       />
       <v-select
         v-model="selectedCourseTypeId"
+        bg-color="white"
         flat
         :items="courseTypeList"
         item-title="name"
@@ -43,14 +46,30 @@
     </div>
     <div class="flex-grow overflow-y-auto">
       <v-data-table
-        class="h-full"
+        class="h-full border"
         fixed-footer
         fixed-header
         theme="light"
-        variant="outlined"
         hover
+        :headers="headers"
+        items-per-page="10"
+        :items="studentPerformanceList"
         :loading="loading"
       >
+        <template #headers="{ columns }">
+          <tr class="bg-primary-important text-white">
+            <template
+              v-for="column in columns"
+              :key="column.key"
+            >
+              <td class="min-w-[150px]">
+                <span
+                  class="mr-2 text-lg font-black"
+                >{{ column.title }}</span>
+              </td>
+            </template>
+          </tr>
+        </template>
         <template #loading>
           <v-skeleton-loader type="table-row@10" />
         </template>
@@ -67,8 +86,14 @@
         <template #bottom>
           <v-pagination
             v-model="currentPage"
+            class="border-t"
             :length="totalPage"
           />
+        </template>
+        <template #item.id="{ item }">
+          <span :style="{ color: getColor(item) }">
+            {{ getRate(item) }}
+          </span>
         </template>
       </v-data-table>
     </div>
@@ -100,8 +125,57 @@ export default {
     currentPage: 1,
     totalPage: 1,
     studentPerformanceList: [],
-    loading: true
+    loading: true,
+    headers: [
+      {
+        title: '学生姓名',
+        value: 'name',
+        sortable: false,
+      },
+      {
+        title: '学号',
+        value: 'studentNumber',
+        sortable: false,
+      },
+      {
+        title: '小组',
+        value: 'groupName',
+        sortable: false,
+      },
+      {
+        title: '课程',
+        value: 'courseName',
+        sortable: false,
+      },
+      {
+        title: '总任务',
+        value: 'totalTask',
+        sortable: false,
+      },
+      {
+        title: '已完成的任务',
+        value: 'finishedTask',
+        sortable: false,
+      },
+      {
+        title: '完成率 (%)',
+        value: item => {
+          const rate = item.finishedTask / item.totalTask;
+          if (isNaN(rate)) {
+            return 0.00;
+          }
+          return (rate * 100).toFixed(2);
+        },
+        key: 'id',
+        sortable: false,
+      }
+    ]
   }),
+  watch: {
+    currentPage() {
+      this.searchStudentPerformance();
+    }
+  },
   created() {
     getCourseType().then(res => {
       if (res) {
@@ -121,10 +195,29 @@ export default {
       const res = await teacherGetStudentLearningPerformance(this.studentName, this.currentPage, this.selectedGroupId, this.selectedCourseTypeId);
       if (res) {
         this.studentPerformanceList = res.data.list;
-        this.totalPage = res.data.pages;
-        this.currentPage = res.data.page;
+        this.totalPage = res.data.totalPage;
       }
       this.loading = false;
+    },
+    getRate(item) {
+      if (!item) {
+        return '0.00%';
+      }
+      const rate = item.finishedTask / item.totalTask;
+      if (isNaN(rate)) {
+        return '0.00%';
+      }
+      return `${(rate * 100).toFixed(2)}%`;
+    },
+    getColor(item) {
+      const rate = item.finishedTask / item.totalTask;
+      if (rate >= 0.8) {
+        return 'green';
+      } else if (rate >= 0.6) {
+        return 'orange';
+      } else {
+        return 'red';
+      }
     }
   }
 };

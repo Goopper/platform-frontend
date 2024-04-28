@@ -110,7 +110,7 @@ export const routes = [
         ]
       },
       {
-        path: 'teacher/correct',
+        path: 'teacher/correct/:messageId',
         component: () => import('@/views/teacher/TaskCorrectView.vue'),
         meta: {
           requireRole: Role.ROLE_TEACHER

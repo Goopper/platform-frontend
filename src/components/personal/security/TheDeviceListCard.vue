@@ -89,6 +89,7 @@ export default {
           color: 'success',
           icon: '$success',
         });
+        this.dialog = false;
         this.loadDevices();
       } else {
         mitt.emit('showToast', {
@@ -106,6 +107,7 @@ export default {
       this.dialog = true;
     },
     loadDevices() {
+      this.devices = [];
       getAllDevices().then(res => {
         const devices = res.data;
         for (let i = 0; i < devices.length; i++) {
