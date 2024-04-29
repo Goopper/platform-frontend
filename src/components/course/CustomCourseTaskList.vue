@@ -2,10 +2,17 @@
   <v-list
     v-if="list"
     bg-color="white"
+    open-strategy="multiple"
+    active-strategy="single-independent"
     class="course-aside"
   >
-    <v-list-item v-if="isShow">
-      <v-list-item-title>{{ courseName }}</v-list-item-title>
+    <v-list-item
+      v-if="isShow"
+      :class="{ selected: selectedId === courseId }"
+    >
+      <v-list-item-title @click="goToDetail()">
+        {{ courseName }}
+      </v-list-item-title>
     </v-list-item>
     <v-list-group
       v-for="section in list"
@@ -16,6 +23,8 @@
         <v-list-item
           :title="section.name"
           v-bind="props"
+          :class="{ selected: selectedId === section.id }"
+          @click="goToSection(section.id)"
         />
       </template>
       <v-list-item
@@ -23,6 +32,8 @@
         :key="task.id"
         :title="task.name"
         v-bind="iconProps(task)"
+        :class="{ selected: selectedId === task.id }"
+        @click="goToTask(task.id)"
       >
         <v-list-item-subtitle :style="scoreColor(task.score)">
           {{ task.score }}
@@ -41,11 +52,11 @@ export default {
     },
     courseName: {
       type: String,
-      required: true,
+      default: undefined,
     },
     studentId: {
       type: Number,
-      required: true,
+      default: undefined,
     },
   },
   data() {
@@ -53,6 +64,7 @@ export default {
       list: [],
       iconDisplayed: 0,
       isShow: false,
+      selectedId: null,
     };
   },
   created() {
@@ -99,6 +111,29 @@ export default {
         }
       }
     },
+    //跳转到课程详情
+    goToDetail() {
+      if (!this.studentId) {
+        this.$router.push(`/course/detail/${this.courseId}`);
+      }
+      this.selectedId = this.courseId;
+    },
+    //跳转到章节详情
+    goToSection(sectionId) {
+      if (!this.studentId) {
+        this.$router.push(
+          `/course/detail/${this.courseId}/section/${sectionId}`
+        );
+      }
+      this.selectedId = sectionId;
+    },
+    //跳转到任务详情
+    goToTask(taskId) {
+      if (!this.studentId) {
+        this.$router.push(`/course/detail/${this.courseId}/task/${taskId}`);
+      }
+      this.selectedId = taskId;
+    },
   },
 };
 </script>
@@ -109,5 +144,9 @@ export default {
 .v-list-item > * {
   display: flex;
   justify-content: space-between;
+}
+.selected {
+  background-color: #383838; /* 你的颜色 */
+  color: #ffffff;
 }
 </style>

@@ -65,7 +65,7 @@ export const routes = [
             },
           },
           {
-            path: 'detail',
+            path: 'detail/:id',
             component: () => import('@/views/common/course/CourseDetailView.vue'),
             children: [
               {
@@ -73,11 +73,11 @@ export const routes = [
                 component: () => import('@/views/common/course/CourseInfoView.vue'),
               },
               {
-                path: 'task',
+                path: 'task/:taskId',
                 component: () => import('@/views/common/course/CourseTaskView.vue'),
               },
               {
-                path: 'section',
+                path: 'section/:sectionId',
                 component: () => import('@/views/common/course/CourseSectionView.vue'),
               }
             ]

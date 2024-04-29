@@ -2,7 +2,7 @@
   <!-- 一个课程卡片 @click是跳转到课程详情页面 -->
   <div
     class="using-card"
-    @click="goToDetail(course.id, course.name)"
+    @click="goToDetail(course.id)"
   >
     <v-img
       :src="course.cover"
@@ -314,10 +314,9 @@ export default {
   },
   methods: {
     //跳转到课程详情页
-    goToDetail(courseId, courseName) {
+    goToDetail(courseId) {
       this.$router.push({
-        path: 'detail',
-        query: { id: courseId, name: courseName },
+        path: `/course/detail/${courseId}`,
       });
     },
     //跳转到创建&修改课程页

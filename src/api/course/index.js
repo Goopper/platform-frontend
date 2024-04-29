@@ -172,3 +172,11 @@ export function getStudentCourseProgress(courseId, studentId) {
     method: 'get'
   });
 }
+
+//获取课程详细信息
+export function getCourseDetail(courseId) {
+  return request({
+    url: `/course/${courseId}`,
+    method: 'get'
+  });
+} 
