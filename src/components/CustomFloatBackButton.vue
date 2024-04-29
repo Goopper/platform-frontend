@@ -4,13 +4,28 @@
     variant="text"
     size="48"
     icon="mdi-arrow-left"
-    @click="$router.back()"
+    @click="back()"
   />
 </template>
 
 <script>
 export default {
   name: 'CustomFloatBackButton',
+  props: {
+    backUrl: {
+      type: String,
+      default: undefined,
+    },
+  },
+  methods: {
+    back() {
+      if (!this.backUrl) {
+        this.$router.back();
+      } else {
+        this.$router.push(this.backUrl);
+      }
+    },
+  },
 };
 </script>
 
