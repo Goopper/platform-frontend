@@ -9,13 +9,24 @@
     <span class="text-gray-500">
       文件大小：{{ formatBytes(attachment.size) }}
     </span>
-    <v-btn
-      variant="outlined"
-      color="success"
-      @click="downloadFile"
-    >
-      下载
-    </v-btn>
+    <div>
+      <v-btn
+        v-if="deletable"
+        class="mr-3"
+        variant="outlined"
+        color="error"
+        @click="deleteFile"
+      >
+        删除
+      </v-btn>
+      <v-btn
+        variant="outlined"
+        color="success"
+        @click="downloadFile"
+      >
+        下载
+      </v-btn>
+    </div>
   </div>
 </template>
 
@@ -26,8 +37,13 @@ export default {
     attachment: {
       type: Object,
       required: true
+    },
+    deletable: {
+      type: Boolean,
+      default: false
     }
   },
+  emits: ['deleteFile'],
   methods: {
     formatBytes(bytes) {
       if (bytes === 0) return '0 Bytes';
@@ -39,8 +55,11 @@ export default {
     downloadFile() {
       const url = this.attachment.url;
       const link = document.createElement('a');
-      link.setAttribute('download', this.attachment.originalFilename);
+      link.href = url;
       link.click();
+    },
+    deleteFile() {
+      this.$emit('deleteFile', this.attachment);
     }
   }
 };

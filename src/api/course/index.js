@@ -173,6 +173,7 @@ export function getStudentCourseProgress(courseId, studentId) {
   });
 }
 
+<<<<<<< HEAD
 //获取课程详细信息
 export function getCourseDetail(courseId) {
   return request({
@@ -180,3 +181,15 @@ export function getCourseDetail(courseId) {
     method: 'get'
   });
 } 
+=======
+export function createCourseType(typeName) {
+  var formData = new FormData();
+  formData.append('typeName', typeName);
+
+  return request({
+    url: '/course/type',
+    method: 'post',
+    data: formData
+  });
+}
+>>>>>>> 8b93a7d1421978c9a7e038aa2ead3d7cd690b6fe
