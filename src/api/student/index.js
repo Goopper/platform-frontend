@@ -1,4 +1,6 @@
 import { request } from '..';
+import mitt from '@/plugins/mitt';
+
 
 export function getCurrentCourse() {
     return request({

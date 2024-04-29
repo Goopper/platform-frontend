@@ -135,8 +135,9 @@
 <script>
 import CustomHorizontalCourseCard from '@/components/CustomHorizontalCourseCard.vue';
 import CustomCourseListVue from '@/components/course/CustomCourseTaskList.vue';
-import { changePassword, getStudentRecentCourse } from '@/api/course';
+import { getStudentRecentCourse } from '@/api/course';
 import { getStudentInfo } from '@/api/user';
+import { changePassword } from '@/api/student';
 import CustomFloatBackButton from '@/components/CustomFloatBackButton.vue';
 import mitt from '@/plugins/mitt';
 export default {
