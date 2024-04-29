@@ -84,7 +84,7 @@
         />
       </div>
       <!-- actions area -->
-      <div class="border-b flex p-4 bg-background-important">
+      <div class="flex p-4 bg-background-important">
         <div class="flex-grow" />
         <v-text-field
           v-model="score"

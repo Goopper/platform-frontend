@@ -11,10 +11,14 @@ export function request(config) {
             'G-Authorization': getLoginState(),
         }
     });
+    // encode url
+    instance.interceptors.request.use(config => {
+        config.url = encodeURI(config.url);
+        return config;
+    });
     instance.interceptors.response.use(res => {
         return res.data;
     }, err => {
-        console.log(err);
         if (err.response) {
             const data = err.response.data;
             const status = err.response.status;

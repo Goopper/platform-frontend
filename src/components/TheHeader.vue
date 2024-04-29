@@ -10,7 +10,7 @@
       <img
         class="h-full cursor-pointer"
         alt="Goopper"
-        src="../../logo.svg"
+        src="/logo.svg"
         @click="$router.push('/')"
       >
     </div>
@@ -92,6 +92,7 @@
       <v-menu
         open-on-hover
         activator="#avatar"
+        theme="light"
       >
         <v-list>
           <v-list-item>

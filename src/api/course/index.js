@@ -172,3 +172,14 @@ export function getStudentCourseProgress(courseId, studentId) {
     method: 'get'
   });
 }
+
+export function createCourseType(typeName) {
+  var formData = new FormData();
+  formData.append('typeName', typeName);
+
+  return request({
+    url: '/course/type',
+    method: 'post',
+    data: formData
+  });
+}
