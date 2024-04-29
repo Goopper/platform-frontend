@@ -63,3 +63,16 @@ export function manualSelectCourse(courseId) {
         method: 'post'
     });
 }
+//修改密码
+export async function changePassword(data) {
+  const res = await request({
+    url: '/user/student/password',
+    method: 'put',
+    data: data
+  });
+  if (res.code == '200') {
+    mitt.emit('showToast', { title: '修改成功', color: 'success', icon: '$success' });
+  } else {
+    mitt.emit('showToast', { title: '修改失败', color: 'error', icon: '$error' });
+  }
+}

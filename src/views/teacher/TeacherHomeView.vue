@@ -8,11 +8,12 @@
         <v-select
           v-model="courseId"
           label="选择课程"
-          :items="CourseList"
+          :items="courseList"
           item-title="name"
           item-value="id"
           variant="outlined"
           density="compact"
+          :loading="loading"
         />
       </div>
       <div class="right-select">
@@ -21,11 +22,12 @@
           <v-select
             v-model="groupId"
             label="选择小组"
-            :items="GroupList"
+            :items="groupList"
             item-title="name"
             item-value="id"
             variant="outlined"
             density="compact"
+            :loading="loading"
           />
         </div>
         <!-- 排序顺序 -->
@@ -33,11 +35,12 @@
           <v-select
             v-model="orderId"
             label="选择排序"
-            :items="OrderList"
+            :items="orderList"
             item-title="name"
             item-value="id"
             variant="outlined"
             density="compact"
+            :loading="loading"
           />
         </div>
       </div>
@@ -109,9 +112,9 @@ import { getCourseList, getGroupList, getStudentList } from '@/api/course';
 export default {
   name: 'TeacherHomeView',
   data: () => ({
-    CourseList: [],
-    GroupList: [],
-    OrderList: [
+    courseList: [],
+    groupList: [],
+    orderList: [
       { id: 1, name: '按学号排序' },
       { id: 2, name: '按姓名排序' },
     ],
@@ -120,6 +123,7 @@ export default {
     orderId: null,
     studentCardsList: [],
     showStudentCards: true,
+    loading: true,
   }),
   watch: {
     // 选择框选择后触发获取当前选择的id
@@ -133,62 +137,42 @@ export default {
       this.fetchStudentList();
     },
   },
-  mounted() {
-    //对OrderList进行遍历，将name放入OrderNameList中,添加OrderId的默认值
-    this.orderId = this.OrderList[0].id;
-  },
-  created() {
+  async created() {
     // 获取教师的课程列表
-    getCourseList().then((res) => {
-      if (res.data.length === 0) {
-        this.showStudentCards = false;
-      } else {
-        for (let i = 0; i < res.data.length; i++) {
-          this.CourseList.push(res.data[i]);
-        }
-        this.courseId = this.CourseList[0].id;
-      }
-
-      // 获取教师的小组列表
-      getGroupList().then((res) => {
-        for (let i = 0; i < res.data.length; i++) {
-          this.GroupList.push(res.data[i]);
-        }
-        this.groupId = this.GroupList[0].id;
-
-        // 获取教师的学生列表 实现方法 get方法传入三个参数有默认值,再可以通过选择框传入
-        if (this.groupId && this.courseId && this.orderId) {
-          this.fetchStudentList();
-        }
-      });
-    });
+    const course = await getCourseList();
+    const group = await getGroupList();
+    this.courseList = course.data;
+    this.groupList = group.data;
+    this.courseId = this.courseList[0].id;
+    this.groupId = this.groupList[0].id;
+    this.orderId = this.orderList[0].id;
+    this.loading = false;
+    this.fetchStudentList();
   },
   methods: {
     //获取学生信息列表
-    fetchStudentList() {
-      if (this.groupId && this.courseId && this.orderId) {
-        getStudentList(this.courseId, this.groupId, this.orderId).then(
-          (res) => {
-            if(res.data.length === 0) {
-              this.showStudentCards = false;
-            } else {
-              this.showStudentCards = true;
-              if (this.orderId === 2) {
-              this.studentCardsList = res.data.sort((a, b) => {
-                return a.name.localeCompare(b.name);
-              });
-            } else {
-              this.studentCardsList = res.data;
-            }
-            }
-            
-          }
-        );
+    async fetchStudentList() {
+      const res = await getStudentList(
+        this.courseId,
+        this.groupId,
+        this.orderId
+      );
+      if (res.data.length === 0) {
+        this.showStudentCards = false;
+      } else {
+        this.showStudentCards = true;
+        if (this.orderId === 2) {
+          this.studentCardsList = res.data.sort((a, b) => {
+            return a.name.localeCompare(b.name);
+          });
+        } else {
+          this.studentCardsList = res.data;
+        }
       }
     },
     //查询当前学生的小组名称
     groupName() {
-      let name = this.GroupList.find((group) => group.id === this.groupId);
+      let name = this.groupList.find((group) => group.id === this.groupId);
       return name ? name.name : null;
     },
 
@@ -319,7 +303,7 @@ nav {
 @media (min-width: 1024px) and (max-width: 1600px) {
   .course-students-card {
     grid-template-columns: 1fr 1fr 1fr;
-  } 
+  }
   .right-select {
     width: 44%;
   }

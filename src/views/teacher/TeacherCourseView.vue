@@ -9,6 +9,7 @@
         variant="outlined"
         density="compact"
         hide-details
+        :loading="loading"
       />
       <v-select
         v-model="selectedState"
@@ -20,6 +21,7 @@
         variant="outlined"
         density="compact"
         hide-details
+        :loading="loading"
       />
       <router-link to="create">
         <v-btn
@@ -30,14 +32,8 @@
         </v-btn>
       </router-link>
     </nav>
-    <h1 v-if="selectedState == 1">
-      草稿
-    </h1>
-    <h1 v-else-if="selectedState == 2">
-      使用中
-    </h1>
-    <h1 v-else>
-      已禁用
+    <h1>
+      {{ titleName(selectedState) }}
     </h1>
 
     <!-- 课程卡片 -->
@@ -46,8 +42,10 @@
       class="using-box"
     >
       <custom-course-card
-        :course="courseList"
-        :state="courseState"
+        v-for="course in courseList"
+        :key="course.id"
+        :course="course"
+        @refresh="loadData"
       />
     </div>
     <div
@@ -58,11 +56,8 @@
         size="100px"
         class="text-gray-400 mt-8"
         icon="mdi-signal-off"
-        @click="$router.go(0);"
       />
-      <p class="font-bold text-lg text-gray-400">
-        无课程
-      </p>
+      无课程
     </div>
   </main>
 </template>
@@ -75,15 +70,15 @@ export default {
   components: { CustomCourseCard },
   data() {
     return {
-      courseList: [],
-      usingCourseList: [],
-      draftCourseList: [],
-      deactivatedCourseList: [],
-      courseStateList: [],
+      courseList :[],
+      courseStateList: [{
+        id: null,
+        name: '全部',
+      }],
       courseState: [],
       searchCourseName: '',
       selectedState: null,
-      lastState: null,
+      loading: true,
     };
   },
   // 监听两个输入框
@@ -96,68 +91,30 @@ export default {
       );
     },
     selectedState() {
-      if (this.selectedState === 1) {
-        this.DraftCourse();
-        this.lastState = 1;
-      } else if (this.selectedState === 2) {
-        this.UsingCourse();
-        this.lastState = 2;
-      } else {
-        this.DeactivatedCourse();
-        this.lastState = 3;
-      }
+      this.loadData();
     },
   },
-  created() {
-    this.courseList = [];
-    //草稿课程
-    getTeacherCourseList(1, '').then((res) => {
-      if (res.data.length.length === 0) {
-        this.isShowDraft = false;
-      } else {
-        this.draftCourseList = res.data;
-      }
-    });
-    //使用中课程
-    getTeacherCourseList(2, '').then((res) => {
-      if (res.data.length.length === 0) {
-        this.isShowUsing = false;
-      } else {
-        this.usingCourseList = res.data;
-      }
-    });
-    //停用课程
-    getTeacherCourseList(3, '').then((res) => {
-      if (res.data.length.length === 0) {
-        this.isShowUsing = false;
-      } else {
-        this.deactivatedCourseList = res.data;
-      }
-    });
-
-    getStatus().then((res) => {
-      this.courseStateList = res.data;
-      this.selectedState = 2;
-      this.courseState = this.courseStateList[1].name;
-    });
+  async created() {
+    const res = await getStatus();
+    this.courseStateList = this.courseStateList.concat(res.data);
+    this.loadData();
   },
   methods: {
-    //草稿课程
-    DraftCourse() {
-      this.courseList = [];
-      this.courseList = this.draftCourseList;
-      this.courseState = this.courseStateList[0];
+    async loadData() {
+      const courseList = await getTeacherCourseList(this.selectedState, this.searchCourseName);
+      this.courseList = courseList.data;
+      this.loading = false;
     },
-    //使用中课程
-    UsingCourse() {
-      this.courseList = [];
-      this.courseList = this.usingCourseList;
-      this.courseState = this.courseStateList[1];
-    },
-    DeactivatedCourse() {
-      this.courseList = [];
-      this.courseList = this.deactivatedCourseList;
-      this.courseState = this.courseStateList[2];
+    titleName(state) {
+      if(state === null) {
+        return '全部课程';
+      }else if (state === 1) {
+        return '草稿';
+      } else if (state === 2) {
+        return '使用中';
+      } else if (state === 3) {
+        return '已停用';
+      }
     },
   },
 };
@@ -196,6 +153,8 @@ h1 {
   overflow: auto;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+  grid-auto-rows: min-content;
+  grid-auto-columns: min-content;
   grid-gap: 1em;
   height: 90%;
 }
@@ -207,7 +166,7 @@ h1 {
   }
 }
 
-@media (max-width: 1200px) {
+@media (max-width: 1300px) {
   .using-box {
     grid-template-columns: 1fr 1fr 1fr 1fr;
   }

@@ -12,10 +12,10 @@
     >
       <!-- 用来左右布局 -->
       <div class="user-msg">
-        <img
+        <v-img
           :src="studentInfo.avatar"
           alt="学生头像"
-        >
+        />
         <!-- 学生信息 -->
         <div class="student-info">
           <strong> {{ studentInfo.name }}</strong>
@@ -134,7 +134,7 @@
 </template>
 <script>
 import CustomHorizontalCourseCard from '@/components/CustomHorizontalCourseCard.vue';
-import CustomCourseListVue from '@/components/course/CustomCourseList.vue';
+import CustomCourseListVue from '@/components/course/CustomCourseTaskList.vue';
 import { changePassword, getStudentRecentCourse } from '@/api/course';
 import { getStudentInfo } from '@/api/user';
 import CustomFloatBackButton from '@/components/CustomFloatBackButton.vue';
@@ -162,7 +162,8 @@ export default {
       confirmPasswordRules: [
         value => !!value || '确认密码是必填项',
         value => value === this.password || '两次输入的密码不一致',
-    ],
+      ],
+    loading: true,
     };
   },
   created() {
@@ -171,9 +172,11 @@ export default {
     // 获取学生学习进度详情
     getStudentRecentCourse(this.studentId).then((res) => {
       this.courseDetail = res.data;
+      this.loading = false;
     });
     getStudentInfo(this.studentId).then((res) => {
       this.studentInfo = res.data;
+      this.loading = false;
     });
   },
   methods: {
@@ -182,12 +185,10 @@ export default {
       if (this.password !== this.confirmPassword) {
         mitt.emit('showToast', { title: '密码不一致', color: 'error', icon: '$error' });
       } else {
-        const fromPassword = new FormData();
-        const fromUid = new FormData();
-        console.log(fromPassword.get('password'));
-        fromPassword.append('password', this.password);
-        fromUid.append('uid', this.studentInfo.id);
-        changePassword(fromUid, fromPassword);
+        const data = new FormData();
+        data.append('password', this.password);
+        data.append('uid', this.studentInfo.id);
+        changePassword(data);
       }
     },
     //清空课程进度
@@ -216,7 +217,7 @@ main {
   display: flex;
 }
 // 头像
-img {
+.v-img {
   width: 16%;
   height: 16%;
   border-radius: 5em;
@@ -276,7 +277,7 @@ strong {
   }
 }
 @media (max-width: 600px) {
-  img{
+  .v-img{
     display: none;
   }
   .basic-info .v-icon{

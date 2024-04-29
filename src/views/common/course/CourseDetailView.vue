@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import CustomCourseList from '@/components/course/CustomCourseList.vue';
+import CustomCourseList from '@/components/course/CustomCourseTaskList.vue';
 import CustomFloatBackButton from '@/components/CustomFloatBackButton.vue';
 export default {
   name: 'CourseDetailView',

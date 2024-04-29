@@ -51,6 +51,7 @@ export default {
   data() {
     return {
       list: [],
+      iconDisplayed: 0,
       isShow: false,
     };
   },
@@ -65,25 +66,26 @@ export default {
     }
   },
   methods: {
-    //获取课程列表(无进度)
+    //获取课程列表
     async getCourseList() {
       const res = await getCourseTaskList(this.courseId);
       this.list = res.data;
     },
+    //获取学生学习课程列表
     async getStudentCourseProgress() {
       const res = await getStudentCourseProgress(this.courseId, this.studentId);
       this.list = res.data;
-      console.log(this.list);
+      this.iconDisplayed = 1;
     },
     iconProps(task) {
-      if ('status' in task) {
-        return {
-          'prepend-icon': task.status
-            ? 'mdi-checkbox-marked-circle-outline'
-            : 'empty',
-        };
-      } else {
-        return {};
+      if (this.iconDisplayed === 1) {
+        if ('status' in task) {
+          return {
+            'prepend-icon': task.status
+              ? 'mdi-checkbox-marked-circle-outline'
+              : 'empty',
+          };
+        }
       }
     },
     scoreColor(score) {

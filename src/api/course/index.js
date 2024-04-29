@@ -29,13 +29,13 @@ export function getStudentList(courseId = null, groupId = null, orderId = null) 
 }
 //获取当前老师课程列表
 export function getTeacherCourseList(statusId, name) {
-  return request({
-    url: '/course',
-    method: 'get',
-    params: {
-      statusId,
-      name
+  let url = `/course?name=${name}`;
+    if (statusId !== null) {
+      url += `&statusId=${statusId}`;
     }
+  return request({
+    url: url,
+    method: 'get',
   });
 }
 
@@ -171,20 +171,4 @@ export function getStudentCourseProgress(courseId, studentId) {
     url: `/student/course/${studentId}/${courseId}`,
     method: 'get'
   });
-}
-//修改密码
-export async function changePassword(uid, password) {
-  const res = await request({
-    url: '/user/student/password',
-    method: 'put',
-    data: {
-      uid,
-      password
-    }
-  });
-  if (res.code == '200') {
-    mitt.emit('showToast', { title: '修改成功', color: 'success', icon: '$success' });
-  } else {
-    mitt.emit('showToast', { title: '修改失败', color: 'error', icon: '$error' });
-  }
 }
