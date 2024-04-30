@@ -76,17 +76,6 @@ export function applyGroup(courseId, groupsId) {
     }
   });
 }
-//创建课程
-export function createCourse(course) {
-  return request({
-    url: '/course',
-    method: 'post',
-    data: {
-      course
-    }
-  });
-
-}
 
 //删除课程
 export async function deleteCourse(courseId) {
@@ -173,7 +162,6 @@ export function getStudentCourseProgress(courseId, studentId) {
   });
 }
 
-<<<<<<< HEAD
 //获取课程详细信息
 export function getCourseDetail(courseId) {
   return request({
@@ -181,7 +169,7 @@ export function getCourseDetail(courseId) {
     method: 'get'
   });
 } 
-=======
+
 export function createCourseType(typeName) {
   var formData = new FormData();
   formData.append('typeName', typeName);
@@ -192,4 +180,39 @@ export function createCourseType(typeName) {
     data: formData
   });
 }
->>>>>>> 8b93a7d1421978c9a7e038aa2ead3d7cd690b6fe
+
+export function createCourse(course) {
+  const raw = JSON.stringify(course);
+  return request({
+    url: '/course',
+    method: 'post',
+    data: raw,
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  });
+}
+
+export function updateCourse(course) {
+  const raw = JSON.stringify(course);
+  return request({
+    url: '/course',
+    method: 'put',
+    data: raw,
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  });
+}
+
+export function removeCourseAttachment(courseId, attachmentId) {
+  const formData = new FormData();
+  formData.append('courseId', courseId);
+  formData.append('attachmentId', attachmentId);
+
+  return request({
+    url: '/course/attachment',
+    method: 'delete',
+    data: formData
+  });
+}
