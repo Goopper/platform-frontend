@@ -9,8 +9,9 @@
     <v-list-item
       v-if="isShow"
       :class="{ selected: selectedId === courseId }"
+      @click="goToDetail()"
     >
-      <v-list-item-title @click="goToDetail()">
+      <v-list-item-title>
         {{ courseName }}
       </v-list-item-title>
     </v-list-item>
@@ -148,5 +149,8 @@ export default {
 .selected {
   background-color: #383838; /* 你的颜色 */
   color: #ffffff;
+}
+.v-list{
+ padding: 0; 
 }
 </style>

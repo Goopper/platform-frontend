@@ -8,7 +8,7 @@
     />
     <!-- 课程列表 -->
     <div class="course-list">
-      <CustomCourseList
+      <CustomCourseStructureList
         v-if="courseId && courseName"
         :course-id="courseId"
         :course-name="courseName"
@@ -23,12 +23,12 @@
 
 <script>
 import { getCourseInfo } from '@/api/course';
-import CustomCourseList from '@/components/course/CustomCourseTaskList.vue';
+import CustomCourseStructureList from '@/components/course/CustomCourseStructureList.vue';
 import CustomFloatBackButton from '@/components/CustomFloatBackButton.vue';
 export default {
   name: 'CourseDetailView',
   components: {
-    CustomCourseList,
+    CustomCourseStructureList,
     CustomFloatBackButton,
   },
   data() {
@@ -58,7 +58,7 @@ main {
 }
 .course-list {
   width: 20%;
-  height: 90%;
+  height: 98%;
   border: 1px solid #e0e0e0;
   > * {
     height: 100%;

@@ -8,7 +8,6 @@
       :src="course.cover"
       alt="课程图片"
       :loading="loading"
-      cover
     />
     <!-- 课程详细 -->
     <div class="course-info">
@@ -60,19 +59,20 @@
                     <v-card-actions>
                       <v-spacer />
                       <v-btn
-                        text
-                        @click="isActive.value = false"
-                      >
-                        取消
-                      </v-btn>
-                      <v-btn
-                        id="apply-success"
-                        text
+                        class="other-btn"
+                        variant="outlined"
+                        color="white"
                         @click="
                           applyGroupList(course.id), (isActive.value = false)
                         "
                       >
                         确定
+                      </v-btn>
+                      <v-btn
+                        variant="outlined"
+                        @click="isActive.value = false"
+                      >
+                        取消
                       </v-btn>
                     </v-card-actions>
                   </v-card>
@@ -104,19 +104,20 @@
                     <v-card-actions>
                       <v-spacer />
                       <v-btn
-                        text
-                        @click="isActive.value = false"
-                      >
-                        取消
-                      </v-btn>
-                      <v-btn
-                        id="apply-success"
-                        text
+                        class="deactivate-btn"
+                        variant="outlined"
+                        color="white"
                         @click="
                           deactivate_course(course.id), (isActive.value = false)
                         "
                       >
                         确定
+                      </v-btn>
+                      <v-btn
+                        variant="outlined"
+                        @click="isActive.value = false"
+                      >
+                        取消
                       </v-btn>
                     </v-card-actions>
                   </v-card>
@@ -187,16 +188,18 @@
                   <v-card-actions>
                     <v-spacer />
                     <v-btn
-                      text
-                      @click="isActive.value = false"
-                    >
-                      取消
-                    </v-btn>
-                    <v-btn
-                      text
+                      variant="outlined"
+                      color="white"
+                      :class="getButtonColor(dialogTitle)"
                       @click="calledInterface(), (isActive.value = false)"
                     >
                       确定
+                    </v-btn>
+                    <v-btn
+                      variant="outlined"
+                      @click="isActive.value = false"
+                    >
+                      取消
                     </v-btn>
                   </v-card-actions>
                 </v-card>
@@ -214,6 +217,7 @@
                   <v-btn
                     block
                     variant="text"
+                    color="white"
                     v-bind="activatorProps"
                     @click="
                       (dialogTitle = '启用课程'),
@@ -247,16 +251,19 @@
                     <v-card-actions>
                       <v-spacer />
                       <v-btn
-                        text
-                        @click="isActive.value = false"
-                      >
-                        取消
-                      </v-btn>
-                      <v-btn
-                        text
+                        variant="outlined"
+                        color="white"
+                        :class="getButtonColor(dialogTitle)"
                         @click="calledInterface(), (isActive.value = false)"
                       >
                         确定
+                      </v-btn>
+                      <v-btn
+                        class="cancel-btn"
+                        variant="outlined"
+                        @click="isActive.value = false"
+                      >
+                        取消
                       </v-btn>
                     </v-card-actions>
                   </v-card>
@@ -376,6 +383,14 @@ export default {
       });
     },
 
+    //判断按钮颜色
+    getButtonColor(title) {
+      if (title === '删除课程') {
+        return 'deactivate-btn';
+      } else {
+        return 'other-btn';
+      }
+    },
     //获取颜色
     getColor(status) {
       return { 'background-color': color.getColor(status) };
@@ -385,6 +400,9 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+$warning: #FB8C00;
+$error: #FF4500;
+$success: #4CAF50;
 .using-card {
   width: 13em;
   height: 17em;
@@ -397,6 +415,7 @@ export default {
     width: 14em;
     height: 9em;
     border-radius: 0.25em;
+    background-color: #bdbdbd;
   }
 
   h2 {
@@ -436,7 +455,13 @@ export default {
     max-width: 100%;
   }
 }
-
+//确认按钮样式
+.other-btn{
+  background-color: $warning;
+}
+.deactivate-btn{
+  background-color: $error;
+}
 .using-card:hover {
   cursor: pointer;
 }

@@ -156,8 +156,10 @@ h1 {
   grid-auto-rows: min-content;
   grid-auto-columns: min-content;
   grid-gap: 1em;
-  height: 90%;
+  height: 88%;
+  padding: 0 0 2em 0 ;
 }
+
 
 // 响应式
 @media (max-width: 1600px) {

@@ -124,7 +124,7 @@
         show-progress
       />
       <div class="course-list">
-        <CustomCourseListVue 
+        <CustomCourseStructureList 
           :course-id="courseId"
           :student-id="studentInfo.id"
         />
@@ -134,7 +134,7 @@
 </template>
 <script>
 import CustomHorizontalCourseCard from '@/components/CustomHorizontalCourseCard.vue';
-import CustomCourseListVue from '@/components/course/CustomCourseTaskList.vue';
+import CustomCourseStructureList from '@/components/course/CustomCourseStructureList.vue';
 import { getStudentRecentCourse } from '@/api/course';
 import { getStudentInfo } from '@/api/user';
 import { changePassword } from '@/api/student';
@@ -144,7 +144,7 @@ export default {
   name: 'StudentDetailView',
   components: {
     CustomHorizontalCourseCard,
-    CustomCourseListVue,
+    CustomCourseStructureList,
     CustomFloatBackButton,
   },
   data() {
