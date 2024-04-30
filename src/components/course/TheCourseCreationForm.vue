@@ -37,6 +37,7 @@
               density="comfortable"
               variant="outlined"
               chips
+              :loading="teacherLoading"
               :items="teachers"
               item-title="name"
               item-value="id"
@@ -62,6 +63,7 @@
               density="comfortable"
               variant="outlined"
               chips
+              :loading="courseTypeLoading"
               :items="courseTypes"
               item-title="name"
               item-value="id"
@@ -146,6 +148,8 @@
                   课程附件（可选）:&nbsp;&nbsp;&nbsp;&nbsp;
                 </span>
                 <v-btn
+                  :disabled="loading"
+                  :loading="uploadLoading"
                   variant="flat"
                   @click="handleUploadClick"
                 >
@@ -155,7 +159,7 @@
                   ref="uploadAttach"
                   type="file"
                   hidden
-                  @change="handleSelectFile"
+                  @change="handleSelectAttachment"
                 >
               </div>
               <div class="mt-2 flex flex-col gap-2 overflow-y-auto max-h-[310px]">
@@ -193,7 +197,7 @@
         variant="flat"
         color="warning"
         density="comfortable"
-        :loading="loading"
+        :loading="loading || courseTypeLoading || teacherLoading"
         @click="handleCancelClick"
       >
         取消
@@ -201,7 +205,7 @@
       <v-btn
         variant="flat"
         density="comfortable"
-        :loading="loading"
+        :loading="loading || courseTypeLoading || teacherLoading"
         @click="handleSaveClick"
       >
         保存，进入下一步
@@ -316,13 +320,13 @@
             color="error"
             class="ms-auto"
             text="确认"
-            :loading="loading"
+            :loading="deleteLoading"
             @click="handleDeleteAttachment"
           />
           <v-btn
             variant="outlined"
             text="取消"
-            :disabled="loading"
+            :disabled="deleteLoading"
             @click="deleteAttachmentDialog=false"
           />
         </v-card-actions>
@@ -332,7 +336,8 @@
 </template>
 
 <script>
-import { createCourseType, getCourseType } from '@/api/course';
+import { deleteAttachment, uploadAttachment } from '@/api/attachment';
+import { createCourseType, getCourseType, removeCourseAttachment } from '@/api/course';
 import { getTeacherList } from '@/api/teacher';
 import mitt from '@/plugins/mitt';
 
@@ -350,6 +355,7 @@ export default {
   },
   emits: ['toNextStep'],
   data: () => ({
+    id: null,
     name: '',
     nameRules: [
       v => !!v || '课程名称不能为空',
@@ -370,6 +376,7 @@ export default {
     typeRules: [
       v => !!v || '请选择或创建一个课程类型',
     ],
+    typeId: null,
     courseTypes: [],
     teachers: [],
     attachments: [],
@@ -379,35 +386,47 @@ export default {
     saveCourseDialog: false,
     deleteAttachmentDialog: false,
     targetAttachment: undefined,
+    uploadLoading: false,
+    deleteLoading: false,
+    courseTypeLoading: false,
+    teacherLoading: false
   }),
   watch: {
     type(val) {
       // type not exists
       if (val && this.courseTypes.indexOf(val) === -1){
         this.createCourseTypeDialog = true;
+      } else if (val) {
+        this.typeId = val.id;
       }
     },
     // watch originCourse changes
-    originCourse(val) {
+    async originCourse(val) {
       if (val) {
         this.name = val.name;
         this.teacherId = val.teacherId;
         this.desc = val.desc;
         this.cover = val.cover;
-        this.type = val.type;
+        this.typeId = val.typeId;
+        this.type = this.courseTypes.find(o => o.id === this.typeId);
         this.attachments = val.attachments;
       }
     }
   },
-  created() {
-    this.loadCourseTypes();
-    getTeacherList().then(res => {
-      if (res) {
-        this.teachers = res.data;
-      } else {
-        mitt.emit('showToast', { title: '获取教师列表失败！', color: 'error', icon: '$error' });
-      }
-    });
+  async created() {
+    const id = this.$route.query.id;
+    if (id) {
+      this.id = id;
+    }
+    this.teacherLoading = true;
+    await this.loadCourseTypes();
+    const res = await getTeacherList();
+    if (res) {
+      this.teachers = res.data;
+    } else {
+      mitt.emit('showToast', { title: '获取教师列表失败！', color: 'error', icon: '$error' });
+    }
+    this.teacherLoading = false;
   },
   mounted() {
     window.addEventListener('beforeunload', this.handleBeforeUnload);
@@ -431,12 +450,17 @@ export default {
       this.createTypeLoading = false;
     },
     async loadCourseTypes() {
+      this.courseTypeLoading = true;
       const res = await getCourseType();
       if (res) {
         this.courseTypes = res.data;
+        if (this.originCourse) {
+          this.type = this.courseTypes.find(o => o.id === this.typeId);
+        }
       } else {
         mitt.emit('showToast', { title: '获取课程类型失败！', color: 'error', icon: '$error' });
       }
+      this.courseTypeLoading = false;
     },
     handleCoverClick() {
       this.$refs.coverInput.click();
@@ -471,11 +495,12 @@ export default {
       // save course
       this.saveCourseDialog = false;
       const course = {
+        id: this.id,
         name: this.name,
         teacherId: this.teacherId,
         desc: this.desc,
-        cover: this.coverFile,
-        typeId: this.type.id,
+        cover: this.coverFile || this.cover,
+        typeId: this.typeId,
         attachments: this.attachments,
       };
       this.$emit('toNextStep', course);
@@ -485,17 +510,42 @@ export default {
       this.deleteAttachmentDialog = true;
     },
     async handleDeleteAttachment() {
-      // TODO
-      console.log(this.targetAttachment);
+      this.deleteLoading = true;
+      const filename = this.targetAttachment.filename;
+      
+      let res = undefined;
+      if (this.targetAttachment.id) {
+        // remove course_attachment record
+        res = await removeCourseAttachment(this.id, this.targetAttachment.id);
+      } else {
+        // delete attachment
+        res = await deleteAttachment(filename);
+      }
+      // check status
+      if (res) {
+        mitt.emit('showToast', { title: '删除附件成功！', color: 'success', icon: '$success' });
+        this.attachments = this.attachments.filter(attachment => attachment.filename !== filename);
+        this.deleteAttachmentDialog = false;
+      } else {
+        mitt.emit('showToast', { title: '删除附件失败！', color: 'error', icon: '$error' });
+      }
+      this.deleteLoading = false;
     },
     handleUploadClick() {
       this.$refs.uploadAttach.click();
     },
-    async handleSelectFile(e) {
-      // TODO
+    async handleSelectAttachment(e) {
       const file = e.target.files[0];
       if (file) {
-        console.log(file);
+        this.uploadLoading = true;
+        const res = await uploadAttachment(file);
+        if (res) {
+          mitt.emit('showToast', { title: '上传附件成功！', color: 'success', icon: '$success' });
+          this.attachments.push(res.data);
+        } else {
+          mitt.emit('showToast', { title: '上传附件失败！', color: 'error', icon: '$error' });
+        }
+        this.uploadLoading = false;
       }
     }
   }

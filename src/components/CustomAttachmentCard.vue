@@ -54,9 +54,7 @@ export default {
     },
     downloadFile() {
       const url = this.attachment.url;
-      const link = document.createElement('a');
-      link.href = url;
-      link.click();
+      window.open(url, '_blank');
     },
     deleteFile() {
       this.$emit('deleteFile', this.attachment);
