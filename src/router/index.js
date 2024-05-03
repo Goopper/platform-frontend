@@ -4,6 +4,7 @@ import { useUserStore } from '@/store/user';
 import Role from '@/utils/role';
 import mitt from '@/plugins/mitt';
 import { clearLoginState } from '@/utils/auth';
+import { LOCAL_STORAGE_TOKEN_KEY } from '@/utils/key';
 
 export const whiteList = [
   '/login',
@@ -26,7 +27,8 @@ router.beforeEach(async (to, from) => {
     const userStore = useUserStore();
     
     // unauthenticated and not in white list
-    if (!userStore.isLoggedIn) {
+    // if has localStorage token, try to load user info
+    if (!userStore.isLoggedIn && localStorage.getItem(LOCAL_STORAGE_TOKEN_KEY)) {
       // try to load user info
       await userStore.loadUserInfo();
     }

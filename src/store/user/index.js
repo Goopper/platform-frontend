@@ -22,6 +22,7 @@ export const useUserStore = defineStore('user', {
             this.user.email = email;
         },
         async loadUserInfo() {
+            mitt.emit('globalLoading');
             const me = (await getMyBasicInfo());
             if (me) {
                 this.setUser(me.data);
@@ -36,6 +37,7 @@ export const useUserStore = defineStore('user', {
                 // clear login state, redirect to login page
                 mitt.emit('unauthorized');
             }
+            mitt.emit('globalLoading');
         }
     },
     getters: {

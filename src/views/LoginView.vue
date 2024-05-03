@@ -4,7 +4,7 @@
       <img
         id="logo"
         alt="Goopper"
-        src="../../logo-text.svg"
+        src="/logo-text.svg"
       >
       <div class="text-subtitle-1 font-weight-bold">
         第三方登陆 :
@@ -23,8 +23,8 @@
         </v-btn>
       </div>
       <v-divider
-        :thickness="2"
-        class="mt-5 mb-5"
+        :thickness="1"
+        class="mt-5 mb-5 border-opacity-100"
       />
       <v-form ref="form">
         <div class="text-subtitle-1 font-weight-bold">

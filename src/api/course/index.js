@@ -29,13 +29,13 @@ export function getStudentList(courseId = null, groupId = null, orderId = null) 
 }
 //获取当前老师课程列表
 export function getTeacherCourseList(statusId, name) {
-  return request({
-    url: '/course',
-    method: 'get',
-    params: {
-      statusId,
-      name
+  let url = `/course?name=${name}`;
+    if (statusId !== null) {
+      url += `&statusId=${statusId}`;
     }
+  return request({
+    url: url,
+    method: 'get',
   });
 }
 
@@ -65,8 +65,8 @@ export function getCourseTaskList(courseId) {
 }
 
 // 应用到小组
-export async function applyGroup(courseId, groupsId) {
-  const err = await request({
+export function applyGroup(courseId, groupsId) {
+  request({
     url: `/course/apply/${courseId}`,
     method: 'post',
     data: groupsId
@@ -75,17 +75,6 @@ export async function applyGroup(courseId, groupsId) {
       mitt.emit('showToast', { title: '应用成功', color: 'success', icon: '$success' });
     }
   });
-}
-//创建课程
-export function createCourse(course) {
-  return request({
-    url: '/course',
-    method: 'post',
-    data: {
-      course
-    }
-  });
-
 }
 
 //删除课程
@@ -105,6 +94,132 @@ export async function deleteCourse(courseId) {
 export function getCourseType() {
   return request({
     url: '/course/type',
+    method: 'get'
+  });
+}
+// 获取所有状态
+export function getStatus() {
+  return request({
+    url: '/course/status',
+    method: 'get'
+  });
+}
+
+//拷贝课程
+export async function copyCourse(courseId) {
+  const res = await request({
+    url: '/course/copy',
+    method: 'post',
+    data: courseId
+  });
+  if (res.code == '200') {
+    mitt.emit('showToast', { title: '复制成功', color: 'success', icon: '$success' });
+  } else {
+    mitt.emit('showToast', { title: '复制失败', color: 'error', icon: '$error' });
+  }
+}
+//发布课程
+export async function publishCourse(courseId) {
+  const res = await request({
+    url: `/course/publish/${courseId}`,
+    method: 'post'
+  });
+  if (res.code == '200') {
+    mitt.emit('showToast', { title: '发布成功', color: 'success', icon: '$success' });
+  } else {
+    mitt.emit('showToast', { title: '发布失败', color: 'error', icon: '$error' });
+  }
+}
+//停用课程
+export async function deactivateCourse(courseId) {
+  const res = await request({
+    url: `/course/disable/${courseId}`,
+    method: 'delete'
+  });
+  if (res.code == '200') {
+    mitt.emit('showToast', { title: '停用成功', color: 'success', icon: '$success' });
+  } else {
+    mitt.emit('showToast', { title: '停用失败', color: 'error', icon: '$error' });
+  }
+}
+//启用课程
+export async function enableCourse(courseId) {
+  const res = await request({
+    url: `/course/enable/${courseId}`,
+    method: 'post'
+  });
+  if (res.code == '200') {
+    mitt.emit('showToast', { title: '启用成功', color: 'success', icon: '$success' });
+  } else {
+    mitt.emit('showToast', { title: '启用失败', color: 'error', icon: '$error' });
+  }
+}
+//获取学生课程进度详情
+export function getStudentCourseProgress(courseId, studentId) {
+  return request({
+    url: `/student/course/${studentId}/${courseId}`,
+    method: 'get'
+  });
+}
+
+//获取课程详细信息
+export function getCourseDetail(courseId) {
+  return request({
+    url: `/course/${courseId}`,
+    method: 'get'
+  });
+} 
+
+export function createCourseType(typeName) {
+  var formData = new FormData();
+  formData.append('typeName', typeName);
+
+  return request({
+    url: '/course/type',
+    method: 'post',
+    data: formData
+  });
+}
+
+export function createCourse(course) {
+  const raw = JSON.stringify(course);
+  return request({
+    url: '/course',
+    method: 'post',
+    data: raw,
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  });
+}
+
+export function updateCourse(course) {
+  const raw = JSON.stringify(course);
+  return request({
+    url: '/course',
+    method: 'put',
+    data: raw,
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  });
+}
+
+export function removeCourseAttachment(courseId, attachmentId) {
+  const formData = new FormData();
+  formData.append('courseId', courseId);
+  formData.append('attachmentId', attachmentId);
+
+  return request({
+    url: '/course/attachment',
+    method: 'delete',
+    data: formData
+  });
+}
+
+export function getCourseStructure(courseId) {
+  return request({
+    url: `/course/tree/${courseId}`,
     method: 'get'
   });
 }

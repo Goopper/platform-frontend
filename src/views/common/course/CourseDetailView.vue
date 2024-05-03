@@ -2,70 +2,66 @@
   <!-- temp view for dev -->
   <main>
     <!-- 返回上一页 -->
-    <v-icon>
-      mdi-arrow-left
-    </v-icon>
-    <!-- 课程列表 -->
-    <v-list
-      bg-color="white"
-      class="course-aside"
-    >
-      <v-list-item title="测试课程1" />
-      <v-list-group
-        v-for="chapter in CourseTreeList"
-        :key="chapter.id"
-        :subgroup="chapter.tasks && chapter.tasks.length ? '' : null"
-      >
-        <template #activator="{props}">
-          <v-list-item
-            :title="chapter.name"
-            v-bind="props"
-          />
-        </template>
-        <v-list-item 
-          v-for="task in chapter.tasks"
-          :key="task.id"
-          :title="task.name"
-        />
-      </v-list-group>
-    </v-list>
 
+    <custom-float-back-button 
+      :back-url="'/course/teacher'"
+    />
+    <!-- 课程列表 -->
+    <div class="course-list">
+      <CustomCourseStructureList
+        v-if="courseId && courseName"
+        :course-id="courseId"
+        :course-name="courseName"
+      />
+    </div>
     <!-- 展示的课程,章节,任务详情 -->
     <div class="show-detail">
-      1111
+      <router-view />
     </div>
   </main>
 </template>
 
 <script>
-import { getCourseTaskList } from '@/api/course';
+import { getCourseInfo } from '@/api/course';
+import CustomCourseStructureList from '@/components/course/CustomCourseStructureList.vue';
+import CustomFloatBackButton from '@/components/CustomFloatBackButton.vue';
 export default {
   name: 'CourseDetailView',
+  components: {
+    CustomCourseStructureList,
+    CustomFloatBackButton,
+  },
   data() {
     return {
-      courseId: this.$route.query.id,
-      CourseTreeList :[]
+      courseId: null,
+      courseName: null,
     };
   },
-  created() {
-    getCourseTaskList(this.courseId).then((res) => {
-      console.log(res.data);
-      this.CourseTreeList=res.data;
-    });
-  }
+created() {
+   this.courseId = this.$route.params.id;
+   getCourseInfo(this.courseId).then((res) => {
+     this.courseName=res.data.name;
+   });   
+  },
+  methods: {
+  },
 };
 </script>
 
 <style lang="scss" scoped>
-  main{
-    display: flex;
-    height: 98%;
+main {
+  display: flex;
+  height: 98%;
+}
+.show-detail {
+  flex: 4;
+}
+.course-list {
+  width: 20%;
+  height: 98%;
+  border: 1px solid #e0e0e0;
+  > * {
+    height: 100%;
   }
-  .course-aside{
-    flex: 1;
-    border: 1px solid #e0e0e0;
-  }
-  .show-detail{
-    flex: 4;
-  }
+}
 </style>

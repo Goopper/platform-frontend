@@ -10,6 +10,25 @@
         :title="toastTitle"
       />
     </Transition>
+    <v-overlay
+      v-model="globalLoading"
+      persistent
+      color="white"
+      opacity="0.8"
+      class="flex flex-col justify-center items-center"
+    >
+      <div class="flex flex-col justify-center items-center">
+        <v-progress-circular
+          indeterminate
+          :width="16"
+          class="w-[15vw] h-[15vw] min-w-[200px] min-h-[200px]"
+          color="primary"
+        />
+        <p class="text-4xl mt-4 font-bold">
+          加载用户信息中
+        </p>
+      </div>
+    </v-overlay>
   </v-app>
 </template>
 
@@ -24,12 +43,16 @@ export default {
       toastTitle: '',
       toastColor: 'info',
       toastIcon: '$info',
-      userStore: useUserStore()
+      userStore: useUserStore(),
+      globalLoading: false
     };
   },
   mounted: function () {
     // create a global event bus
     mitt.on('showToast', this.showToast);
+    mitt.on('globalLoading', () => {
+      this.globalLoading = !this.globalLoading;
+    });
   },
   methods: {
     async showToast ({title, color, icon, duration=2000}) {
