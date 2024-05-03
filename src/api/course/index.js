@@ -216,3 +216,10 @@ export function removeCourseAttachment(courseId, attachmentId) {
     data: formData
   });
 }
+
+export function getCourseStructure(courseId) {
+  return request({
+    url: `/course/tree/${courseId}`,
+    method: 'get'
+  });
+}

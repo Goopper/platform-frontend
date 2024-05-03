@@ -50,7 +50,11 @@
           />
         </v-stepper-window-item>
         <v-stepper-window-item :value="2">
-          Content
+          <the-course-content-modify-card
+            v-if="originCourse.id"
+            :id="originCourse.id"
+            :loading="loading"
+          />
         </v-stepper-window-item>
       </v-stepper-window>
     </v-stepper>
@@ -59,7 +63,7 @@
 
 <script>
 import { uploadAttachment } from '@/api/attachment';
-import { createCourse, getCourseInfo, updateCourse } from '@/api/course';
+import { createCourse, updateCourse } from '@/api/course';
 import { getCourseCreationInfo } from '@/api/course/creation';
 import mitt from '@/plugins/mitt';
 
@@ -69,13 +73,19 @@ export default {
     activeStep: 1,
     alreadyCreated: false,
     loading: false,
-    originCourse: undefined
+    originCourse: {},
   }),
   created() {
     const id = this.$route.query.id;
     if (id) {
       this.loadCourse(id);
       this.alreadyCreated = true;
+    }
+  },
+  mounted() {
+    const id = this.$route.query.id;
+    if (id) {
+      this.activeStep = 2;
     }
   },
   methods: {
@@ -101,6 +111,8 @@ export default {
         // update
         await this.updateCourse(course);
       }
+      // flush course
+      this.originCourse = course;
       this.loading = false;
     },
     async createCourse(course) {
@@ -111,8 +123,9 @@ export default {
       const creationResult = await createCourse(course);
       if (creationResult) {
         mitt.emit('showToast', { title: '创建课程成功！', color: 'success', icon: '$success' });
+        // this.course.id = creationResult.data.id;
         // move to next step
-        this.activeStep = 2;
+        // this.activeStep = 2;
       } else {
         mitt.emit('showToast', { title: '创建课程失败。', color: 'error', icon: '$error' });
         this.loading = false;

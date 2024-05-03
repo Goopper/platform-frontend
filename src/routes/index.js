@@ -1,3 +1,28 @@
+// 视图
+import LoginView from '@/views/LoginView.vue';
+import GitHubOAuthCallbackView from '@/views/oauth/GitHubOAuthCallbackView.vue';
+import GitHubOAuthBindView from '@/views/oauth/bind/GitHubOAuthBindView.vue';
+import MainView from '@/views/MainView.vue';
+import HomeView from '@/views/common/HomeView.vue';
+import StudentHomeView from '@/views/student/StudentHomeView.vue';
+import TeacherHomeView from '@/views/teacher/TeacherHomeView.vue';
+import CourseView from '@/views/common/course/CourseView.vue';
+import StudentCourseView from '@/views/student/StudentCourseView.vue';
+import TeacherCourseView from '@/views/teacher/TeacherCourseView.vue';
+import CourseCreateView from '@/views/teacher/course/CourseCreateView.vue';
+import CourseDetailView from '@/views/common/course/CourseDetailView.vue';
+import CourseInfoView from '@/views/common/course/CourseInfoView.vue';
+import CourseTaskView from '@/views/common/course/CourseTaskView.vue';
+import CourseSectionView from '@/views/common/course/CourseSectionView.vue';
+import PersonalCenterView from '@/views/common/PersonalCenterView.vue';
+import InfoView from '@/views/common/personal/InfoView.vue';
+import SecurityView from '@/views/common/personal/SecurityView.vue';
+import MessageView from '@/views/common/personal/MessageView.vue';
+import StatisticView from '@/views/common/personal/StatisticView.vue';
+import TaskCorrectView from '@/views/teacher/TaskCorrectView.vue';
+import StudentPerformanceView from '@/views/teacher/StudentPerformanceView.vue';
+import StudentDetailView from '@/views/teacher/StudentDetailView.vue';
+
 // 权限
 import Role from '@/utils/role';
 
@@ -5,34 +30,34 @@ import Role from '@/utils/role';
 export const routes = [
   {
     path: '/login',
-    component: () => import('@/views/LoginView.vue')
+    component: LoginView
   },
   {
     path: '/oauth/callback/github',
-    component: () => import('@/views/oauth/GitHubOAuthCallbackView.vue')
+    component: GitHubOAuthCallbackView
   },
   {
     path: '/oauth/bind/github',
-    component: () => import('@/views/oauth/bind/GitHubOAuthBindView.vue')
+    component: GitHubOAuthBindView
   },
   {
     path: '/',
-    component: () => import('@/views/MainView.vue'),
+    component: MainView,
     children: [
       {
         path: 'home',
-        component: () => import('@/views/common/HomeView.vue'),
+        component: HomeView,
         children: [
           {
             path: Role.ROLE_STUDENT.name,
-            component: () => import('@/views/student/StudentHomeView.vue'),
+            component: StudentHomeView,
             meta: {
               requireRole: Role.ROLE_STUDENT
             }
           },
           {
             path: Role.ROLE_TEACHER.name,
-            component: () => import('@/views/teacher/TeacherHomeView.vue'),
+            component: TeacherHomeView,
             meta: {
               requireRole: Role.ROLE_TEACHER
             }
@@ -41,44 +66,44 @@ export const routes = [
       },
       {
         path: 'course',
-        component: () => import('@/views/common/course/CourseView.vue'),
+        component: CourseView,
         children: [
           {
             path: Role.ROLE_STUDENT.name,
-            component: () => import('@/views/student/StudentCourseView.vue'),
+            component: StudentCourseView,
             meta: {
               requireRole: Role.ROLE_STUDENT
             }
           },
           {
             path: Role.ROLE_TEACHER.name,
-            component: () => import('@/views/teacher/TeacherCourseView.vue'),
+            component: TeacherCourseView,
             meta: {
               requireRole: Role.ROLE_TEACHER
             },
           },
           {
             path: 'create',
-            component: () => import('@/views/teacher/course/CourseCreateView.vue'),
+            component: CourseCreateView,
             meta: {
               requireRole: Role.ROLE_TEACHER
             },
           },
           {
             path: 'detail/:id',
-            component: () => import('@/views/common/course/CourseDetailView.vue'),
+            component: CourseDetailView,
             children: [
               {
                 path: '',
-                component: () => import('@/views/common/course/CourseInfoView.vue'),
+                component: CourseInfoView,
               },
               {
                 path: 'task/:taskId',
-                component: () => import('@/views/common/course/CourseTaskView.vue'),
+                component: CourseTaskView,
               },
               {
                 path: 'section/:sectionId',
-                component: () => import('@/views/common/course/CourseSectionView.vue'),
+                component: CourseSectionView,
               }
             ]
           },
@@ -86,23 +111,23 @@ export const routes = [
       },
       {
         path: 'personal',
-        component: () => import('@/views/common/PersonalCenterView.vue'),
+        component: PersonalCenterView,
         children: [
           {
             path: '',
-            component: () => import('@/views/common/personal/InfoView.vue'),
+            component: InfoView,
           },
           {
             path: 'security',
-            component: () => import('@/views/common/personal/SecurityView.vue'),
+            component: SecurityView,
           },
           {
             path: 'message',
-            component: () => import('@/views/common/personal/MessageView.vue'),
+            component: MessageView,
           },
           {
             path: 'statistics',
-            component: () => import('@/views/common/personal/StatisticView.vue'),
+            component: StatisticView,
             meta: {
               requireRole: Role.ROLE_TEACHER
             }
@@ -111,21 +136,21 @@ export const routes = [
       },
       {
         path: 'teacher/correct/:messageId',
-        component: () => import('@/views/teacher/TaskCorrectView.vue'),
+        component: TaskCorrectView,
         meta: {
           requireRole: Role.ROLE_TEACHER
         }
       },
       {
         path: 'teacher/student/performance',
-        component: () => import('@/views/teacher/StudentPerformanceView.vue'),
+        component: StudentPerformanceView,
         meta: {
           requireRole: Role.ROLE_TEACHER
         }
       },
       {
         path: 'teacher/student/detail',
-        component: () => import('@/views/teacher/StudentDetailView.vue'),
+        component: StudentDetailView,
         meta: {
           requireRole: Role.ROLE_TEACHER
         }
