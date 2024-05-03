@@ -1,9 +1,10 @@
 import { request } from '..';
 
 export function getGitHubOAuthUrl() {
+    var currentOrigin = window.location.origin;
     return request({
         method: 'get',
-        url: '/oauth/github/url?redirectUrl=http://localhost:3000/oauth/callback/github',
+        url: `/oauth/github/url?redirectUrl=${currentOrigin}/oauth/callback/github`,
     });
 }
 
@@ -26,8 +27,9 @@ export function oAuthLogin(provider, id) {
 }
 
 export function getOAuthURL(providerName) {
+    var currentOrigin = window.location.origin;
     return request({
-        url: `/oauth/${providerName}/url?redirectUrl=http://localhost:3000/oauth/bind/github`,
+        url: `/oauth/${providerName}/url?redirectUrl=${currentOrigin}/oauth/bind/github`,
         method: 'get'
     });
 };
