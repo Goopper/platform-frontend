@@ -8,6 +8,7 @@
       :src="course.cover"
       alt="课程图片"
       :loading="loading"
+      :lazy-src="course.cover"
     />
     <!-- 课程详细 -->
     <div class="course-info">

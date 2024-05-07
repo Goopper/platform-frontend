@@ -47,6 +47,15 @@
     </nav>
     <!-- 学生信息卡片 -->
     <div
+      v-if="loading"
+      class="loader"
+    >
+      <v-progress-circular
+        indeterminate
+        color="primary"
+      />
+    </div>
+    <div
       v-if="showStudentCards"
       class="course-students-card"
     >
@@ -128,19 +137,29 @@ export default {
   watch: {
     // 选择框选择后触发获取当前选择的id
     orderId() {
+      this.loading = true;
       this.fetchStudentList();
+      this.loading = false;
     },
     groupId() {
+      this.loading = true;
       this.fetchStudentList();
+      this.loading = false;
     },
     courseId() {
+      this.loading = true;
       this.fetchStudentList();
+      this.loading = false;
     },
   },
   async created() {
     // 获取教师的课程列表
+
     const course = await getCourseList();
     const group = await getGroupList();
+    if (course == 0 || group == 0) {
+      this.loading = false;
+    }
     this.courseList = course.data;
     this.groupList = group.data;
     this.courseId = this.courseList[0].id;
@@ -395,5 +414,11 @@ section p {
 
 section span:first-of-type {
   color: #666666;
+}
+
+.loader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>

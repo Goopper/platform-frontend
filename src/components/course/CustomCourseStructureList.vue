@@ -1,6 +1,16 @@
 <template>
+  <div
+    v-if="isLoading"
+    class="loader"
+  >
+    <v-progress-circular
+      indeterminate
+      color="primary"
+    />
+  </div>
+
   <v-list
-    v-if="list"
+    v-else
     bg-color="white"
     open-strategy="multiple"
     active-strategy="single-independent"
@@ -66,6 +76,8 @@ export default {
       iconDisplayed: 0,
       isShow: false,
       selectedId: null,
+      isLoading:true,
+      
     };
   },
   created() {
@@ -83,12 +95,15 @@ export default {
     async getCourseList() {
       const res = await getCourseTaskList(this.courseId);
       this.list = res.data;
+      this.isLoading = false;
     },
     //获取学生学习课程列表
     async getStudentCourseProgress() {
       const res = await getStudentCourseProgress(this.courseId, this.studentId);
       this.list = res.data;
       this.iconDisplayed = 1;
+      this.isLoading = false;
+
     },
     iconProps(task) {
       if (this.iconDisplayed === 1) {
@@ -152,5 +167,10 @@ export default {
 }
 .v-list{
  padding: 0; 
+}
+.loader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>
