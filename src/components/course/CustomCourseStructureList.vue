@@ -1,6 +1,16 @@
 <template>
+  <div
+    v-if="isLoading"
+    class="loader"
+  >
+    <v-progress-circular
+      indeterminate
+      color="primary"
+    />
+  </div>
+
   <v-list
-    v-if="list"
+    v-else
     bg-color="white"
     open-strategy="multiple"
     active-strategy="single-independent"
@@ -34,7 +44,7 @@
         :title="task.name"
         v-bind="iconProps(task)"
         :class="{ selected: selectedId === task.id }"
-        @click="goToTask(task.id)"
+        @click="goToTask(task.id,section.id)"
       >
         <v-list-item-subtitle :style="scoreColor(task.score)">
           {{ task.score }}
@@ -66,6 +76,8 @@ export default {
       iconDisplayed: 0,
       isShow: false,
       selectedId: null,
+      isLoading: true,
+      
     };
   },
   created() {
@@ -77,18 +89,31 @@ export default {
     if (this.courseName) {
       this.isShow = true;
     }
+    //判断当前选中的是课程、章节还是任务
+    if (this.$route.params.taskId) {
+      this.selectedId = Number(this.$route.params.taskId);
+      this.activeSection = this.selectedId;
+    } else if (this.$route.params.sectionId) {
+      this.selectedId = Number(this.$route.params.sectionId);
+      this.activeSection = this.selectedId;
+    } else {
+      this.selectedId = this.courseId;
+    }
   },
   methods: {
     //获取课程列表
     async getCourseList() {
       const res = await getCourseTaskList(this.courseId);
       this.list = res.data;
+      this.isLoading = false;
     },
     //获取学生学习课程列表
     async getStudentCourseProgress() {
       const res = await getStudentCourseProgress(this.courseId, this.studentId);
       this.list = res.data;
       this.iconDisplayed = 1;
+      this.isLoading = false;
+
     },
     iconProps(task) {
       if (this.iconDisplayed === 1) {
@@ -152,5 +177,10 @@ export default {
 }
 .v-list{
  padding: 0; 
+}
+.loader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>

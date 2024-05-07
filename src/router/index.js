@@ -5,6 +5,11 @@ import Role from '@/utils/role';
 import mitt from '@/plugins/mitt';
 import { clearLoginState } from '@/utils/auth';
 import { LOCAL_STORAGE_TOKEN_KEY } from '@/utils/key';
+import nProgress from 'nprogress';
+import 'nprogress/nprogress.css';
+import { useSaveStore } from '@/store/common/save';
+
+nProgress.configure({ showSpinner: false });
 
 export const whiteList = [
   '/login',
@@ -23,6 +28,9 @@ mitt.on('unauthorized', () => {
 });
 
 router.beforeEach(async (to, from) => {
+  nProgress.start();
+
+  // permission check
   if (!whiteList.includes(to.path)) {
     const userStore = useUserStore();
     
@@ -31,6 +39,7 @@ router.beforeEach(async (to, from) => {
     if (!userStore.isLoggedIn && localStorage.getItem(LOCAL_STORAGE_TOKEN_KEY)) {
       // try to load user info
       await userStore.loadUserInfo();
+      nProgress.inc(0.5);
     }
 
     // role redirect
@@ -60,4 +69,24 @@ router.beforeEach(async (to, from) => {
       }
     }
   }
+
+  // confirm check
+  if (from.meta.routeConfirm) {
+    const saveStore = useSaveStore();
+    if (saveStore.isSaved) {
+      return true;
+    } else {
+      const result = confirm('当前页面有未保存的内容，是否继续？');
+      if (result) {
+        saveStore.setAsSaved();
+      } else {
+        mitt.emit('course-item-selection-update');
+        return false;
+      }
+    }
+  }
+});
+
+router.afterEach(() => {
+  nProgress.done();
 });

@@ -37,6 +37,7 @@
     </h1>
 
     <!-- 课程卡片 -->
+    
     <div
       v-if="courseList.length > 0"
       class="using-box"
@@ -57,7 +58,18 @@
         class="text-gray-400 mt-8"
         icon="mdi-signal-off"
       />
-      无课程
+      <p class="font-bold text-lg text-gray-400">
+        无课程
+      </p>
+    </div>
+    <div
+      v-if="loading"
+      class="loader"
+    >
+      <v-progress-circular
+        indeterminate
+        color="primary"
+      />
     </div>
   </main>
 </template>
@@ -158,6 +170,12 @@ h1 {
   grid-gap: 1em;
   height: 88%;
   padding: 0 0 2em 0 ;
+}
+
+.loader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 

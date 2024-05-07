@@ -12,7 +12,12 @@ html,
 body {
   margin: 0;
   padding: 0;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+#nprogress .bar {
+  background: var(--custom-primary) !important;
 }
 
 .v-application {

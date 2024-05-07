@@ -2,10 +2,19 @@
   <!-- temp view for dev -->
   <main>
     <!-- 返回上一页 -->
+    <div v-if="isAuthority()">
+      <custom-float-back-button
+        :back-url="'/course/teacher'"
+        class="back-button"
+      />
+    </div>
+    <div v-else>
+      <custom-float-back-button
+        class="back-button"
+        :back-url="'/course/student'"
+      />
+    </div>
 
-    <custom-float-back-button 
-      :back-url="'/course/teacher'"
-    />
     <!-- 课程列表 -->
     <div class="course-list">
       <CustomCourseStructureList
@@ -14,6 +23,7 @@
         :course-name="courseName"
       />
     </div>
+
     <!-- 展示的课程,章节,任务详情 -->
     <div class="show-detail">
       <router-view />
@@ -25,6 +35,7 @@
 import { getCourseInfo } from '@/api/course';
 import CustomCourseStructureList from '@/components/course/CustomCourseStructureList.vue';
 import CustomFloatBackButton from '@/components/CustomFloatBackButton.vue';
+import { useUserStore } from '@/store/user';
 export default {
   name: 'CourseDetailView',
   components: {
@@ -37,13 +48,23 @@ export default {
       courseName: null,
     };
   },
-created() {
-   this.courseId = this.$route.params.id;
-   getCourseInfo(this.courseId).then((res) => {
-     this.courseName=res.data.name;
-   });   
+  computed: {
+    taskId() {
+      return this.$route.params.taskId;
+    },
+  },
+  created() {
+    this.courseId = this.$route.params.id;
+    getCourseInfo(this.courseId).then((res) => {
+      this.courseName = res.data.name;
+    });
+    console.log(this.$route.params.taskId);
   },
   methods: {
+    isAuthority() {
+      const role = useUserStore().role.name;
+      if (role === 'teacher') return true;
+    },
   },
 };
 </script>
@@ -62,6 +83,11 @@ main {
   border: 1px solid #e0e0e0;
   > * {
     height: 100%;
+  }
+}
+@media (max-width: 770px) {
+  .back-button {
+    display: none;
   }
 }
 </style>

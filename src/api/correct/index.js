@@ -23,3 +23,17 @@ export function submitCorrect(answerId, comment, score) {
         data: data 
     });
 }
+
+//提交任务答案
+export function submitTaskAnswer(taskId,content,attachments) {
+  console.log(attachments);
+  return request({
+    url: '/answer/submit',
+    method: 'post',
+    data: {
+      taskId,
+      content,
+      attachments
+    }
+  });
+}

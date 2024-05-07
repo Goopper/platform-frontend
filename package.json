@@ -11,6 +11,7 @@
     "@mdi/font": "^7.4.47",
     "axios": "^1.6.8",
     "mitt": "^3.0.1",
+    "nprogress": "^0.2.0",
     "pinia": "^2.1.7",
     "unplugin-fonts": "^1.1.1",
     "vue": "^3.4.23",
