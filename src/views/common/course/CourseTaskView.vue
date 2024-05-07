@@ -5,7 +5,10 @@
       <div class="title-state">
         <h1>{{ task.name }}</h1>
         <span>
-          <v-icon v-if="task.status">mdi-check-circle-outline</v-icon>
+          <v-icon
+            v-if="task.status"
+            color="green"
+          >mdi-check-circle-outline</v-icon>
         </span>
       </div>
       <p>{{ task.content }}</p>
@@ -23,6 +26,7 @@
         <v-tab
           value="answer"
           text="答题区"
+          :disabled="task.status"
         >
           答题区
         </v-tab>
@@ -54,26 +58,29 @@
             </div>
           </div>
         </v-window-item>
+        <!-- 答题区window -->
         <v-window-item
           value="answer"
           class="answer"
         >
           <div class="answer-input">
             <!-- 输入框 -->
-            <v-textarea
-              v-model="content"
-              :rules="contentRules"
-              class="textarea"
-              placeholder="输入答案..."
-              variant="solo"
-              bg-color="white"
-              :maxlength="500"
-              no-resize
-              clearable
-              flat
-            />
+            <div class="textarea">
+              <v-textarea
+                v-model="content"
+                :rules="contentRules"
+                placeholder="输入答案..."
+                variant="solo"
+                bg-color="white"
+                :maxlength="500"
+                no-resize
+                clearable
+                flat
+              />
+            </div>
+
             <!-- 上传附件 -->
-            <div class="input-attachment">
+            <div class="attachment-upload">
               <input
                 ref="uploadAttach"
                 type="file"
@@ -86,7 +93,7 @@
                 class="upload-attachment"
               >
                 <custom-attachment-card
-                  v-for="(attachment,index) in attachments"
+                  v-for="(attachment, index) in attachments"
                   :key="index"
                   :attachment="attachment"
                   deletable
@@ -129,17 +136,14 @@
                   color="white"
                   class="submit-btn"
                   v-bind="activatorProps"
+                  :loading="uploadLoading"
                   :disabled="isAuthority()"
                 >
                   提交
                 </v-btn>
               </template>
-              <v-card
-                color="white"
-              >
-                <v-card-title>
-                  提交请求
-                </v-card-title>
+              <v-card color="white">
+                <v-card-title> 提交请求 </v-card-title>
                 <v-card-text>
                   <p>是否要提交当前的答案?</p>
                   <span>提交后不能更改!</span>
@@ -150,9 +154,7 @@
                     class="submit-btn"
                     variant="outlined"
                     color="white"
-                    @click="
-                      (submitAnswer()),isActive=false
-                    "
+                    @click="submitAnswer(), (isActive = false)"
                   >
                     确定
                   </v-btn>
@@ -165,7 +167,6 @@
                 </v-card-actions>
               </v-card>
             </v-dialog>
-            <!-- 删除附件 -->
             <v-dialog
               v-model="deleteAttachmentDialog"
               persistent
@@ -176,7 +177,11 @@
                 color="white"
               >
                 <v-card-text>
-                  确定删除提交的 <span class="font-bold text-red-500">{{ targetAttachment.originalFilename }}</span> 附件吗？
+                  确定删除提交的
+                  <span class="font-bold text-red-500">{{
+                    targetAttachment.originalFilename
+                  }}</span>
+                  附件吗？
                 </v-card-text>
                 <v-card-actions>
                   <v-btn
@@ -191,7 +196,7 @@
                     variant="outlined"
                     text="取消"
                     :disabled="deleteLoading"
-                    @click="deleteAttachmentDialog=false"
+                    @click="deleteAttachmentDialog = false"
                   />
                 </v-card-actions>
               </v-card>
@@ -200,6 +205,29 @@
         </v-window-item>
       </v-window>
     </div>
+    <!-- 离开弹窗 -->
+    <v-dialog
+      v-model="isLeaveDialog"
+      persistent
+      max-width="320"
+    >
+      <v-card color="white">
+        <v-card-title>确认离开</v-card-title>
+        <v-card-text>你有未提交的内容，确定要离开吗？</v-card-text>
+        <v-card-actions>
+          <v-spacer />
+          <v-btn
+            color="red"
+            @click="confirmLeave"
+          >
+            确定
+          </v-btn>
+          <v-btn @click="cancelLeave">
+            取消
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </main>
 </template>
 <script>
@@ -213,21 +241,41 @@ import { useUserStore } from '@/store/user';
 export default {
   name: 'CourseTaskView',
   components: { CustomAttachmentCard },
+  beforeRouteUpdate(to, from, next) {
+    if (this.content || this.attachments.length > 0) {
+      this.isLeaveDialog = true;
+      this.nextRoute = next.bind(null, to);
+    } else {
+      this.tab = 'attachment';
+      next();
+    }
+  },
+  beforeRouteLeave(to, from, next) {
+    if (this.content || this.attachments.length > 0) {
+      this.isLeaveDialog = true;
+      this.nextRoute = next.bind(null, to);
+    } else {
+      this.tab = 'attachment';
+      next();
+    }
+  },
   data() {
     return {
       taskId: null,
       task: [],
       tab: null,
       content: '',
-      contentRules: [
-        (v) => !!v || '内容不能为空',
-      ],
+      contentRules: [(v) => !!v || '内容不能为空'],
       attachments: [],
       uploadLoading: false,
       isActive: false,
       deleteAttachmentDialog: false,
       targetAttachment: null,
+      //删除加载
       deleteLoading: false,
+      //离开加载
+      isLeaveDialog: false,
+      //离开路由
     };
   },
   watch: {
@@ -237,62 +285,103 @@ export default {
     this.fetchData();
   },
   methods: {
+    //查询当前task
     fetchData() {
+      if (this.content || this.attachments.length > 0) {
+        this.content = '';
+        this.attachments = [];
+      }
       this.taskId = this.$route.params.taskId;
       getTaskDetail(this.taskId).then((res) => {
         this.task = res.data;
       });
     },
+    //上传附件按钮
     handleUploadClick() {
       this.$refs.uploadAttach.click();
     },
+    //上传附件确认
     async handleSelectAttachment() {
       const file = this.$refs.uploadAttach.files[0];
       if (file) {
         this.uploadLoading = true;
         const res = await uploadAttachment(file);
         if (res) {
-          mitt.emit('showToast', { title: '上传附件成功！', color: 'success', icon: '$success' });
+          mitt.emit('showToast', {
+            title: '上传附件成功！',
+            color: 'success',
+            icon: '$success',
+          });
           this.attachments.push(res.data);
         } else {
-          mitt.emit('showToast', { title: '上传附件失败！', color: 'error', icon: '$error' });
+          mitt.emit('showToast', {
+            title: '上传附件失败！',
+            color: 'error',
+            icon: '$error',
+          });
         }
         this.uploadLoading = false;
       }
     },
     // 提交答案
     submitAnswer() {
-      if(!this.content){
-        mitt.emit('showToast', { title: '答案不能为空', color: 'error', icon: '$error' });
+      if (!this.content) {
+        mitt.emit('showToast', {
+          title: '答案不能为空',
+          color: 'error',
+          icon: '$error',
+        });
         return;
       } else {
-        submitTaskAnswer(this.taskId, this.content, this.attachments).then((res) => {
-        if (res.code == '200') {
-          mitt.emit('showToast', { title: '提交成功', color: 'success', icon: '$success' });
-        } else {
-          mitt.emit('showToast', { title: '提交失败', color: 'error', icon: '$error' });
-        }
-        });
+        submitTaskAnswer(this.taskId, this.content, this.attachments).then(
+          (res) => {
+            if (res.code == '200') {
+              mitt.emit('showToast', {
+                title: '提交成功',
+                color: 'success',
+                icon: '$success',
+              });
+              this.fetchData();
+            } else {
+              mitt.emit('showToast', {
+                title: '提交失败',
+                color: 'error',
+                icon: '$error',
+              });
+            }
+          }
+        );
       }
     },
     //删除附件弹窗按钮
     deleteClick(attachment) {
-      this.targetAttachment=attachment;
-      this.deleteAttachmentDialog=true;
+      this.targetAttachment = attachment;
+      this.deleteAttachmentDialog = true;
     },
     //删除附件确认按钮
     async deleteAttachment() {
       this.deleteLoading = true;
       const res = await deleteAttachment(this.targetAttachment.filename);
       if (res) {
-        mitt.emit('showToast', { title: '删除附件成功！', color: 'success', icon: '$success' });
-        this.attachments = this.attachments.filter(item => item.filename !== this.targetAttachment.filename);
+        mitt.emit('showToast', {
+          title: '删除附件成功！',
+          color: 'success',
+          icon: '$success',
+        });
+        this.attachments = this.attachments.filter(
+          (item) => item.filename !== this.targetAttachment.filename
+        );
         this.deleteAttachmentDialog = false;
       } else {
-        mitt.emit('showToast', { title: '删除附件失败！', color: 'error', icon: '$error' });
+        mitt.emit('showToast', {
+          title: '删除附件失败！',
+          color: 'error',
+          icon: '$error',
+        });
       }
       this.deleteLoading = false;
     },
+    //权限判断
     isAuthority() {
       const role = useUserStore().role.name;
       if (role == 'student') {
@@ -300,8 +389,21 @@ export default {
       } else {
         return true;
       }
-
-    }
+    },
+    confirmLeave() {
+      this.content = '';
+      this.attachments = [];
+      this.isLeaveDialog = false;
+      if (this.nextRoute) {
+        this.nextRoute();
+        this.nextRoute = null;
+        this.tab = 'attachment';
+      }
+    },
+    cancelLeave() {
+      this.isLeaveDialog = false;
+      this.nextRoute = null;
+    },
   },
 };
 </script>
@@ -310,14 +412,21 @@ main {
   background-color: white;
   height: 98%;
   border: 1px solid #e0e0e0;
+  border-left: 0px;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
 }
 .task-main {
-  height: 56%;
   padding: 2em;
+  p {
+    margin: 2em 0;
+    height: 56%;
+    overflow: auto;
+  }
   .title-state {
     display: flex;
+    height: 12%;
     h1 {
       font-size: 1em;
       font-weight: bold;
@@ -326,60 +435,54 @@ main {
       margin-left: 2em;
     }
   }
-  p {
-    margin: 2em 0;
-    height: 56%;
-    overflow: auto;
+}
+.answer-attachment {
+  height: 37%;
+  .v-tabs {
+    border-bottom: 1px solid #e0e0e0;
+  }
+  .attachment {
+    padding: 2em;
   }
 }
-
-.v-tabs {
-  border-bottom: 1px solid #e0e0e0;
-}
-.attachment {
-  padding: 2em;
-}
-.answer {
-  .answer-input{
-    display: flex;
-    .textarea {
-      flex: 1;
-      border-right: 1px solid #e0e0e0;
-    }
-    .input-attachment {
-      height: 25vh;
-      overflow: auto;
-      flex: 1;
-      padding: 1em;
-      .upload-attachment{
-        height: 50%;
-        > *{
-          margin-bottom: 1em;
-        } 
+.answer-input {
+  display: flex;
+  .textarea {
+    flex: 1;
+    border-right: 1px solid #e0e0e0;
+  }
+  .attachment-upload {
+    overflow: auto;
+    flex: 1;
+    padding: 1em;
+    .upload-attachment {
+      height: 50%;
+      > * {
+        margin-bottom: 1em;
       }
     }
   }
-  .btn-column{
+}
+.btn-column {
   padding: 1em;
-  border-top : 1px solid #e0e0e0;
+  border-top: 1px solid #e0e0e0;
   text-align: right;
   background-color: #fafafa;
-  .v-btn{
-    margin-left:1em;
+  .v-btn {
+    margin-left: 1em;
   }
-  .submit-btn{
+  .submit-btn {
     background-color: #383838;
   }
 }
-}
-.v-card-text{
+.v-card-text {
   display: flex;
   flex-direction: column;
-  span{
+  span {
     color: red;
   }
 }
-.submit-btn{
-  background-color: #FB8C00;
+.submit-btn {
+  background-color: #fb8c00;
 }
 </style>

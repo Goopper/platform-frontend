@@ -25,7 +25,7 @@ export function submitCorrect(answerId, comment, score) {
 }
 
 //提交任务答案
-export function submitTaskAnswer(content, attachments, taskId) {
+export function submitTaskAnswer(taskId,content,attachments) {
   console.log(attachments);
   return request({
     url: '/answer/submit',
