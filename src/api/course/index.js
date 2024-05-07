@@ -170,6 +170,22 @@ export function getCourseDetail(courseId) {
   });
 } 
 
+//获取章节详细信息
+export function getSectionDetail(sectionId) {
+  return request({
+    url: `/section/${sectionId}`,
+    method: 'get'
+  });
+}
+
+//获取任务详细信息
+export function getTaskDetail(taskId) {
+  return request({
+    url: `/task/${taskId}`,
+    method: 'get'
+  });
+}
+
 export function createCourseType(typeName) {
   var formData = new FormData();
   formData.append('typeName', typeName);

@@ -1,11 +1,385 @@
 <template>
-  task
+  <main>
+    <!-- 任务名称 任务状态 任务内容 -->
+    <div class="task-main">
+      <div class="title-state">
+        <h1>{{ task.name }}</h1>
+        <span>
+          <v-icon v-if="task.status">mdi-check-circle-outline</v-icon>
+        </span>
+      </div>
+      <p>{{ task.content }}</p>
+    </div>
+    <!-- 答题区和附件 -->
+    <div class="answer-attachment">
+      <v-tabs
+        v-model="tab"
+        align-tabs="title"
+      >
+        <v-tab
+          value="attachment"
+          text="教学课件"
+        />
+        <v-tab
+          value="answer"
+          text="答题区"
+        >
+          答题区
+        </v-tab>
+      </v-tabs>
+      <v-window v-model="tab">
+        <v-window-item
+          value="attachment"
+          class="attachment"
+        >
+          <div class="attachments">
+            <custom-attachment-card
+              v-for="attachment in task.attachment"
+              :key="attachment.id"
+              :attachment="attachment"
+            />
+            <!-- 没有附件的情况 -->
+            <div
+              v-if="task.attachment && task.attachment.length === 0"
+              class="flex flex-col justify-center items-center"
+            >
+              <v-icon
+                size="8vh"
+                class="text-gray-400"
+                icon="mdi-attachment"
+              />
+              <p class="font-bold text-lg text-gray-400">
+                没有附件
+              </p>
+            </div>
+          </div>
+        </v-window-item>
+        <v-window-item
+          value="answer"
+          class="answer"
+        >
+          <div class="answer-input">
+            <!-- 输入框 -->
+            <v-textarea
+              v-model="content"
+              :rules="contentRules"
+              class="textarea"
+              placeholder="输入答案..."
+              variant="solo"
+              bg-color="white"
+              :maxlength="500"
+              no-resize
+              clearable
+              flat
+            />
+            <!-- 上传附件 -->
+            <div class="input-attachment">
+              <input
+                ref="uploadAttach"
+                type="file"
+                hidden
+                @change="handleSelectAttachment"
+              >
+              <!-- 附件大于0是显示附件 -->
+              <div
+                v-if="attachments.length > 0"
+                class="upload-attachment"
+              >
+                <custom-attachment-card
+                  v-for="(attachment,index) in attachments"
+                  :key="index"
+                  :attachment="attachment"
+                  deletable
+                  @delete-file="deleteClick"
+                />
+              </div>
+              <div
+                v-else
+                class="flex flex-col justify-center items-center"
+              >
+                <v-icon
+                  size="8vh"
+                  class="text-gray-400"
+                  icon="mdi-attachment"
+                />
+                <p class="font-bold text-lg text-gray-400">
+                  没有附件
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="btn-column">
+            <v-btn
+              variant="outlined"
+              density="comfortable"
+              :loading="uploadLoading"
+              @click="handleUploadClick"
+            >
+              上传附件
+            </v-btn>
+            <v-dialog
+              v-model="isActive"
+              persistent
+              max-width="360"
+            >
+              <template #activator="{ props: activatorProps }">
+                <v-btn
+                  variant="outlined"
+                  density="comfortable"
+                  color="white"
+                  class="submit-btn"
+                  v-bind="activatorProps"
+                  :disabled="isAuthority()"
+                >
+                  提交
+                </v-btn>
+              </template>
+              <v-card
+                color="white"
+              >
+                <v-card-title>
+                  提交请求
+                </v-card-title>
+                <v-card-text>
+                  <p>是否要提交当前的答案?</p>
+                  <span>提交后不能更改!</span>
+                </v-card-text>
+                <v-card-actions>
+                  <v-spacer />
+                  <v-btn
+                    class="submit-btn"
+                    variant="outlined"
+                    color="white"
+                    @click="
+                      (submitAnswer()),isActive=false
+                    "
+                  >
+                    确定
+                  </v-btn>
+                  <v-btn
+                    variant="outlined"
+                    @click="isActive = false"
+                  >
+                    取消
+                  </v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
+            <!-- 删除附件 -->
+            <v-dialog
+              v-model="deleteAttachmentDialog"
+              persistent
+              max-width="360"
+            >
+              <v-card
+                title="提示"
+                color="white"
+              >
+                <v-card-text>
+                  确定删除提交的 <span class="font-bold text-red-500">{{ targetAttachment.originalFilename }}</span> 附件吗？
+                </v-card-text>
+                <v-card-actions>
+                  <v-btn
+                    variant="flat"
+                    color="error"
+                    class="ms-auto"
+                    text="确认"
+                    :loading="deleteLoading"
+                    @click="deleteAttachment"
+                  />
+                  <v-btn
+                    variant="outlined"
+                    text="取消"
+                    :disabled="deleteLoading"
+                    @click="deleteAttachmentDialog=false"
+                  />
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
+          </div>
+        </v-window-item>
+      </v-window>
+    </div>
+  </main>
 </template>
 <script>
+import mitt from '@/plugins/mitt';
+import CustomAttachmentCard from '@/components/CustomAttachmentCard.vue';
+import { submitTaskAnswer } from '@/api/correct';
+import { uploadAttachment } from '@/api/attachment';
+import { getTaskDetail } from '@/api/course';
+import { deleteAttachment } from '@/api/attachment';
+import { useUserStore } from '@/store/user';
 export default {
-  name:'CourseTaskView'
+  name: 'CourseTaskView',
+  components: { CustomAttachmentCard },
+  data() {
+    return {
+      taskId: null,
+      task: [],
+      tab: null,
+      content: '',
+      contentRules: [
+        (v) => !!v || '内容不能为空',
+      ],
+      attachments: [],
+      uploadLoading: false,
+      isActive: false,
+      deleteAttachmentDialog: false,
+      targetAttachment: null,
+      deleteLoading: false,
+    };
+  },
+  watch: {
+    $route: 'fetchData',
+  },
+  created() {
+    this.fetchData();
+  },
+  methods: {
+    fetchData() {
+      this.taskId = this.$route.params.taskId;
+      getTaskDetail(this.taskId).then((res) => {
+        this.task = res.data;
+      });
+    },
+    handleUploadClick() {
+      this.$refs.uploadAttach.click();
+    },
+    async handleSelectAttachment() {
+      const file = this.$refs.uploadAttach.files[0];
+      if (file) {
+        this.uploadLoading = true;
+        const res = await uploadAttachment(file);
+        if (res) {
+          mitt.emit('showToast', { title: '上传附件成功！', color: 'success', icon: '$success' });
+          this.attachments.push(res.data);
+        } else {
+          mitt.emit('showToast', { title: '上传附件失败！', color: 'error', icon: '$error' });
+        }
+        this.uploadLoading = false;
+      }
+    },
+    // 提交答案
+    submitAnswer() {
+      if(!this.content){
+        mitt.emit('showToast', { title: '答案不能为空', color: 'error', icon: '$error' });
+        return;
+      } else {
+        submitTaskAnswer(this.taskId, this.content, this.attachments).then((res) => {
+        if (res.code == '200') {
+          mitt.emit('showToast', { title: '提交成功', color: 'success', icon: '$success' });
+        } else {
+          mitt.emit('showToast', { title: '提交失败', color: 'error', icon: '$error' });
+        }
+        });
+      }
+    },
+    //删除附件弹窗按钮
+    deleteClick(attachment) {
+      this.targetAttachment=attachment;
+      this.deleteAttachmentDialog=true;
+    },
+    //删除附件确认按钮
+    async deleteAttachment() {
+      this.deleteLoading = true;
+      const res = await deleteAttachment(this.targetAttachment.filename);
+      if (res) {
+        mitt.emit('showToast', { title: '删除附件成功！', color: 'success', icon: '$success' });
+        this.attachments = this.attachments.filter(item => item.filename !== this.targetAttachment.filename);
+        this.deleteAttachmentDialog = false;
+      } else {
+        mitt.emit('showToast', { title: '删除附件失败！', color: 'error', icon: '$error' });
+      }
+      this.deleteLoading = false;
+    },
+    isAuthority() {
+      const role = useUserStore().role.name;
+      if (role == 'student') {
+        return false;
+      } else {
+        return true;
+      }
+
+    }
+  },
 };
 </script>
 <style lang="scss" scoped>
+main {
+  background-color: white;
+  height: 98%;
+  border: 1px solid #e0e0e0;
+  display: flex;
+  flex-direction: column;
+}
+.task-main {
+  height: 56%;
+  padding: 2em;
+  .title-state {
+    display: flex;
+    h1 {
+      font-size: 1em;
+      font-weight: bold;
+    }
+    span {
+      margin-left: 2em;
+    }
+  }
+  p {
+    margin: 2em 0;
+    height: 56%;
+    overflow: auto;
+  }
+}
 
+.v-tabs {
+  border-bottom: 1px solid #e0e0e0;
+}
+.attachment {
+  padding: 2em;
+}
+.answer {
+  .answer-input{
+    display: flex;
+    .textarea {
+      flex: 1;
+      border-right: 1px solid #e0e0e0;
+    }
+    .input-attachment {
+      height: 25vh;
+      overflow: auto;
+      flex: 1;
+      padding: 1em;
+      .upload-attachment{
+        height: 50%;
+        > *{
+          margin-bottom: 1em;
+        } 
+      }
+    }
+  }
+  .btn-column{
+  padding: 1em;
+  border-top : 1px solid #e0e0e0;
+  text-align: right;
+  background-color: #fafafa;
+  .v-btn{
+    margin-left:1em;
+  }
+  .submit-btn{
+    background-color: #383838;
+  }
+}
+}
+.v-card-text{
+  display: flex;
+  flex-direction: column;
+  span{
+    color: red;
+  }
+}
+.submit-btn{
+  background-color: #FB8C00;
+}
 </style>
