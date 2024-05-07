@@ -1,6 +1,6 @@
 <template>
   <!-- temp view for dev -->
-  <div class="h-auto flex">
+  <div class="h-[calc(100vh-9rem)] flex">
     <custom-float-back-button :loading="loading" />
     <v-stepper
       v-model="activeStep"
@@ -9,7 +9,7 @@
       flat
       :rounded="0"
     >
-      <v-stepper-header class="border-b">
+      <v-stepper-header class="border-b min-h-[5.5rem]">
         <v-stepper-item
           class="text-xl"
           title="课程基本信息"
@@ -32,6 +32,7 @@
           class="text-xl"
           title="课程内容"
           :value="2"
+          :editable="alreadyCreated"
         >
           <template #icon>
             <v-icon
@@ -174,6 +175,15 @@ export default {
   display: flex !important;
   .v-window {
     margin: 0;
+    flex-grow: 1;
+    display: flex;
+  }
+  .v-window__container {
+    flex-grow: 1;
+  }
+  .v-window-item {
+    flex-grow: 1;
+    overflow-y: auto;
   }
 }
 
@@ -181,6 +191,12 @@ export default {
   .v-avatar {
     width: 36px !important;
     height: 36px !important;
+  }
+}
+
+.course-creation-textarea {
+  .v-input__prepend {
+    padding-top: 0 !important;
   }
 }
 </style>

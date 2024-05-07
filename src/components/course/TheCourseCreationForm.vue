@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex-grow flex flex-col"
+    class="flex flex-col h-full"
   >
     <div
       id="creation-form-container"
@@ -47,7 +47,6 @@
               :menu-props="{
                 'theme': 'light'
               }"
-              clearable
             >
               <template #prepend>
                 <span class="text-lg">
@@ -84,6 +83,7 @@
             <!-- desc -->
             <v-textarea
               v-model="desc"
+              class="course-creation-textarea"
               label="课程描述(最长500个字符)"
               name="desc"
               :rules="descRules"

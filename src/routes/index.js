@@ -1,3 +1,6 @@
+// 权限
+import Role from '@/utils/role';
+
 // 视图
 import LoginView from '@/views/LoginView.vue';
 import GitHubOAuthCallbackView from '@/views/oauth/GitHubOAuthCallbackView.vue';
@@ -22,9 +25,8 @@ import StatisticView from '@/views/common/personal/StatisticView.vue';
 import TaskCorrectView from '@/views/teacher/TaskCorrectView.vue';
 import StudentPerformanceView from '@/views/teacher/StudentPerformanceView.vue';
 import StudentDetailView from '@/views/teacher/StudentDetailView.vue';
-
-// 权限
-import Role from '@/utils/role';
+import TaskCreateView from '@/views/teacher/course/TaskCreateView.vue';
+import SectionCreateView from '@/views/teacher/course/SectionCreateView.vue';
 
 // 路由定义
 export const routes = [
@@ -86,8 +88,27 @@ export const routes = [
             path: 'create',
             component: CourseCreateView,
             meta: {
-              requireRole: Role.ROLE_TEACHER
+              requireRole: Role.ROLE_TEACHER,
+              routeConfirm: true
             },
+            children: [
+              {
+                path: 'task',
+                component: TaskCreateView,
+                meta: {
+                  requireRole: Role.ROLE_TEACHER,
+                  routeConfirm: true
+                },
+              },
+              {
+                path: 'section',
+                component: SectionCreateView,
+                meta: {
+                  requireRole: Role.ROLE_TEACHER,
+                  routeConfirm: true
+                },
+              }
+            ]
           },
           {
             path: 'detail/:id',

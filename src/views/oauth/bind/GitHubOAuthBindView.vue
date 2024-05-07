@@ -68,7 +68,6 @@ export default {
   methods: {
     async bindGitHub() {
       const account = await getGitHubOAuthAccount(this.code);
-      console.log(account);
       if (account) {
         const oauthId = account.data.id;
         const oauthName = account.data.login;

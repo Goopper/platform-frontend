@@ -47,7 +47,6 @@ export default {
   }),
   created() {
     const OS = DeviceOS.getDeviceOSByName(this.device.deviceInfo.platform);
-    console.log(OS);
     this.OS = OS;
   },
   methods: {
