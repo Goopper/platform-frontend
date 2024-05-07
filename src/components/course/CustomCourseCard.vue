@@ -36,6 +36,7 @@
                     block
                     variant="text"
                     v-bind="activatorProps"
+                    @click="getGroupList"
                   >
                     🔮应用到小组
                   </v-btn>
@@ -314,12 +315,6 @@ export default {
     applyGroups: [],
     loading: true,
   }),
-  created() {
-    //获取所有小组
-    getGroupList().then((res) => {
-      this.groupList = res.data;
-    });
-  },
   methods: {
     //跳转到课程详情页
     goToDetail(courseId) {
@@ -356,6 +351,12 @@ export default {
     enableCourse(id) {
       enableCourse(id).then(() => {
         this.$emit('refresh');
+      });
+    },
+    //获取小组
+    getGroupList() {
+      getGroupList().then((res) => {
+        this.groupList = res.data;
       });
     },
     //应用到小组
