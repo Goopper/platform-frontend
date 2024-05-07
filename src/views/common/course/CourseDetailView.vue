@@ -5,6 +5,7 @@
 
     <custom-float-back-button 
       :back-url="'/course/teacher'"
+      class="back-button"
     />
     <!-- 课程列表 -->
     <div class="course-list">
@@ -62,6 +63,11 @@ main {
   border: 1px solid #e0e0e0;
   > * {
     height: 100%;
+  }
+}
+@media (max-width: 770px){
+  .back-button{
+    display: none;
   }
 }
 </style>
