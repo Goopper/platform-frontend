@@ -494,8 +494,9 @@ export default {
     handleSave() {
       // save course
       this.saveCourseDialog = false;
+      const idNum = this.id === null ? null : Number(this.id);
       const course = {
-        id: this.id,
+        id: idNum,
         name: this.name,
         teacherId: this.teacherId,
         desc: this.desc,
