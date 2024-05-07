@@ -52,7 +52,10 @@
           <p class="text-gray-500 text-sm">
             最后学习日期：{{ latestLearnedInfo.date }}
           </p>
-          <v-btn variant="outlined">
+          <v-btn
+            variant="outlined"
+            @click="goToDetail(currentCourse.course.id)"
+          >
             继续学习
           </v-btn>
         </div>
@@ -188,7 +191,13 @@ export default {
         return this.currentYearPerformance[day] === 1;
       }
       return false;
-    }
+    },
+    //跳转到课程详情页
+    goToDetail(courseId) {
+      this.$router.push({
+        path: `/course/detail/${courseId}`,
+      });
+    },
   },
 };
 </script>

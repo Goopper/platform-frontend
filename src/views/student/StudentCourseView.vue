@@ -42,6 +42,7 @@
         class="cursor-pointer"
         :course="course"
         show-progress
+        @click="goToDetail(course.course.id)"
       />
     </div>
     <div
@@ -261,7 +262,12 @@ export default {
         mitt.emit('showToast', { title: '选课失败！', color: 'error', icon: '$error' });
       }
       this.loading = false;
-    }
+    },
+    goToDetail(courseId) {
+      this.$router.push({
+        path: `/course/detail/${courseId}`,
+      });
+    },
   }
 };
 </script>
