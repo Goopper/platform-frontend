@@ -56,7 +56,6 @@ export default {
     async getCourseInfo() {
       const res = await getCourseInfo(this.courseId);
       this.course = res.data;
-      console.log(this.course);
     },
   },
 };
@@ -104,6 +103,7 @@ export default {
     height: 40%;
   p{
     width: 70%;
+    overflow: auto;
   }
  }
  .attachments{

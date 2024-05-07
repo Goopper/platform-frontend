@@ -48,7 +48,6 @@ export default {
       this.sectionId = this.$route.params.sectionId;
       getSectionDetail(this.sectionId).then((res) => {
         this.section = res.data;
-        console.log(this.section);
       });
     },
   },

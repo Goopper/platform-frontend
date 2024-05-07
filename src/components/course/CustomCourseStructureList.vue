@@ -44,7 +44,7 @@
         :title="task.name"
         v-bind="iconProps(task)"
         :class="{ selected: selectedId === task.id }"
-        @click="goToTask(task.id)"
+        @click="goToTask(task.id,section.id)"
       >
         <v-list-item-subtitle :style="scoreColor(task.score)">
           {{ task.score }}
@@ -76,7 +76,7 @@ export default {
       iconDisplayed: 0,
       isShow: false,
       selectedId: null,
-      isLoading:true,
+      isLoading: true,
       
     };
   },
@@ -88,6 +88,16 @@ export default {
     }
     if (this.courseName) {
       this.isShow = true;
+    }
+    //判断当前选中的是课程、章节还是任务
+    if (this.$route.params.taskId) {
+      this.selectedId = Number(this.$route.params.taskId);
+      this.activeSection = this.selectedId;
+    } else if (this.$route.params.sectionId) {
+      this.selectedId = Number(this.$route.params.sectionId);
+      this.activeSection = this.selectedId;
+    } else {
+      this.selectedId = this.courseId;
     }
   },
   methods: {
