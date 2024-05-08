@@ -1,5 +1,16 @@
 <template>
-  <main>
+  <div
+    v-if="loading"
+    class="loader"
+  >
+    <v-progress-circular
+      indeterminate
+      :size="80"
+      :width="8"
+      color="primary"
+    />
+  </div>
+  <main v-else>
     <div class="section-main">
       <h1>{{ section.name }}</h1>
       <p>{{ section.desc }}</p>
@@ -35,6 +46,7 @@ export default {
     return {
       sectionId: null,
       section: [],
+      loading: true,
     };
   },
   watch: {
@@ -48,6 +60,7 @@ export default {
       this.sectionId = this.$route.params.sectionId;
       getSectionDetail(this.sectionId).then((res) => {
         this.section = res.data;
+        this.loading = false;
       });
     },
   },
@@ -57,7 +70,6 @@ export default {
 main {
   background-color: white;
   height: 98%;
-  border: 1px solid #e0e0e0;
   display: flex;
   flex-direction: column;
   padding: 2em;
@@ -87,5 +99,11 @@ h1 {
 }
 .task-item {
   border: 1px solid #e0e0e0;
+}
+.loader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50vh;
 }
 </style>

@@ -89,12 +89,17 @@
               </template>
             </v-dialog>
             <v-menu
+              disabled
               open-on-click
               class="menu"
             >
               <template #activator="{ props }">
-                <div v-bind="props">
-                  <v-icon>mdi-dots-vertical</v-icon>
+                <div
+                  v-bind="props"
+                >
+                  <v-icon disabled>
+                    mdi-dots-vertical
+                  </v-icon>
                 </div>
               </template>
               <v-list>
@@ -263,6 +268,7 @@ strong {
   height: 50%;
   overflow: auto;
   border: 1px solid #e0e0e0;
+  background-color: white;
   > * {
     height: 100%;
   }

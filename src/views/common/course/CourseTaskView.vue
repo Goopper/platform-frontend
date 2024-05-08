@@ -1,5 +1,16 @@
 <template>
-  <main>
+  <div
+    v-if="loading"
+    class="loader"
+  >
+    <v-progress-circular
+      indeterminate
+      :size="80"
+      :width="8"
+      color="primary"
+    />
+  </div>
+  <main v-else>
     <!-- 任务名称 任务状态 任务内容 -->
     <div class="task-main">
       <div class="title-state">
@@ -31,10 +42,12 @@
           答题区
         </v-tab>
       </v-tabs>
-      <v-window v-model="tab">
+      <v-window
+        v-model="tab"
+        class="window"
+      >
         <v-window-item
           value="attachment"
-          class="attachment"
         >
           <div class="attachments">
             <custom-attachment-card
@@ -61,23 +74,21 @@
         <!-- 答题区window -->
         <v-window-item
           value="answer"
-          class="answer"
         >
           <div class="answer-input">
             <!-- 输入框 -->
-            <div class="textarea">
-              <v-textarea
-                v-model="content"
-                :rules="contentRules"
-                placeholder="输入答案..."
-                variant="solo"
-                bg-color="white"
-                :maxlength="500"
-                no-resize
-                clearable
-                flat
-              />
-            </div>
+            <v-textarea
+              v-model="content"
+              class="textarea"
+              placeholder="输入答案..."
+              variant="solo"
+              bg-color="white"
+              :maxlength="500"
+              no-resize
+              clearable
+              flat
+              hide-details
+            />
 
             <!-- 上传附件 -->
             <div class="attachment-upload">
@@ -90,7 +101,6 @@
               <!-- 附件大于0是显示附件 -->
               <div
                 v-if="attachments.length > 0"
-                class="upload-attachment"
               >
                 <custom-attachment-card
                   v-for="(attachment, index) in attachments"
@@ -222,7 +232,7 @@
           >
             确定
           </v-btn>
-          <v-btn @click="cancelLeave">
+          <v-btn @click="cancelLeave(task.id)">
             取消
           </v-btn>
         </v-card-actions>
@@ -265,7 +275,6 @@ export default {
       task: [],
       tab: null,
       content: '',
-      contentRules: [(v) => !!v || '内容不能为空'],
       attachments: [],
       uploadLoading: false,
       isActive: false,
@@ -275,7 +284,7 @@ export default {
       deleteLoading: false,
       //离开加载
       isLeaveDialog: false,
-      //离开路由
+      loading: true,
     };
   },
   watch: {
@@ -295,6 +304,7 @@ export default {
       getTaskDetail(this.taskId).then((res) => {
         this.task = res.data;
       });
+      this.loading = false;
     },
     //上传附件按钮
     handleUploadClick() {
@@ -398,11 +408,13 @@ export default {
         this.nextRoute();
         this.nextRoute = null;
         this.tab = 'attachment';
+        localStorage.setItem('task', -1);
       }
     },
-    cancelLeave() {
+    cancelLeave(taskId) {
       this.isLeaveDialog = false;
       this.nextRoute = null;
+      localStorage.setItem('task', taskId);
     },
   },
 };
@@ -410,9 +422,6 @@ export default {
 <style lang="scss" scoped>
 main {
   background-color: white;
-  height: 98%;
-  border: 1px solid #e0e0e0;
-  border-left: 0px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -436,45 +445,53 @@ main {
     }
   }
 }
-.answer-attachment {
-  height: 37%;
-  .v-tabs {
-    border-bottom: 1px solid #e0e0e0;
-  }
-  .attachment {
-    padding: 2em;
-  }
-}
-.answer-input {
-  display: flex;
-  .textarea {
-    flex: 1;
-    border-right: 1px solid #e0e0e0;
-  }
-  .attachment-upload {
+.window{
+  height: 32vh;
+  border-top: 1px solid #e0e0e0;
+  .attachments{
+    height: 30vh;
+    padding: 1em 2em;
     overflow: auto;
-    flex: 1;
-    padding: 1em;
-    .upload-attachment {
-      height: 50%;
-      > * {
-        margin-bottom: 1em;
+    > *{
+      margin: 0.5em 0;
+    }
+  }
+  .answer-input{
+    display: flex;
+    height: 26vh;
+    .v-textarea{
+      flex:1;
+      border-right: 1px solid #e0e0e0;
+    }
+    .attachment-upload{
+      height: 24vh;
+      flex:1;
+      padding: 1em;
+      overflow: auto;
+      //单个附件
+      > div > *{
+        margin: 0.5em 0;
       }
     }
   }
 }
+
+//答题区样式
 .btn-column {
-  padding: 1em;
+  height: 6vh;
   border-top: 1px solid #e0e0e0;
-  text-align: right;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
   background-color: #fafafa;
   .v-btn {
-    margin-left: 1em;
+    margin-right: 1em;
   }
   .submit-btn {
     background-color: #383838;
   }
 }
+//弹框样式
 .v-card-text {
   display: flex;
   flex-direction: column;
@@ -482,7 +499,15 @@ main {
     color: red;
   }
 }
+//确认按钮样式
 .submit-btn {
   background-color: #fb8c00;
+}
+//加载样式
+.loader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50vh;
 }
 </style>
