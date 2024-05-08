@@ -27,3 +27,49 @@ export function getTaskSubmitTypes() {
         method: 'get'
     });
 }
+
+export function createSection(section, courseId) {
+    return request({
+        url: `/section/${courseId}`,
+        method: 'post',
+        data: section
+    });
+}
+
+export function updateSection(section) {
+    return request({
+        url: '/section',
+        method: 'put',
+        data: section
+    });
+}
+
+export function deleteSection(sectionId) {
+    return request({
+        url: `/section/${sectionId}`,
+        method: 'delete'
+    });
+}
+
+export function createTask(task, sectionId) {
+    return request({
+        url: `/task/${sectionId}`,
+        method: 'post',
+        data: task
+    });
+}
+
+export function updateTask(task) {
+    return request({
+        url: '/task',
+        method: 'put',
+        data: task
+    });
+}
+
+export function publishCourse(courseId) {
+    return request({
+        url: `/course/publish/${courseId}`,
+        method: 'post'
+    });
+}

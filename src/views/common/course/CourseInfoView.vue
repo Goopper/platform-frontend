@@ -1,5 +1,16 @@
 <template>
-  <main>
+  <div
+    v-if="loading"
+    class="loader"
+  >
+    <v-progress-circular
+      indeterminate
+      :size="80"
+      :width="8"
+      color="primary"
+    />
+  </div>
+  <main v-else>
     <div class="course">
       <div class="title-type">
         <h1>{{ course.name }}</h1>
@@ -46,7 +57,8 @@ export default {
   data() {
     return {
       course: [],
-      courseId: this.$route.params.id
+      courseId: this.$route.params.id,
+      loading:true,
     };
   },
   created() {
@@ -56,6 +68,7 @@ export default {
     async getCourseInfo() {
       const res = await getCourseInfo(this.courseId);
       this.course = res.data;
+      this.loading = false;
     },
   },
 };
@@ -113,6 +126,12 @@ export default {
     margin: 1em 0;
   }
  }
+.loader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50vh;
+}
  @media (max-width: 700px){
   main{
     padding: 1em;

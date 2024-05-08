@@ -12,7 +12,7 @@
         {{ OS.name }}
       </p>
       <p class="text-gray-500 text-sm">
-        最近开始活跃时间：{{ device.device.date }}
+        最近开始活跃时间：{{ localDatetime }}
       </p>
       <p class="text-gray-500 text-sm">
         浏览器版本：{{ device.deviceInfo.browser }}.{{ device.deviceInfo.version }}
@@ -32,6 +32,7 @@
 
 <script>
 import DeviceOS from '@/utils/device-os';
+import { timestampToDateString } from '@/utils/time';
 
 export default {
   name: 'CustomDeviceCard',
@@ -44,10 +45,12 @@ export default {
   emits: ['logoutDevice'],
   data: () => ({
     OS: {},
+    localDatetime: ''
   }),
   created() {
     const OS = DeviceOS.getDeviceOSByName(this.device.deviceInfo.platform);
     this.OS = OS;
+    this.localDatetime = timestampToDateString(this.device.device.timestamp);
   },
   methods: {
     logoutDevice() {

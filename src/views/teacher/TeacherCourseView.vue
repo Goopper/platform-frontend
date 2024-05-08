@@ -39,7 +39,18 @@
     <!-- 课程卡片 -->
     
     <div
-      v-if="courseList.length > 0"
+      v-if="loading"
+      class="loader"
+    >
+      <v-progress-circular
+        indeterminate
+        :size="80"
+        :width="8"
+        color="primary"
+      />
+    </div>
+    <div
+      v-else-if="courseList.length > 0"
       class="using-box"
     >
       <custom-course-card
@@ -61,15 +72,6 @@
       <p class="font-bold text-lg text-gray-400">
         无课程
       </p>
-    </div>
-    <div
-      v-if="loading"
-      class="loader"
-    >
-      <v-progress-circular
-        indeterminate
-        color="primary"
-      />
     </div>
   </main>
 </template>
@@ -103,6 +105,7 @@ export default {
       );
     },
     selectedState() {
+      this.loading = true;
       this.loadData();
     },
   },
@@ -176,8 +179,8 @@ h1 {
   display: flex;
   justify-content: center;
   align-items: center;
+  height: 50vh;
 }
-
 
 // 响应式
 @media (max-width: 1600px) {

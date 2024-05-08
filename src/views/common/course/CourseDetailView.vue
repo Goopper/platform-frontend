@@ -48,17 +48,11 @@ export default {
       courseName: null,
     };
   },
-  computed: {
-    taskId() {
-      return this.$route.params.taskId;
-    },
-  },
   created() {
     this.courseId = this.$route.params.id;
     getCourseInfo(this.courseId).then((res) => {
       this.courseName = res.data.name;
     });
-    console.log(this.$route.params.taskId);
   },
   methods: {
     isAuthority() {
@@ -72,15 +66,19 @@ export default {
 <style lang="scss" scoped>
 main {
   display: flex;
-  height: 98%;
+  height: 100%;
+
 }
 .show-detail {
   flex: 4;
+  background-color: white;
+  border:1px solid #e0e0e0;
+  border-left: 0px;
 }
 .course-list {
   width: 20%;
-  height: 98%;
   border: 1px solid #e0e0e0;
+  background-color: white;
   > * {
     height: 100%;
   }

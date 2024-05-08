@@ -46,72 +46,76 @@
       </div>
     </nav>
     <!-- 学生信息卡片 -->
-    <div
-      v-if="loading"
-      class="loader"
-    >
-      <v-progress-circular
-        indeterminate
-        color="primary"
-      />
-    </div>
-    <div
-      v-if="showStudentCards"
-      class="course-students-card"
-    >
+    <div class="student-cards">
       <div
-        v-for="studentCard in studentCardsList"
-        :key="studentCard.id"
+        v-if="loading"
+        class="loader"
+      >
+        <v-progress-circular
+          indeterminate
+          :size="80"
+          :width="8"
+          color="primary"
+        />
+      </div>
+      <div
+        v-else-if="showStudentCards && loading === false"
+        class="course-students-card"
       >
         <div
-          class="stu-cards"
-          @click="goStudentDetail(studentCard.id)"
+          v-for="studentCard in studentCardsList"
+          :key="studentCard.id"
         >
-          <section>
-            <h1>{{ studentCard.name }}</h1>
-            <span>{{ groupName() }}</span>
-            <p>{{ studentCard.taskName }}</p>
-            <span>{{
-              timeAndSection(studentCard.lastUpdate, studentCard.sectionName)
-            }}</span>
-          </section>
-          <div class="image-circular">
-            <img
-              :src="studentCard.avatar"
-              alt=""
-            >
-            <v-progress-circular
-              :model-value="
-                processNumber(studentCard.finishedTask, studentCard.totalTask)
-              "
-              :size="48"
-              :width="6"
-              :color="
-                processColor(
+          <div
+            class="stu-cards"
+            @click="goStudentDetail(studentCard.id)"
+          >
+            <section>
+              <h1>{{ studentCard.name }}</h1>
+              <span>{{ groupName() }}</span>
+              <p>{{ studentCard.taskName }}</p>
+              <span>{{
+                timeAndSection(studentCard.lastUpdate, studentCard.sectionName)
+              }}</span>
+            </section>
+            <div class="image-circular">
+              <img
+                :src="studentCard.avatar"
+                alt=""
+              >
+              <v-progress-circular
+                :model-value="
                   processNumber(studentCard.finishedTask, studentCard.totalTask)
-                )
-              "
-            >
-              {{
-                processNumber(studentCard.finishedTask, studentCard.totalTask)
-              }}
-            </v-progress-circular>
+                "
+                :size="48"
+                :width="6"
+                :color="
+                  processColor(
+                    processNumber(studentCard.finishedTask, studentCard.totalTask)
+                  )
+                "
+              >
+                {{
+                  processNumber(studentCard.finishedTask, studentCard.totalTask)
+                }}
+              </v-progress-circular>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-    <div
-      v-else
-      class="p-4 flex flex-col justify-center items-center h-full"
-    >
-      <v-icon
-        size="100px"
-        class="text-gray-400 mt-8"
-        icon="mdi-signal-off"
-      />
-      <p class="font-bold text-lg text-gray-400">
-        无学生
-      </p>
+      <div
+        v-else
+        class="p-4 flex flex-col justify-center items-center h-full"
+      >
+        <v-icon
+          size="100px"
+          class="text-gray-400 mt-8"
+          icon="mdi-signal-off"
+        />
+        <p class="font-bold text-lg text-gray-400">
+          无学生
+        </p>
+      </div>
     </div>
   </main>
 </template>
@@ -138,18 +142,18 @@ export default {
     // 选择框选择后触发获取当前选择的id
     orderId() {
       this.loading = true;
+      this.showStudentCards = false;
       this.fetchStudentList();
-      this.loading = false;
     },
     groupId() {
       this.loading = true;
+      this.showStudentCards = false;
       this.fetchStudentList();
-      this.loading = false;
     },
     courseId() {
       this.loading = true;
+      this.showStudentCards = false;
       this.fetchStudentList();
-      this.loading = false;
     },
   },
   async created() {
@@ -176,10 +180,13 @@ export default {
         this.groupId,
         this.orderId
       );
+      this.loading = true;
       if (res.data.length === 0) {
         this.showStudentCards = false;
+        this.loading = false;
       } else {
         this.showStudentCards = true;
+        this.loading = false;
         if (this.orderId === 2) {
           this.studentCardsList = res.data.sort((a, b) => {
             return a.name.localeCompare(b.name);
@@ -246,6 +253,8 @@ export default {
 
 <style lang="scss" scoped>
 main {
+  display: flex;
+  flex-direction: column;
   padding: 2em;
   width: 100%;
   background-color: white;
@@ -305,6 +314,12 @@ nav {
 
 .stu-cards:hover {
   cursor: pointer;
+}
+.loader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50vh;
 }
 
 //缩小时改变大小
@@ -414,11 +429,5 @@ section p {
 
 section span:first-of-type {
   color: #666666;
-}
-
-.loader {
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 </style>

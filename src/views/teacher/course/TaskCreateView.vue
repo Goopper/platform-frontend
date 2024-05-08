@@ -1,7 +1,10 @@
 <template>
   <div class="relative flex flex-col justify-between h-full">
     <!-- form -->
-    <v-form class="p-4 overflow-y-auto">
+    <v-form
+      ref="form"
+      class="p-4 overflow-y-auto"
+    >
       <!-- name -->
       <v-text-field
         v-model="task.name"
@@ -118,7 +121,7 @@
         :loading="loading"
         color="error"
         variant="flat"
-        @click="handleSaveClick"
+        @click="handleDeleteClick"
       >
         <v-tooltip
           activator="parent"
@@ -132,7 +135,7 @@
         :loading="loading"
         color="warning"
         variant="flat"
-        @click="handleSaveClick"
+        @click="handleCancelClick"
       >
         取消
       </v-btn>
@@ -153,11 +156,11 @@
         保存草稿
       </v-btn>
       <v-btn
+        v-if="id"
         :loading="loading"
         color="primary"
         variant="flat"
-        :disabled="disable"
-        @click="handleSaveClick"
+        @click="handlePublishClick"
       >
         发布课程
       </v-btn>
@@ -174,11 +177,44 @@
         indeterminate
       />
     </v-overlay>
+    <!-- delete attachment dialog -->
+    <v-dialog
+      v-model="deleteAttachmentDialog"
+      persistent
+      max-width="500"
+    >
+      <v-card
+        title="提示"
+        color="white"
+      >
+        <v-card-text>
+          确定删除课程附件 <span class="font-bold text-red-500">{{ targetAttachment.originalFilename }}</span> 吗？删除后将无法恢复！
+        </v-card-text>
+        <v-card-actions>
+          <v-btn
+            variant="flat"
+            color="error"
+            class="ms-auto"
+            text="确认"
+            :loading="deleteLoading"
+            @click="handleConfirmAttachmentClick"
+          />
+          <v-btn
+            variant="outlined"
+            text="取消"
+            :disabled="deleteLoading"
+            @click="deleteAttachmentDialog=false"
+          />
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
 <script>
-import { getTaskCreationInfo, getTaskSubmitTypes } from '@/api/course/creation';
+import { deleteAttachment, uploadAttachment } from '@/api/attachment';
+import { removeTaskAttachment } from '@/api/course';
+import { createTask, getTaskCreationInfo, getTaskSubmitTypes, updateTask } from '@/api/course/creation';
 import mitt from '@/plugins/mitt';
 import { useSaveStore } from '@/store/common/save';
 
@@ -193,7 +229,12 @@ export default {
       attachments: [],
       submitTypeId: null,
     },
-    originTask: {},
+    originTask: {
+      name: '',
+      content: '',
+      attachments: [],
+      submitTypeId: null,
+    },
     nameRules: [
       value => !!value || '任务名称不能为空',
     ],
@@ -207,7 +248,11 @@ export default {
     attachmentChanged: false,
     submitTypes: [],
     uploadLoading: false,
-    saveStore: useSaveStore()
+    deleteLoading: false,
+    deleteAttachmentDialog: false,
+    targetAttachment: {},
+    saveStore: useSaveStore(),
+    dialog: false
   }),
   computed: {
     disable() {
@@ -249,6 +294,12 @@ export default {
           attachments: [],
           submitTypeId: null,
         };
+        this.originTask = {
+          name: '',
+          content: '',
+          attachments: [],
+          submitTypeId: null,
+        };
       }
       this.overlay = false;
     },
@@ -263,22 +314,108 @@ export default {
       }
       this.loading = false;
     },
-    handleSaveClick() {
+    async handleSaveClick() {
       this.loading = true;
-      // save section
-      mitt.emit('showToast', { title: '保存成功！', color: 'success', icon: '$success' });
+      const { valid } = await this.$refs.form.validate();
+      if (!valid) {
+        this.loading = false;
+        return;
+      }
+      const key = this.$route.query.current;
+      if (!key) {
+        mitt.emit('showToast', { title: '未选择！', color: 'error', icon: '$error' });
+        this.loading = false;
+        return;
+      }
+      const sectionId = key.indexOf('-') > -1 ? key.split('-')[0] : key;
+      let res = undefined;
+      if (this.id) {
+        // update task
+        res = await updateTask(this.task);
+      } else {
+        // create task
+        res = await createTask(this.task, sectionId);
+      }
+      if (res) {
+        if (this.id) {
+          // flush task
+          this.originTask = JSON.parse(JSON.stringify(this.task));
+        } else {
+          // flush task
+          this.task = {
+            name: '',
+            content: '',
+            attachments: [],
+            submitTypeId: null,
+          };
+          mitt.emit('course-creation-creating-update-false');
+        }
+        mitt.emit('showToast', { title: '保存任务信息成功！', color: 'success', icon: '$success' });
+        mitt.emit('course-creation-structure-update');
+        mitt.emit('course-creation-open-section', sectionId);
+        this.attachmentChanged = false;
+      } else {
+        mitt.emit('showToast', { title: '保存任务信息失败！', color: 'error', icon: '$error' });
+      }
       this.loading = false;
     },
     handleUploadClick() {
       this.$refs.uploadAttach.click();
     },
     async handleSelectAttachment(e) {
-      this.attachmentChanged = true;
+      this.uploadLoading = true;
+      const file = e.target.files[0];
+      if (!file) {
+        this.uploadLoading = false;
+        return;
+      }
+      const res = await uploadAttachment(file);
+      if (res) {
+        mitt.emit('showToast', { title: '上传附件成功！', color: 'success', icon: '$success' });
+        this.task.attachments.push(res.data);
+        this.attachmentChanged = true;
+      } else {
+        mitt.emit('showToast', { title: '上传附件失败！', color: 'error', icon: '$error' });
+      }
+      this.uploadLoading = false;
     },
-    handleDeleteAttachmentClick() {
+    handleDeleteAttachmentClick(attachment) {
+      this.targetAttachment = attachment;
+      this.deleteAttachmentDialog = true;
     },
     async handleConfirmAttachmentClick() {
-      this.attachmentChanged = true;
+      this.deleteLoading = true;
+      const filename = this.targetAttachment.filename;
+      
+      let res = undefined;
+      if (this.targetAttachment.id) {
+        // remove course_attachment record
+        res = await removeTaskAttachment(this.id, this.targetAttachment.id);
+      } else {
+        // delete attachment
+        res = await deleteAttachment(filename);
+      }
+      // check status
+      if (res) {
+        mitt.emit('showToast', { title: '删除附件成功！', color: 'success', icon: '$success' });
+        this.task.attachments = this.task.attachments.filter(attachment => attachment.filename !== filename);
+        this.deleteAttachmentDialog = false;
+      } else {
+        mitt.emit('showToast', { title: '删除附件失败！', color: 'error', icon: '$error' });
+      }
+      this.deleteLoading = false;
+    },
+    handleDeleteClick() {
+      this.dialog = true;
+    },
+    handleCancelClick() {
+      mitt.emit('course-creation-cancel');
+    },
+    handlePublishClick() {
+      mitt.emit('course-creation-publish');
+    },
+    async handleDeleteConfirmClick() {
+      mitt.emit('course-creation-selection-none');
     }
   },
 };

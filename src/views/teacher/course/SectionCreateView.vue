@@ -1,7 +1,10 @@
 <template>
   <div class="relative h-full overflow-y-auto flex flex-col">
     <!-- form -->
-    <v-form class="flex-grow p-4">
+    <v-form
+      ref="form"
+      class="flex-grow p-4"
+    >
       <!-- name -->
       <v-text-field
         v-model="section.name"
@@ -46,11 +49,12 @@
     <!-- actions -->
     <div class="border-t bg-background-important flex justify-end items-center p-3 gap-3">
       <v-btn
+        v-if="id"
         :loading="loading"
         color="error"
         variant="flat"
         :disable="disable"
-        @click="handleSaveClick"
+        @click="handleDeleteClick"
       >
         <v-tooltip
           activator="parent"
@@ -64,8 +68,7 @@
         :loading="loading"
         color="warning"
         variant="flat"
-        :disable="disable"
-        @click="handleSaveClick"
+        @click="handleCancelClick"
       >
         取消
       </v-btn>
@@ -74,7 +77,7 @@
         :loading="loading"
         color="primary"
         variant="outlined"
-        :disable="disable"
+        :disabled="disable"
         @click="handleSaveClick"
       >
         <v-tooltip
@@ -86,11 +89,11 @@
         保存草稿
       </v-btn>
       <v-btn
+        v-if="id"
         :loading="loading"
         color="primary"
         variant="flat"
-        :disable="disable"
-        @click="handleSaveClick"
+        @click="handlePublishClick"
       >
         发布课程
       </v-btn>
@@ -107,19 +110,55 @@
         indeterminate
       />
     </v-overlay>
+    <v-dialog
+      v-model="dialog"
+      persistent
+      max-width="500"
+    >
+      <v-card
+        title="提示"
+        color="white"
+      >
+        <v-card-text>
+          确认要删除章节 <strong>{{ section.name }}</strong> 吗？其中包含的所有任务都会被删除！
+        </v-card-text>
+        <v-card-actions>
+          <v-btn
+            variant="flat"
+            color="error"
+            class="ms-auto"
+            text="确认"
+            :loading="loading"
+            @click="handleDeleteConfirmClick"
+          />
+          <v-btn
+            variant="outlined"
+            text="取消"
+            :disabled="loading"
+            @click="dialog=false"
+          />
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
 <script>
-import { getSectionCreationInfo } from '@/api/course/creation';
+import { createSection, deleteSection, getSectionCreationInfo, updateSection } from '@/api/course/creation';
 import mitt from '@/plugins/mitt';
+import { useSaveStore } from '@/store/common/save';
 
 export default {
   name: 'TheSectionCreationForm',
   data: () => ({
     overlay: false,
+    // section id
     id: undefined,
     section: {
+      name: '',
+      desc: ''
+    },
+    originalSection: {
       name: '',
       desc: ''
     },
@@ -129,11 +168,15 @@ export default {
     descRules: [
       value => !!value || '章节描述不能为空'
     ],
-    loading: false
+    loading: false,
+    dialog: false,
+    saveStore: useSaveStore()
   }),
   computed: {
     disable() {
-      return !this.section.name || !this.section.desc;
+      const isChanged = this.section.name !== this.originalSection.name || this.section.desc !== this.originalSection.desc;
+      this.saveStore.setSaveState(!isChanged);
+      return !isChanged;
     }
   },
   watch: {
@@ -145,10 +188,44 @@ export default {
     this.loadSection();
   },
   methods: {
-    handleSaveClick() {
+    async handleSaveClick() {
       this.loading = true;
-      // save section
-      mitt.emit('showToast', { title: '保存成功！', color: 'success', icon: '$success' });
+      const { valid } = await this.$refs.form.validate();
+      if (!valid) {
+        this.loading = false;
+        return;
+      }
+      const courseId = this.$route.query.id;
+      if (!courseId) {
+        mitt.emit('showToast', { title: '未选择课程！', color: 'error', icon: '$error' });
+        this.loading = false;
+        return;
+      }
+      let res = undefined;
+      if (this.id) {
+        // update section
+        res = await updateSection(this.section);
+      } else {
+        // create section
+        res = await createSection(this.section, courseId);
+      }
+      if (res) {
+        if (this.id) {
+          // flush section
+          this.originalSection = JSON.parse(JSON.stringify(this.section));
+        } else {
+          // flush section
+          this.section = {
+            name: '',
+            desc: ''
+          };
+          mitt.emit('course-creation-structure-update');
+        }
+        mitt.emit('showToast', { title: '保存章节信息成功！', color: 'success', icon: '$success' });
+        mitt.emit('course-creation-creating-update-false');
+      } else {
+        mitt.emit('showToast', { title: '保存章节信息失败！', color: 'error', icon: '$error' });
+      }
       this.loading = false;
     },
     async loadSection() {
@@ -159,6 +236,8 @@ export default {
         const res = await getSectionCreationInfo(this.id);
         if (res) {
           this.section = res.data;
+          // deep copy
+          this.originalSection = JSON.parse(JSON.stringify(this.section));
         } else {
           mitt.emit('showToast', { title: '获取章节信息失败！', color: 'error', icon: '$error' });
           // go back
@@ -169,8 +248,37 @@ export default {
           name: '',
           desc: ''
         };
+        this.originalSection = {
+          name: '',
+          desc: ''
+        };
       }
       this.overlay = false;
+    },
+    handleDeleteClick() {
+      this.dialog = true;
+    },
+    async handleDeleteConfirmClick() {
+      this.loading = true;
+      const res = await deleteSection(this.id);
+      if (res) {
+        mitt.emit('showToast', { title: '删除章节成功！', color: 'success', icon: '$success' });
+        // delete success
+        // 1. clear selection
+        mitt.emit('course-creation-selection-none');
+        // 2. update structure
+        mitt.emit('course-creation-structure-update');
+        this.dialog = false;
+      } else {
+        mitt.emit('showToast', { title: '删除章节失败！', color: 'error', icon: '$error' });
+      }
+      this.loading = false;
+    },
+    handleCancelClick() {
+      mitt.emit('course-creation-cancel');
+    },
+    handlePublishClick() {
+      mitt.emit('course-creation-publish');
     }
   }
 };

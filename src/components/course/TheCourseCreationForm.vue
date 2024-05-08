@@ -36,7 +36,6 @@
               :rules="teacherIdRules"
               density="comfortable"
               variant="outlined"
-              chips
               :loading="teacherLoading"
               :items="teachers"
               item-title="name"

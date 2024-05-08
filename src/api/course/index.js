@@ -239,3 +239,15 @@ export function getCourseStructure(courseId) {
     method: 'get'
   });
 }
+
+export function removeTaskAttachment(taskId, attachmentId) {
+  const formData = new FormData();
+  formData.append('taskId', taskId);
+  formData.append('attachmentId', attachmentId);
+
+  return request({
+    url: '/task/attachment',
+    method: 'delete',
+    data: formData
+  });
+}
