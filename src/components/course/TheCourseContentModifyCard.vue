@@ -139,12 +139,73 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <v-dialog
+      v-model="cancelDialog"
+      persistent
+      max-width="500"
+    >
+      <v-card
+        title="提示"
+        color="white"
+      >
+        <v-card-text>
+          确认要取消编辑吗？所有未保存的内容将会丢失！
+        </v-card-text>
+        <v-card-actions>
+          <v-btn
+            variant="flat"
+            class="ms-auto"
+            color="warning"
+            text="确认"
+            :loading="loading"
+            @click="handleConfirmCancelClick"
+          />
+          <v-btn
+            variant="outlined"
+            text="取消"
+            :disabled="loading"
+            @click="cancelDialog=false"
+          />
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <v-dialog
+      v-model="publishDialog"
+      persistent
+      max-width="500"
+    >
+      <v-card
+        title="提示"
+        color="white"
+      >
+        <v-card-text>
+          确认要发布课程吗？发布后将无法再次编辑！
+        </v-card-text>
+        <v-card-actions>
+          <v-btn
+            variant="flat"
+            class="ms-auto"
+            text="确认"
+            :loading="publishLoading"
+            @click="handleConfirmPublishClick"
+          />
+          <v-btn
+            variant="outlined"
+            text="取消"
+            :disabled="publishLoading"
+            @click="publishDialog=false"
+          />
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
 <script>
 import { getCourseStructure } from '@/api/course';
+import { publishCourse } from '@/api/course/creation';
 import mitt from '@/plugins/mitt';
+import { useSaveStore } from '@/store/common/save';
 
 export default {
   name: 'TheCourseContentModifyCard',
@@ -165,7 +226,12 @@ export default {
     currentKey: undefined,
     currentSectionName: undefined,
     opened: [],
-    createDialog: false
+    createDialog: false,
+    cancelDialog: false,
+    publishDialog: false,
+    saveStore: useSaveStore(),
+    creating: false,
+    publishLoading: false,
   }),
   async created() {
     mitt.on('course-creation-structure-update', () => {
@@ -174,6 +240,21 @@ export default {
     mitt.on('course-item-selection-update', () => {
       this.loadSelection();
     });
+    mitt.on('course-creation-cancel', () => {
+      this.cancelDialog = true;
+    });
+    mitt.on('course-creation-publish', () => {
+      this.publishDialog = true;
+    });
+    mitt.on('course-creation-selection-none', () => {
+      this.clearSelection();
+    });
+    mitt.on('course-creation-creating-update-false', () => {
+      this.creating = false;
+    });
+    mitt.on('course-creation-open-section', (id) => {
+      this.opened = [parseInt(id)];
+    });
 
     await this.loadStructure();
     this.loadSelection();
@@ -181,6 +262,7 @@ export default {
   methods: {
     handleCreateSectionClick() {
       this.routeCreation();
+      this.creating = true;
     },
     handleCreateTaskClick() {
       const targets = document.getElementsByClassName('course-creation-item-selected');
@@ -198,6 +280,7 @@ export default {
     handleConfirmCreateTaskClick() {
       this.routeCreation(undefined, false);
       this.createDialog = false;
+      this.creating = true;
     },
     handleItemClick(key, isSection = true) {
       if (this.loading) {
@@ -219,7 +302,6 @@ export default {
           current: this.currentKey
         }
       };
-      const prevRoute = this.$route.fullPath;
       // 是否包含id（也就是修改而不是新增）
       if (key) {
         // key: sectionId-taskId or sectionId
@@ -247,8 +329,44 @@ export default {
           const id = current.split('-')[0];
           this.opened = [parseInt(id)];
         }
+        // 如果正在创建章节或者任务中（不是编辑已存在的），不需要路由
+        if (this.creating) return;
         this.routeCreation(current, isSection);   
       }
+    },
+    clearSelection() {
+      this.currentKey = undefined;
+      this.$router.replace({
+        path: '/course/create',
+        query: {
+          id: this.id
+        }
+      });
+    },
+    handleConfirmCancelClick() {
+      this.saveStore.setAsSaved();
+      this.clearSelection();
+      this.cancelDialog = false;
+    },
+    async handleConfirmPublishClick() {
+      this.publishLoading = true;
+      const res = await publishCourse(this.id);
+      if (res) {
+        mitt.emit('showToast', {
+          color: 'success',
+          icon: '$success',
+          title: '发布课程成功！'
+        });
+        this.publishDialog = false;
+        this.$router.replace('/course/teacher');
+      } else {
+        mitt.emit('showToast', {
+          color: 'error',
+          icon: '$error',
+          title: '发布课程失败！'
+        });
+      }
+      this.publishLoading = false;
     }
   }
 };
