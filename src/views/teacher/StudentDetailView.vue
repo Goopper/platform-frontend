@@ -135,6 +135,17 @@
         />
       </div>
     </div>
+    <div
+      v-else
+      class="loader"
+    >
+      <v-progress-circular
+        color="primary"
+        size="160"
+        :width="8"
+        indeterminate
+      />
+    </div>
   </main>
 </template>
 <script>
@@ -272,6 +283,12 @@ strong {
   > * {
     height: 100%;
   }
+}
+.loader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50vh;
 }
 @media (max-width: 800px) {
   .student-info{
