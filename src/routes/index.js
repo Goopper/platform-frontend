@@ -159,7 +159,8 @@ export const routes = [
         path: 'teacher/correct/:messageId',
         component: TaskCorrectView,
         meta: {
-          requireRole: Role.ROLE_TEACHER
+          requireRole: Role.ROLE_TEACHER,
+          routeConfirm: true
         }
       },
       {

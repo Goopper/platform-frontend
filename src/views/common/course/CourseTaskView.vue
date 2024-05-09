@@ -46,9 +46,7 @@
         v-model="tab"
         class="window"
       >
-        <v-window-item
-          value="attachment"
-        >
+        <v-window-item value="attachment">
           <div class="attachments">
             <custom-attachment-card
               v-for="attachment in task.attachment"
@@ -72,9 +70,7 @@
           </div>
         </v-window-item>
         <!-- 答题区window -->
-        <v-window-item
-          value="answer"
-        >
+        <v-window-item value="answer">
           <div class="answer-input">
             <!-- 输入框 -->
             <v-textarea
@@ -99,9 +95,7 @@
                 @change="handleSelectAttachment"
               >
               <!-- 附件大于0是显示附件 -->
-              <div
-                v-if="attachments.length > 0"
-              >
+              <div v-if="attachments.length > 0">
                 <custom-attachment-card
                   v-for="(attachment, index) in attachments"
                   :key="index"
@@ -232,7 +226,7 @@
           >
             确定
           </v-btn>
-          <v-btn @click="cancelLeave(task.id)">
+          <v-btn @click="cancelLeave()">
             取消
           </v-btn>
         </v-card-actions>
@@ -265,7 +259,6 @@ export default {
       this.isLeaveDialog = true;
       this.nextRoute = next.bind(null, to);
     } else {
-      this.tab = 'attachment';
       next();
     }
   },
@@ -273,6 +266,7 @@ export default {
     return {
       taskId: null,
       task: [],
+      selectedId: null,
       tab: null,
       content: '',
       attachments: [],
@@ -296,9 +290,17 @@ export default {
   methods: {
     //查询当前task
     fetchData() {
-      if (this.content || this.attachments.length > 0) {
-        this.content = '';
-        this.attachments = [];
+      if (localStorage.getItem('content')) {
+        this.tab='answer';
+        this.content = localStorage.getItem('content');
+        this.attachments = localStorage.getItem('attachment');
+        localStorage.removeItem('content');
+        localStorage.removeItem('attachment');
+      } else {
+        if (this.content || this.attachments.length > 0) {
+          this.content = '';
+          this.attachments = [];
+        }
       }
       this.taskId = this.$route.params.taskId;
       getTaskDetail(this.taskId).then((res) => {
@@ -408,13 +410,16 @@ export default {
         this.nextRoute();
         this.nextRoute = null;
         this.tab = 'attachment';
-        localStorage.setItem('task', -1);
       }
+      localStorage.setItem('taskId', this.taskId);
     },
-    cancelLeave(taskId) {
+    cancelLeave() {
       this.isLeaveDialog = false;
       this.nextRoute = null;
-      localStorage.setItem('task', taskId);
+      this.selectedId = this.taskId;
+      localStorage.setItem('content', this.content);
+      localStorage.setItem('attachment', this.attachments);
+      this.$router.go(0);
     },
   },
 };
@@ -445,31 +450,31 @@ main {
     }
   }
 }
-.window{
+.window {
   height: 32vh;
   border-top: 1px solid #e0e0e0;
-  .attachments{
+  .attachments {
     height: 30vh;
     padding: 1em 2em;
     overflow: auto;
-    > *{
+    > * {
       margin: 0.5em 0;
     }
   }
-  .answer-input{
+  .answer-input {
     display: flex;
     height: 26vh;
-    .v-textarea{
-      flex:1;
+    .v-textarea {
+      flex: 1;
       border-right: 1px solid #e0e0e0;
     }
-    .attachment-upload{
+    .attachment-upload {
       height: 24vh;
-      flex:1;
+      flex: 1;
       padding: 1em;
       overflow: auto;
       //单个附件
-      > div > *{
+      > div > * {
         margin: 0.5em 0;
       }
     }
