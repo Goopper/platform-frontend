@@ -102,6 +102,7 @@
           <template #append>
             <v-btn
               variant="flat"
+              :disabled="disable"
               @click="handleSubmitCorrect"
             >
               提交
@@ -176,6 +177,7 @@
 import { getAnswerByMessageId, submitCorrect } from '@/api/correct';
 import { receiveOneMessage } from '@/api/message';
 import mitt from '@/plugins/mitt';
+import { useSaveStore } from '@/store/common/save';
 
 export default {
   name: 'TaskCorrectView',
@@ -183,13 +185,12 @@ export default {
     messageId: null,
     loading: true,
     answer: {},
-    rawScore: 0,
+    rawScore: null,
     comment: '',
     confirmDialog: false,
-    nextConfirmDialog: false
+    nextConfirmDialog: false,
+    saveStore: useSaveStore(),
   }),
-  computed: {
-  },
   computed: {
     score: {
       get() {
@@ -205,6 +206,11 @@ export default {
         }
       },
     },
+    disable() {
+      const isChanged = this.score !== null;
+      this.saveStore.setSaveState(!isChanged);
+      return !isChanged;
+    }
   },
   created() {
     this.messageId = this.$route.params.messageId;
@@ -223,6 +229,8 @@ export default {
       const nextId = this.answer.nextAnswerUserMessageId;
       this.messageId = nextId;
       this.$router.replace({ path: `/teacher/correct/${nextId}` });
+      this.rawScore = 0;
+      this.comment = '';
       this.loadAnswer();
       this.nextConfirmDialog = false;
     },

@@ -11,6 +11,7 @@
 
   <v-list
     v-else
+    v-model:opened="opened"
     bg-color="white"
     open-strategy="multiple"
     active-strategy="single-independent"
@@ -25,32 +26,49 @@
         {{ courseName }}
       </v-list-item-title>
     </v-list-item>
-    <v-list-group
-      v-for="section in list"
-      :key="section.id"
-      subgroup
-    >
-      <template #activator="{ props }">
-        <v-list-item
-          :title="section.name"
-          v-bind="props"
-          :class="{ selected: selectedId === section.id }"
-          @click="goToSection(section.id)"
-        />
-      </template>
-      <v-list-item
-        v-for="task in section.tasks"
-        :key="task.id"
-        :title="task.name"
-        v-bind="iconProps(task)"
-        :class="{ selected: selectedId === task.id }"
-        @click="goToTask(task.id,section.id)"
+    <div v-if="list && list.length > 0">
+      <v-list-group
+        v-for="section in list"
+        :key="section.id"
+        :value="section.id"
+        subgroup
       >
-        <v-list-item-subtitle :style="scoreColor(task.score)">
-          {{ task.score }}
-        </v-list-item-subtitle>
-      </v-list-item>
-    </v-list-group>
+        <template #activator="{ props }">
+          <v-list-item
+            :title="section.name"
+            v-bind="props"
+            :class="{ selected: selectedId === section.id }"
+            @click="goToSection(section.id)"
+          />
+        </template>
+        <v-list-item
+          v-for="task in section.tasks"
+          :key="task.id"
+          :title="task.name"
+          v-bind="iconProps(task)"
+          :class="{ selected: selectedId === task.id }"
+          @click="goToTask(task.id)"
+        >
+          <v-list-item-subtitle :style="scoreColor(task.score)">
+            {{ task.score }}
+          </v-list-item-subtitle>
+        </v-list-item>
+      </v-list-group>
+    </div>
+    <!-- 在没有章节时显示 -->
+    <div
+      v-else
+      class="flex flex-col justify-center items-center no-section"
+    >
+      <v-icon
+        size="8vh"
+        class="text-gray-400"
+        icon="mdi-playlist-remove"
+      />
+      <p class="font-bold text-lg text-gray-400">
+        当前课程没有章节
+      </p>
+    </div>
   </v-list>
 </template>
 <script>
@@ -77,7 +95,7 @@ export default {
       isShow: false,
       selectedId: null,
       isLoading: true,
-      
+      opened: [],
     };
   },
   created() {
@@ -92,10 +110,9 @@ export default {
     //判断当前选中的是课程、章节还是任务
     if (this.$route.params.taskId) {
       this.selectedId = Number(this.$route.params.taskId);
-      this.activeSection = this.selectedId;
+      this.opened = [parseInt(localStorage.getItem('sectionId'))];
     } else if (this.$route.params.sectionId) {
       this.selectedId = Number(this.$route.params.sectionId);
-      this.activeSection = this.selectedId;
     } else {
       this.selectedId = this.courseId;
     }
@@ -113,7 +130,6 @@ export default {
       this.list = res.data;
       this.iconDisplayed = 1;
       this.isLoading = false;
-
     },
     iconProps(task) {
       if (this.iconDisplayed === 1) {
@@ -152,6 +168,7 @@ export default {
         );
       }
       this.selectedId = sectionId;
+      localStorage.setItem('sectionId', sectionId);
     },
     //跳转到任务详情
     goToTask(taskId) {
@@ -175,8 +192,11 @@ export default {
   background-color: #383838; /* 你的颜色 */
   color: #ffffff;
 }
-.v-list{
- padding: 0; 
+.v-list {
+  padding: 0;
+}
+.no-section {
+  height: 50vh;
 }
 .loader {
   display: flex;
