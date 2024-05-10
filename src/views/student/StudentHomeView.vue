@@ -75,15 +75,15 @@
       </div>
       <div
         v-else
-        class="bg-secondary p-4 border flex flex-col justify-center items-center h-full"
+        class="bg-secondary p-4 flex flex-col justify-center items-center h-full w-full"
       >
         <v-icon
           size="100px"
-          class="text-gray-400 mt-8"
+          class="text-gray-400"
           icon="mdi-signal-off"
         />
         <p class="font-bold text-lg text-gray-400">
-          无学习记录
+          无课程学习记录
         </p>
       </div>
     </div>
@@ -138,15 +138,15 @@
       </div>
       <div
         v-else
-        class="bg-secondary p-4 border flex flex-col justify-center items-center h-full"
+        class="bg-secondary p-4 flex flex-col justify-center items-center h-full"
       >
         <v-icon
           size="100px"
-          class="text-gray-400 mt-8"
+          class="text-gray-400"
           icon="mdi-signal-off"
         />
         <p class="font-bold text-lg text-gray-400">
-          无学习记录
+          无全年学习记录
         </p>
       </div>
     </div>
