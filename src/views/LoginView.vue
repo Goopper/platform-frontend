@@ -1,5 +1,8 @@
 <template>
-  <div id="login">
+  <div
+    id="login"
+    class="flex"
+  >
     <div id="content">
       <img
         id="logo"
@@ -67,6 +70,7 @@
       <br>
       <strong v-text="maxim[randomMaximIndex].author" />
     </div>
+    <the-p5-banner class="w-[70%] smd:hidden" />
   </div>
 </template>
 
@@ -183,8 +187,7 @@ export default {
 #login {
   width: 100%;
   height: 100%;
-  background-image: url("../assets/img/banner.png");
-  background-size: cover;
+  background-color: #060606;
 }
 
 #content {
