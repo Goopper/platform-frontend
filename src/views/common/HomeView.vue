@@ -9,7 +9,18 @@
     >
       <!-- message -->
       <div class="grow overflow-y-auto sm:max-h-[400px]">
-        <div v-if="messageList.length > 0">
+        <div
+          v-if="loading"
+          class="flex justify-center my-8"
+        >
+          <v-progress-circular
+            indeterminate
+            :size="80"
+            :width="8"
+            color="primary"
+          />
+        </div>
+        <div v-else-if="messageList.length > 0">
           <custom-message-card
             v-for="message in messageList"
             :key="message.id" 
@@ -32,6 +43,7 @@
           </p>
         </div>
       </div>
+      <!-- actions -->
       <div
         id="message-card-action"
         class="p-2 border-t flex justify-end items-center"
@@ -131,7 +143,8 @@ export default {
     typeCorrectId: MessageType.CORRECT.id,
     messageList: [],
     targetMessage: {},
-    dialog: false
+    dialog: false,
+    loading: false
   }),
   computed: {
     user() {
@@ -142,9 +155,7 @@ export default {
     }
   },
   created() {
-    getMessageList().then(res => { 
-      this.messageList = res.data.list;
-    });
+    this.loadMessages();
   },
   methods: {
     handleMessageCardClick(message) {
@@ -163,6 +174,16 @@ export default {
     },
     handleMessageToCorrect() {
       this.$router.push(`/teacher/correct/${this.targetMessage.id}`);
+    },
+    async loadMessages() {
+      this.loading = true;
+      const res = await getMessageList();
+      if (res) {
+        this.messageList = res.data.list;
+      } else {
+        mitt.emit('showToast', { title: '获取消息列表失败', color: 'error', icon: '$error' });
+      }
+      this.loading = false;
     }
   },
 };
