@@ -67,6 +67,14 @@ export function updateTask(task) {
     });
 }
 
+
+export function deleteTask(taskId) {
+    return request({
+        url: `/task/${taskId}`,
+        method: 'delete'
+    });
+}
+
 export function publishCourse(courseId) {
     return request({
         url: `/course/publish/${courseId}`,

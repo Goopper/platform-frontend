@@ -129,7 +129,7 @@ export default {
     currentYear: undefined,
     currentYearDaysCount: 356,
     currentYearPerformance: [],
-    switchYearLoading: false
+    switchYearLoading: false,
   }),
   computed: {
     user() {

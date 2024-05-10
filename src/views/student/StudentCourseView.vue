@@ -11,6 +11,7 @@
           variant="outlined"
           label="课程名称"
           density="compact"
+          :loading="loading"
         />
         <v-select
           v-model="learningCourseTypeId"
@@ -23,10 +24,12 @@
           density="compact"
           label="课程类型"
           variant="outlined"
+          :loading="loading"
         >
           <template #append>
             <v-btn
               variant="flat"
+              :loading="loading"
               @click="searchLearningCourse"
             >
               搜索
@@ -35,7 +38,18 @@
         </v-select>
       </div>
     </div>
-    <div v-if="learningCourseList.length > 0">
+    <div
+      v-if="loading"
+      class="flex justify-center my-8"
+    >
+      <v-progress-circular
+        indeterminate
+        :size="80"
+        :width="8"
+        color="primary"
+      />
+    </div>
+    <div v-else-if="learningCourseList.length > 0">
       <custom-horizontal-course-card
         v-for="course in learningCourseList"
         :key="course.id"
@@ -69,6 +83,7 @@
           variant="outlined"
           label="课程名称"
           density="compact"
+          :loading="loading"
         />
         <v-select
           v-model="selectableCourseTypeId"
@@ -81,10 +96,12 @@
           density="compact"
           label="课程类型"
           variant="outlined"
+          :loading="loading"
         >
           <template #append>
             <v-btn
               variant="flat"
+              :loading="loading"
               @click="searchSelectableCourse"
             >
               搜索
@@ -93,7 +110,18 @@
         </v-select>
       </div>
     </div>
-    <div v-if="selectableCourseList.length > 0">
+    <div
+      v-if="loading"
+      class="flex justify-center my-8"
+    >
+      <v-progress-circular
+        indeterminate
+        :size="80"
+        :width="8"
+        color="primary"
+      />
+    </div>
+    <div v-else-if="selectableCourseList.length > 0">
       <custom-horizontal-course-card
         v-for="course in selectableCourseList"
         :key="course.id"

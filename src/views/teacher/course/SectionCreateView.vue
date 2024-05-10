@@ -120,7 +120,7 @@
         color="white"
       >
         <v-card-text>
-          确认要删除章节 <strong>{{ section.name }}</strong> 吗？其中包含的所有任务都会被删除！
+          确认要删除章节 <strong>{{ section.name }}</strong> 吗？其中包含的所有任务都会被删除且无法恢复！
         </v-card-text>
         <v-card-actions>
           <v-btn

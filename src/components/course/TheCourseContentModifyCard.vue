@@ -3,11 +3,37 @@
     v-if="id"
     class="flex-grow h-full flex"
   >
+    <!-- empty -->
+    <v-overlay
+      v-bind="loading"
+      class="align-center justify-center"
+      persistent
+      contained
+    >
+      <v-progress-circular
+        color="primary"
+        size="100"
+        indeterminate
+      />
+    </v-overlay>
     <!-- left structure -->
     <div
       id="course-creation-left-structure"
       class="relative border-r w-1/4 h-auto overflow-y-auto"
     >
+      <div
+        v-if="structure.length === 0"
+        class="flex flex-col justify-center items-center flex-grow mt-8"
+      >
+        <v-icon
+          size="100px"
+          class="text-gray-400"
+          icon="mdi-note-outline"
+        />
+        <p class="font-bold text-lg text-gray-400">
+          目前无任何章节或任务
+        </p>
+      </div>
       <v-list
         v-model:opened="opened"
         class="py-0"
@@ -91,7 +117,7 @@
     <!-- right form content -->
     <div class="flex-grow w-3/4 flex flex flex-col">
       <div
-        v-if="currentKey === undefined"
+        v-if="currentKey === undefined && !creating"
         class="flex flex-col justify-center items-center flex-grow"
       >
         <v-icon
@@ -179,12 +205,30 @@
         color="white"
       >
         <v-card-text>
-          确认要发布课程吗？发布后将无法再次编辑！
+          <span>确认要发布课程吗？发布后将无法再次编辑！</span>
+          <br>
+          <span>
+            本课程包括了：
+            <strong>{{ taskCount }}</strong> 个任务 和 <strong>{{ sectionCount }}</strong> 
+            个章节
+          </span>
+          <p class="mt-2">
+            请输入课程名称 <strong class="select-none">{{ fullCourseName }}</strong> 以确认创建：
+          </p>
+          <v-text-field
+            v-model="courseName"
+            class="mt-2"
+            label="课程名称"
+            variant="outlined"  
+            density="compact"          
+            clearable
+          />
         </v-card-text>
         <v-card-actions>
           <v-btn
             variant="flat"
             class="ms-auto"
+            :disabled="publishDisable"
             text="确认"
             :loading="publishLoading"
             @click="handleConfirmPublishClick"
@@ -219,6 +263,10 @@ export default {
       type: Boolean,
       default: false
     },
+    fullCourseName: {
+      type: String,
+      required: true,
+    }
   },
   data: () => ({
     structureLoading: false,
@@ -232,7 +280,19 @@ export default {
     saveStore: useSaveStore(),
     creating: false,
     publishLoading: false,
+    courseName: ''
   }),
+  computed: {
+    publishDisable() {
+      return this.courseName !== this.fullCourseName;
+    },
+    sectionCount() {
+      return this.structure.length;
+    },
+    taskCount() {
+      return this.structure.reduce((acc, cur) => acc + cur.tasks.length, 0);
+    }
+  },
   async created() {
     mitt.on('course-creation-structure-update', () => {
       this.loadStructure();
@@ -244,6 +304,22 @@ export default {
       this.cancelDialog = true;
     });
     mitt.on('course-creation-publish', () => {
+      if (!this.saveStore.isSaved) {
+        mitt.emit('showToast', {
+          color: 'warning',
+          icon: '$warning',
+          title: '请先保存当前内容！'
+        });
+        return;
+      }
+      if (this.taskCount === 0) {
+        mitt.emit('showToast', {
+          color: 'warning',
+          icon: '$warning',
+          title: '请先添加任务！'
+        });
+        return;
+      }
       this.publishDialog = true;
     });
     mitt.on('course-creation-selection-none', () => {
@@ -315,7 +391,15 @@ export default {
     async loadStructure() {
       this.structureLoading = true;
       const res = await getCourseStructure(this.id);
-      this.structure = res.data;
+      if (res) {
+        this.structure = res.data;
+      } else {
+        mitt.emit('showToast', {
+          color: 'error',
+          icon: '$error',
+          title: '获取课程结构失败！'
+        });
+      }
       this.structureLoading = false;
     },
     loadSelection() {
@@ -346,6 +430,7 @@ export default {
     handleConfirmCancelClick() {
       this.saveStore.setAsSaved();
       this.clearSelection();
+      this.creating = false;
       this.cancelDialog = false;
     },
     async handleConfirmPublishClick() {
