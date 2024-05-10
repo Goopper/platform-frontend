@@ -75,7 +75,7 @@
       </div>
       <div
         v-else
-        class="bg-secondary p-4 flex flex-col justify-center items-center h-full w-full"
+        class="bg-secondary p-4 flex flex-col justify-center items-center h-full w-full bsm:min-w-[480px]"
       >
         <v-icon
           size="100px"
@@ -138,7 +138,7 @@
       </div>
       <div
         v-else
-        class="bg-secondary p-4 flex flex-col justify-center items-center h-full"
+        class="bg-secondary p-4 flex flex-col justify-center items-center h-full bsm:min-w-[480px]"
       >
         <v-icon
           size="100px"
