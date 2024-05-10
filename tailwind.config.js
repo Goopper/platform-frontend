@@ -14,6 +14,9 @@ export default {
             'sm': {
                 'max': '768px'
             },
+            'smd': {
+                'max': '1024px'
+            },
             'md': {
                 'max': '1280px'
             },
