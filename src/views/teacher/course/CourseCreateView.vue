@@ -55,6 +55,7 @@
             v-if="originCourse.id"
             :id="originCourse.id"
             :loading="loading"
+            :full-course-name="originCourse.name"
           />
         </v-stepper-window-item>
       </v-stepper-window>

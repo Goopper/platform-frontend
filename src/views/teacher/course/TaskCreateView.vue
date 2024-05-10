@@ -208,13 +208,43 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <v-dialog
+      v-model="dialog"
+      persistent
+      max-width="500"
+    >
+      <v-card
+        title="提示"
+        color="white"
+      >
+        <v-card-text>
+          确认要删除任务 <strong>{{ task.name }}</strong> 吗？删除之后无法恢复！
+        </v-card-text>
+        <v-card-actions>
+          <v-btn
+            variant="flat"
+            color="error"
+            class="ms-auto"
+            text="确认"
+            :loading="loading"
+            @click="handleDeleteConfirmClick"
+          />
+          <v-btn
+            variant="outlined"
+            text="取消"
+            :disabled="loading"
+            @click="dialog=false"
+          />
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
 <script>
 import { deleteAttachment, uploadAttachment } from '@/api/attachment';
 import { removeTaskAttachment } from '@/api/course';
-import { createTask, getTaskCreationInfo, getTaskSubmitTypes, updateTask } from '@/api/course/creation';
+import { createTask, deleteTask, getTaskCreationInfo, getTaskSubmitTypes, updateTask } from '@/api/course/creation';
 import mitt from '@/plugins/mitt';
 import { useSaveStore } from '@/store/common/save';
 
@@ -350,8 +380,10 @@ export default {
           };
           mitt.emit('course-creation-creating-update-false');
         }
+        this.saveStore.setAsSaved();
         mitt.emit('showToast', { title: '保存任务信息成功！', color: 'success', icon: '$success' });
         mitt.emit('course-creation-structure-update');
+        mitt.emit('course-creation-selection-none');
         mitt.emit('course-creation-open-section', sectionId);
         this.attachmentChanged = false;
       } else {
@@ -415,7 +447,20 @@ export default {
       mitt.emit('course-creation-publish');
     },
     async handleDeleteConfirmClick() {
-      mitt.emit('course-creation-selection-none');
+      this.loading = true;
+      const res = await deleteTask(this.id);
+      if (res) {
+        mitt.emit('showToast', { title: '删除任务成功！', color: 'success', icon: '$success' });
+        // delete success
+        // 1. clear selection
+        mitt.emit('course-creation-selection-none');
+        // 2. update structure
+        mitt.emit('course-creation-structure-update');
+        this.dialog = false;
+      } else {
+        mitt.emit('showToast', { title: '删除任务失败！', color: 'error', icon: '$error' });
+      }
+      this.loading = false;
     }
   },
 };
