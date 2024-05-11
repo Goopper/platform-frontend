@@ -22,6 +22,7 @@ declare module 'vue' {
     TheAccountBindCard: typeof import('./src/components/personal/info/TheAccountBindCard.vue')['default']
     TheAvatarModifyCard: typeof import('./src/components/personal/info/TheAvatarModifyCard.vue')['default']
     TheCourseContentModifyCard: typeof import('./src/components/course/TheCourseContentModifyCard.vue')['default']
+    TheCourseCountBar: typeof import('./src/components/statistics/TheCourseCountBar.vue')['default']
     TheCourseCreationForm: typeof import('./src/components/course/TheCourseCreationForm.vue')['default']
     TheCourseModifyCard: typeof import('./src/components/course/TheCourseModifyCard.vue')['default']
     TheCourseStructureCard: typeof import('./src/components/course/TheCourseStructureCard.vue')['default']
