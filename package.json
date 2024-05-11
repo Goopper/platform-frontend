@@ -10,6 +10,7 @@
   "dependencies": {
     "@mdi/font": "^7.4.47",
     "axios": "^1.6.8",
+    "echarts": "^5.5.0",
     "mitt": "^3.0.1",
     "nprogress": "^0.2.0",
     "p5": "^1.9.3",
