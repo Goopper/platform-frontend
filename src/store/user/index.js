@@ -55,6 +55,9 @@ export const useUserStore = defineStore('user', {
         },
         userInfo(state) {
             return state.user;
+        },
+        isTeacher(state) {
+            return state.user && state.user.roleId === Role.ROLE_TEACHER.id;
         }
     },
 });
