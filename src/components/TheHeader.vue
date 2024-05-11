@@ -37,6 +37,14 @@
         >
           个人中心
         </v-tab>
+        <v-tab
+          v-if="userStore.isTeacher"
+          class="sm:hidden"
+          to="/data/analysis"
+        >
+          数据分析
+          <v-icon icon="mdi-share-outline" />
+        </v-tab>
       </v-tabs>
     </div>
     <!-- avatar -->

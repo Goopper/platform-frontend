@@ -27,6 +27,7 @@ import StudentPerformanceView from '@/views/teacher/StudentPerformanceView.vue';
 import StudentDetailView from '@/views/teacher/StudentDetailView.vue';
 import TaskCreateView from '@/views/teacher/course/TaskCreateView.vue';
 import SectionCreateView from '@/views/teacher/course/SectionCreateView.vue';
+import DataAnalysisView from '@/views/teacher/statistics/DataAnalysisView.vue';
 
 // 路由定义
 export const routes = [
@@ -41,6 +42,13 @@ export const routes = [
   {
     path: '/oauth/bind/github',
     component: GitHubOAuthBindView
+  },
+  {
+    path: '/data/analysis',
+    component: DataAnalysisView,
+    meta: {
+      requireRole: Role.ROLE_TEACHER
+    }
   },
   {
     path: '/',
