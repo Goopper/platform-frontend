@@ -51,6 +51,7 @@ export default {
           top: '10%',
           bottom: '10%'
         },
+        backgroundColor: 'transparent',
         tooltip: {},
         series: [
           {
@@ -61,13 +62,14 @@ export default {
               { value: 20, name: '大数据技术导论' },
               { value: 36, name: '平台新手入门' },
               { value: 10, name: '数据分析可视化' }
-            ]
+            ],
+            barWidth: '20%'
           },
           {
             name: '课程占比',
             type: 'pie',
             center: ['25%', '30%'],
-            radius: '28%',
+            radius: '50%',
             z: 100,
             data: [
               { value: 5, name: 'Linux系统' },
