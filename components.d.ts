@@ -29,6 +29,7 @@ declare module 'vue' {
     TheEmailModifyCard: typeof import('./src/components/personal/info/TheEmailModifyCard.vue')['default']
     TheHeader: typeof import('./src/components/TheHeader.vue')['default']
     TheLogoutCard: typeof import('./src/components/personal/security/TheLogoutCard.vue')['default']
+    TheP5Banner: typeof import('./src/components/TheP5Banner.vue')['default']
     ThePasswordModifyCard: typeof import('./src/components/personal/security/ThePasswordModifyCard.vue')['default']
     TheSectionCreationForm: typeof import('./src/views/teacher/course/SectionCreationForm.vue')['default']
     TheTaskCreationForm: typeof import('./src/views/teacher/course/TheTaskCreationForm.vue')['default']
