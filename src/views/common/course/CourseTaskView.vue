@@ -36,9 +36,10 @@
           text="教学课件"
         />
         <v-tab
+          v-if="isShowTab(task.submitTypeId)"
           value="answer"
           text="答题区"
-          :disabled="task.status || isSubmit"
+          :disabled="task.status"
         >
           答题区
         </v-tab>
@@ -280,7 +281,6 @@ export default {
       deleteLoading: false,
       //离开加载
       isLeaveDialog: false,
-      isSubmit: false,
       loading: true,
     };
   },
@@ -313,8 +313,7 @@ export default {
         this.submitTypeName = '文本与可选附件提交';
       } else {
         this.submitTypeName = '无需提交';
-        this.isSubmit = true;
-        if (!this.task.status) {
+        if (!this.task.status && useUserStore().role.name == 'student') {
           submitTaskAnswer(this.task.id,'',[]);
         }
       }
@@ -408,6 +407,15 @@ export default {
     isAuthority() {
       const role = useUserStore().role.name;
       if (role == 'student') {
+        return false;
+      } else {
+        return true;
+      }
+    },
+    //判断是否显示答题区
+    isShowTab(submitTypeId) {
+      const role = useUserStore().role.name;
+      if (submitTypeId === 3 || role == 'teacher') {
         return false;
       } else {
         return true;

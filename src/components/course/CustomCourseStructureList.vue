@@ -188,6 +188,9 @@ export default {
   display: flex;
   justify-content: space-between;
 }
+.v-list > .v-list-item {
+  border-bottom: 1px solid #e0e0e0;
+}
 .selected {
   background-color: #383838; /* 你的颜色 */
   color: #ffffff;
