@@ -161,7 +161,8 @@ export default {
 
     const course = await getCourseList();
     const group = await getGroupList();
-    if (course == 0 || group == 0) {
+    console.log(course, group);
+    if (course == [] || group == []) {
       this.loading = false;
     }
     this.courseList = course.data;
@@ -169,8 +170,8 @@ export default {
     this.courseId = this.courseList[0].id;
     this.groupId = this.groupList[0].id;
     this.orderId = this.orderList[0].id;
+    await this.fetchStudentList();
     this.loading = false;
-    this.fetchStudentList();
   },
   methods: {
     //获取学生信息列表

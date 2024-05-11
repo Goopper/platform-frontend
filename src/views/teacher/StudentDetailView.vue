@@ -88,38 +88,6 @@
                 </v-card>
               </template>
             </v-dialog>
-            <v-menu
-              disabled
-              open-on-click
-              class="menu"
-            >
-              <template #activator="{ props }">
-                <div
-                  v-bind="props"
-                >
-                  <v-icon disabled>
-                    mdi-dots-vertical
-                  </v-icon>
-                </div>
-              </template>
-              <v-list>
-                <v-list-item>
-                  <v-btn @click="completeCourseProgress">
-                    完成所有课程
-                  </v-btn>
-                </v-list-item>
-                <v-list-item>
-                  <v-btn @click="emptyCourseProgress">
-                    清空课程进度
-                  </v-btn>
-                </v-list-item>
-                <v-list-item>
-                  <v-btn block>
-                    删除学生
-                  </v-btn>
-                </v-list-item>
-              </v-list>
-            </v-menu>
           </div>
         </div>
       </div>
@@ -208,16 +176,6 @@ export default {
         changePassword(data);
       }
     },
-    //清空课程进度
-    emptyCourseProgress() {
-      this.courseDetail.finishedTask = 0;
-    },
-    completeCourseProgress() {
-      this.courseDetail.finishedTask = this.courseDetail.totalTask;
-    },
-    deleteStudent() {
-      console.log(this.studentInfo);
-    }
   }
 };
 </script>

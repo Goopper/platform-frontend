@@ -15,6 +15,7 @@
     <div class="task-main">
       <div class="title-state">
         <h1>{{ task.name }}</h1>
+        <p>{{ submitTypeName }}</p>
         <span>
           <v-icon
             v-if="task.status"
@@ -37,7 +38,7 @@
         <v-tab
           value="answer"
           text="答题区"
-          :disabled="task.status"
+          :disabled="task.status || isSubmit"
         >
           答题区
         </v-tab>
@@ -269,6 +270,7 @@ export default {
       selectedId: null,
       tab: null,
       content: '',
+      submitTypeName:null,
       attachments: [],
       uploadLoading: false,
       isActive: false,
@@ -278,18 +280,20 @@ export default {
       deleteLoading: false,
       //离开加载
       isLeaveDialog: false,
+      isSubmit: false,
       loading: true,
     };
   },
   watch: {
     $route: 'fetchData',
   },
-  created() {
-    this.fetchData();
+  async created() {
+    await this.fetchData();
+    this.loading = false;
   },
   methods: {
     //查询当前task
-    fetchData() {
+    async fetchData() {
       if (localStorage.getItem('content')) {
         this.tab='answer';
         this.content = localStorage.getItem('content');
@@ -303,10 +307,17 @@ export default {
         }
       }
       this.taskId = this.$route.params.taskId;
-      getTaskDetail(this.taskId).then((res) => {
-        this.task = res.data;
-      });
-      this.loading = false;
+      const res = await getTaskDetail(this.taskId);
+      this.task = res.data;
+      if (this.task.submitTypeId === 4) {
+        this.submitTypeName = '文本与可选附件提交';
+      } else {
+        this.submitTypeName = '无需提交';
+        this.isSubmit = true;
+        if (!this.task.status) {
+          submitTaskAnswer(this.task.id,'',[]);
+        }
+      }
     },
     //上传附件按钮
     handleUploadClick() {
@@ -433,13 +444,14 @@ main {
 }
 .task-main {
   padding: 2em;
-  p {
+  > p {
     margin: 2em 0;
     height: 56%;
     overflow: auto;
   }
   .title-state {
     display: flex;
+    align-items: center;
     height: 12%;
     h1 {
       font-size: 1em;
@@ -447,6 +459,14 @@ main {
     }
     span {
       margin-left: 2em;
+    }
+    p{
+      font-size: 0.75em;
+      padding: 0.1em 0.5em;
+      margin-left: 1em;
+      color: white;
+      background-color: #383838;
+      border-radius: 1em;
     }
   }
 }

@@ -62,7 +62,7 @@ export default {
         this.section = res.data;
         this.loading = false;
       });
-    },
+    }
   },
 };
 </script>
@@ -95,10 +95,12 @@ h1 {
   .task {
     height: 80%;
     overflow: auto;
+    border-top: 1px solid #e0e0e0;
   }
 }
 .task-item {
   border: 1px solid #e0e0e0;
+  border-top: 0px;
 }
 .loader {
   display: flex;
