@@ -45,10 +45,7 @@ export const routes = [
   },
   {
     path: '/data/analysis',
-    component: DataAnalysisView,
-    meta: {
-      requireRole: Role.ROLE_TEACHER
-    }
+    component: DataAnalysisView
   },
   {
     path: '/',

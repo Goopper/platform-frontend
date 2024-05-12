@@ -1,15 +1,10 @@
 <template>
   <div class="w-full h-full">
-    <dv-loading v-if="loading">
-      <div class="text-white">
-        Loading...
-      </div>
-    </dv-loading>
     <div
-      v-else
       id="data-analysis"
       class="h-full w-full flex flex-col"
     >
+      <!-- title -->
       <span
         id="data-analysis-title"
         class="text-white text-center text-3xl block w-full relative"
@@ -45,17 +40,25 @@
               fill="#009DFF"
             />
           </svg>
-          <span class="absolute right-[6rem]">
+          <span
+            ref="clock"
+            class="absolute right-[6rem]"
+          >
             2024/05/11 13:48:24
           </span>
         </div>
       </span>
+      <!-- charts grid -->
       <div
         id="data-analysis-content"
         class="w-full h-full flex-grow p-2 grid gap-2"
       >
-        <div class="flex h-full w-full flex-col gap-2">
-          <the-course-count-bar class="h-full w-full" />
+        <div class="flex flex-col gap-3">
+          <the-course-count-bar-chart class="h-full" />
+        </div>
+        <div class="flex flex-col gap-3">
+          <the-course-count-line-chart class="h-1/2" />
+          <the-course-count-pie-chart class="h-1/2" />
         </div>
       </div>
     </div>
@@ -63,27 +66,29 @@
 </template>
 
 <script>
-import mitt from '@/plugins/mitt'; 
-import { Loading as DvLoading } from '@kjgl77/datav-vue3';
-
 export default {
   name: 'DataAnalysisView',
-  components: {
-    DvLoading: DvLoading,
-  },
-  data: () => ({
-    loading: false
-  }),
   created() {
-
+    this.startClock();
   },
   methods: {
-    handleCourseCountBarChartClick() {
-      mitt.emit('showToast', {
-        title: '点击了课程数量柱状图',
-        color: 'success',
-        icon: '$success'
-      });
+    startClock() {
+      setInterval(() => {
+        const clock = this.$refs.clock;
+        if (clock) {
+          clock.innerText = this.formatDate(new Date());
+        }
+      }, 1000);
+    },
+    formatDate(date) {
+      var year = date.getFullYear();
+      var month = ('0' + (date.getMonth() + 1)).slice(-2);
+      var day = ('0' + date.getDate()).slice(-2);
+      var hour = ('0' + date.getHours()).slice(-2);
+      var minute = ('0' + date.getMinutes()).slice(-2);
+      var second = ('0' + date.getSeconds()).slice(-2);
+
+      return year + '/' + month + '/' + day + ' ' + hour + ':' + minute + ':' + second;
     }
   }
 };
@@ -91,28 +96,30 @@ export default {
 
 <style lang="scss">
 #data-analysis {
-  background-color: #000d4a;
+  background: #000d4a url('@/assets/img/analysis/background.jpg') center center;
+  background-size:cover;
+  background-repeat: no-repeat;
   font-family: SimSun;
+  color: white;
 }
 
 #data-analysis-title {
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
   padding: 0.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
 
   span {
-    font-size: 1rem;
+    font-family: 'DIGITAL';
+    font-size: 1.1rem;
+    font-weight: bold;
     display: block;
     color: #d6d6d6;
   }
 }
 
 #data-analysis-content {
-  grid-template-columns: 1fr 1.5fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
 }
 
 #data-analysis-title-home-button {
@@ -128,17 +135,8 @@ export default {
   filter: drop-shadow(0 0 1px #009DFF);
 }
 
-.border-box-content {
-  width: calc(100%);
-  height: calc(100%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-}
-
 .chart-item {
-  background-color: #031e5c;
+  background: rgba(6,48,109,.5);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -161,5 +159,36 @@ export default {
   height: 1.05rem;
   background-color: #49bcf7;
   vertical-align: text-bottom;
+}
+
+.radar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.radar::before {
+  content: "";
+  position: absolute;
+  left: -100%;
+  width: 100%;
+  height: 100%; /* Adjust this value to change the thickness of the line */
+  background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(169, 169, 169, 0.1) 100%);
+  animation: radar 2s linear infinite;
+}
+
+@keyframes radar {
+  0% {
+    left: -100%;
+  }
+  50% {
+    left: 0;
+  }
+  100% {
+    left: 100%;
+  }
 }
 </style>
