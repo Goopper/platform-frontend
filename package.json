@@ -8,7 +8,6 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@kjgl77/datav-vue3": "^1.7.2",
     "@mdi/font": "^7.4.47",
     "axios": "^1.6.8",
     "echarts": "^5.5.0",

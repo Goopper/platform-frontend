@@ -1,10 +1,17 @@
 <template>
-  <div
-    id="group-learning-duration-bar"
-  />
+  <div class="chart-item w-full h-full">
+    <span class="chart-title">
+      授课课程占比
+    </span>
+    <div
+      id="group-learning-duration-bar"
+      class="w-full flex-grow"
+    />
+  </div>
 </template>
 <script>
 import * as echarts from 'echarts';
+
 export default {
   name: 'TheGroupLearningDurationBar',
       data: () => ({
@@ -15,12 +22,13 @@ export default {
   },
   methods: {
     init() {
-      let charts = echarts.init(document.getElementById('group-learning-duration-bar'));
+      let charts = echarts.init(document.getElementById('group-learning-duration-bar'), 'dark');
       charts.setOption({
         legend: {},
         tooltip: {
           trigger: 'axis',
         },
+        backgroundColor: 'transparent',
         dataset: {
           source: [
             ['product', '机器学习算法库', '测试课程', '大数据技术导论', '大数据导论', '统计实战'],
@@ -61,9 +69,3 @@ export default {
   }
 };
 </script>
-<style lang="scss" scoped>
-#group-learning-duration-bar{
-  width: 100%;
-  height: 100%;
-}
-</style>

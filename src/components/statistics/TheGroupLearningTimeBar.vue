@@ -1,17 +1,17 @@
 <template>
-  <div id="group-learning-time-bar" />
+  <div class="chart-item w-full h-full">
+    <span class="chart-title">
+      授课课程使用时长
+    </span>
+    <div
+      id="group-learning-time-bar"
+      class="w-full flex-grow"
+    />
+  </div>
 </template>
 <script>
-import * as echarts from 'echarts/core';
-import {
-  TitleComponent,
-  TooltipComponent,
-  GridComponent,
-  LegendComponent,
-} from 'echarts/components';
-import { LineChart } from 'echarts/charts';
-import { LabelLayout } from 'echarts/features';
-import { CanvasRenderer } from 'echarts/renderers';
+import echarts from '@/plugins/echarts';
+
 export default {
   name: 'TheGroupLearningTimeBar',
   data: () => ({
@@ -21,30 +21,23 @@ export default {
   },
   methods: {
     init() {
-      echarts.use([
-        TitleComponent,
-        TooltipComponent,
-        GridComponent,
-        LegendComponent,
-        LineChart,
-        CanvasRenderer,
-        LabelLayout,
-      ]);
       this.bar = echarts.init(
-        document.getElementById('group-learning-time-bar')
+        document.getElementById('group-learning-time-bar'),
+        'dark'
       );
       this.bar.setOption({
-        title: {
-          text: '组使用学习时长',
-        },
         tooltip: {},
+        backgroundColor: 'transparent',
         dataset: {
           source: [
-            ['1911', 40],
-            ['2110', 86],
-            ['2011', 50],
-            ['2212', 50],
+            ['1911(分钟)', 40],
+            ['2110(分钟)', 86],
+            ['2011(分钟)', 50],
+            ['2212(分钟)', 50],
           ],
+        },
+        grid: {
+          top: ''
         },
         xAxis: { type: 'value' },
         yAxis: { type: 'category' },
@@ -58,9 +51,3 @@ export default {
   }
 };
 </script>
-<style scoped>
-#group-learning-time-bar {
-  width: 100%;
-  height: 100%;
-}
-</style>

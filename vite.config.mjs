@@ -34,6 +34,10 @@ export default defineConfig({
       },
       devOptions: {
         enabled: true
+      },
+      workbox: {
+        // 4MB Max
+        maximumFileSizeToCacheInBytes: 4 * 1024 * 1024
       }
     })
   ],
@@ -54,5 +58,16 @@ export default defineConfig({
   },
   server: {
     port: 3000
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'echarts': ['echarts'],
+          'p5': ['p5'],
+          'vendor': ['mitt', 'vue', 'vue-router', 'axios', 'vuetify', 'nprogress', 'pinia', 'unplugin-fonts']
+        }
+      }
+    }
   }
 });
