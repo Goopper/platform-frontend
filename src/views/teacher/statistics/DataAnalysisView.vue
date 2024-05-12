@@ -24,6 +24,9 @@
           @click="handleCourseCountBarChartClick"
         />
       </dv-border-box1>
+      <the-course-use-line class="chart-item" />
+      <the-group-learning-duration-bar class="chart-item" />
+      <the-group-learning-time-bar class="chart-item" />
     </div>
   </div>
 </template>
@@ -42,7 +45,8 @@ export default {
     DvDecoration7: DvDecoration7,
   },
   data: () => ({
-    loading: false
+    
+    TheCourseUseLineloading: false
   }),
   created() {
 
