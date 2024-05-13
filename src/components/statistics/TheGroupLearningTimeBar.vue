@@ -1,7 +1,7 @@
 <template>
   <div class="chart-item w-full h-full">
     <span class="chart-title">
-      授课课程使用时长
+      用户学习时长前10
     </span>
     <div
       id="group-learning-time-bar"
@@ -30,11 +30,17 @@ export default {
         backgroundColor: 'transparent',
         dataset: {
           source: [
-            ['1911(分钟)', 40],
-            ['2110(分钟)', 86],
-            ['2011(分钟)', 50],
-            ['2212(分钟)', 50],
-          ],
+            ['20211021', 72],
+            ['20211109', 70],
+            ['20211112', 65],
+            ['20211010', 59],
+            ['20211101', 56],
+            ['20211117', 56],
+            ['20211005', 54],
+            ['20211029', 53],
+            ['20211023', 52],
+            ['20211107', 51]
+          ].sort((a, b) => b[1] - a[1]).reverse(),
         },
         grid: {
           top: ''
@@ -44,6 +50,10 @@ export default {
         series: [
           {
             type: 'bar',
+            label: {
+              show: true,
+              position: 'right',
+            }
           }
         ],
       });
