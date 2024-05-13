@@ -1,8 +1,6 @@
 <template>
   <div class="chart-item w-full h-full">
-    <span class="chart-title">
-      用户学习时长前10
-    </span>
+    <span class="chart-title"> 用户实例开启时长前10(小时) </span>
     <div
       id="group-learning-time-bar"
       class="w-full flex-grow"
@@ -14,8 +12,7 @@ import echarts from '@/plugins/echarts';
 
 export default {
   name: 'TheGroupLearningTimeBar',
-  data: () => ({
-  }),
+  data: () => ({}),
   mounted() {
     this.init();
   },
@@ -26,7 +23,6 @@ export default {
         'dark'
       );
       this.bar.setOption({
-        tooltip: {},
         backgroundColor: 'transparent',
         dataset: {
           source: [
@@ -39,25 +35,64 @@ export default {
             ['20211005', 54],
             ['20211029', 53],
             ['20211023', 52],
-            ['20211107', 51]
-          ].sort((a, b) => b[1] - a[1]).reverse(),
+            ['20211107', 51],
+          ]
+            .sort((a, b) => b[1] - a[1])
+            .reverse(),
         },
         grid: {
-          top: ''
+          top: '',
         },
         xAxis: { type: 'value' },
-        yAxis: { type: 'category' },
+        yAxis: [
+          {
+            type: 'category',
+            axisLine: 'none',
+            axisTick: 'none',
+            offset: '7',
+            axisLabel: {
+              textStyle: {
+                color: 'white',
+                fontSize: 12,
+              },
+            },
+          },
+          {
+            axisLine: 'none',
+            axisTick: 'none',
+            axisLabel: {
+              textStyle: {
+                color: 'white',
+                fontSize: 12,
+              },
+            },
+            data: [72, 70, 65, 59, 56, 56, 54, 53, 52, 51]
+              .sort((a, b) => b[1] - a[1])
+              .reverse(),
+          }
+        ],
         series: [
           {
             type: 'bar',
-            label: {
-              show: true,
-              position: 'right',
-            }
+            barWith: 15,
+            itemStyle: {
+              normal: {
+                color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [
+                  { offset: 0, color: '#0092fe' },
+                  { offset: 0.5, color: '#01abcb' },
+                  { offset: 1, color: '#02c794' },
+                ]),
+                barBorderRadius: 15,
+              },
+            },
+            z: 2,
+            showBackground: true,
+            backgroundStyle: {
+             color : 'rgba(0,0,0,0.2)'},
           }
         ],
       });
     },
-  }
+  },
 };
 </script>
