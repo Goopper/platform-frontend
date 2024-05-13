@@ -293,10 +293,8 @@ nav {
 .course-students-card {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
-  grid-template-rows: 1fr 1fr 1fr 1fr;
   grid-gap: 1em;
   overflow: auto;
-  height: calc(100% - 62px);
 }
 .course-students-card > div {
   display: flex;
@@ -310,6 +308,9 @@ nav {
   padding: 1em;
   width: 14em;
   height: 11em;
+}
+.student-cards{
+  overflow: auto;
 }
 
 .stu-cards:hover {
@@ -347,7 +348,7 @@ nav {
   .course-students-card {
     grid-template-columns: 1fr 1fr;
     grid-gap: 0.5em;
-    height: calc(100% - 140px);
+    height: 96%;
   }
   nav {
     display: inline;
@@ -372,6 +373,8 @@ nav {
 @media (max-width: 500px) {
   .course-students-card {
     grid-template-columns: 1fr;
+    height: 96%;
+    overflow: auto;
   }
 
   .stu-cards {
