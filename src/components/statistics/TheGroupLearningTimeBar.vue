@@ -9,28 +9,23 @@
 </template>
 <script>
 import echarts from '@/plugins/echarts';
-
+import {getUserLearningTime} from '@/api/statistic/baize';
 export default {
   name: 'TheGroupLearningTimeBar',
   data: () => ({
-    dataset: [
-      ['20211021', 72],
-      ['20211109', 70],
-      ['20211112', 65],
-      ['20211010', 59],
-      ['20211101', 56],
-      ['20211117', 56],
-      ['20211005', 54],
-      ['20211029', 53],
-      ['20211023', 52],
-      ['20211107', 51],
-    ]
+    dataset: null,
+    bar: undefined
   }),
-  mounted() {
-    this.init();
+  async created() {
+    const res = await getUserLearningTime();
+    this.dataset = res.data;
+    this.dataset.sort((a, b) => {
+      return a[1] - b[1];
+    });
+    this.getTimeBar();
   },
   methods: {
-    init() {
+    getTimeBar() {
       this.bar = echarts.init(
         document.getElementById('group-learning-time-bar'),
         'dark'
@@ -39,8 +34,6 @@ export default {
         backgroundColor: 'transparent',
         dataset: {
           source: this.dataset
-            .sort((a, b) => b[1] - a[1])
-            .reverse(),
         },
         grid: {
           top: '',
