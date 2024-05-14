@@ -27,31 +27,36 @@ export default {
       );
       charts.setOption({
         legend: {
-           data: ['平均值', '最大值'],
+           data: ['平均值', '学习人数'],
         },
         tooltip: {
           trigger: 'axis',
           formatter: function (params) {
-            // let longerStu = ['student', 'student', '20191101', '20201133', '20211006', '202110026', '20211115', '20211126'];
-            // let stu = null;
-            // for(let i = 0;i < longerStu.length; i++){
-            //   if(params[0].value == longerStu[i]){
-            //     stu = longerStu[i];
-            //   }
-            // }
             // 假设你的数据中包含最大时长的用户信息
-            return params[0].name+'<br/>'+ params[0].seriesName+params[0].value+'小时'+'<br/>'+params[1].seriesName+params[0].value+'小时';
+            return params[0].name+'<br/>'+ params[0].seriesName+' : '+params[0].value[1]+'小时'+'<br/>'+params[1].seriesName+' : '+params[1].value[2]+'人';
           }
         },
         backgroundColor: 'transparent',
+        dataset: {
+          source: [
+            ['OpenCV计算机视觉',0,1],
+            ['Hadoop 大数据开发',0.75,1],
+            ['大数据导论(1911班)',7.5,30],
+            ['数据分析与可视化实操考试',0.83,7],
+            ['大数据导论(2110班)',13.73,26],
+            ['大数据技术导论(2110班)',1.89,24],
+            ['大数据导论(21111班)',13.41,29],
+            ['大数据技术导论(21111班)',2.5,29]
+          ],
+        },
         //标签
         xAxis: [
            {
             type: 'category',
-            data: ['OpenCV计算机视觉', 'Hadoop 大数据开发', '大数据导论(1911班)', '数据分析与可视化实操考试', '大数据导论(2110班)', '大数据技术导论(2110班)', '大数据导论(21111班)', '大数据技术导论(21111班)'],
+            // data: ['OpenCV计算机视觉', 'Hadoop 大数据开发', '大数据导论(1911班)', '数据分析与可视化实操考试', '大数据导论(2110班)', '大数据技术导论(2110班)', '大数据导论(21111班)', '大数据技术导论(21111班)'],
             axisLabel: {
               interval: 0,
-              width: 80,
+              width: 50,
               overflow: 'truncate',
               textStyle: {
                 fontSize: 10
@@ -98,15 +103,23 @@ export default {
           {
             name: '平均值',
             type: 'line',
-            data: [0, 0.75, 7.5, 0.83, 13.73, 1.89, 13.41, 2.5],
+            // data: [0, 0.75, 7.5, 0.83, 13.73, 1.89, 13.41, 2.5],
             yAxisIndex: 1,
             z: 2,
-            smooth: true
+            smooth: true,
+            lineStyle: {
+              color: '#eca776'
+            },
+              itemStyle: {
+                color: 'white',
+                borderColor: '#eca776',
+                borderWidth: 1
+            }
           },
           {
-            name: '最大值',
+            name: '学习人数',
             type: 'bar',
-            data: [0, 1, 168, 2, 597, 52, 436, 45],
+            // data: [1, 1, 30, 7, 26, 24, 29, 29],
             itemStyle: {
               normal: {
                 color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
@@ -118,6 +131,30 @@ export default {
                     offset: 1,
                     color: '#0091ff',
                   },
+                  // {
+                  //   offset: 0,
+                  //   color:  'red'
+                  // },
+                  //                   {
+                  //   offset: 0.2,
+                  //   color:  'orange'
+                  // },
+                  //                   {
+                  //   offset: 0.4,
+                  //   color:  'yellow'
+                  // },
+                  //                   {
+                  //   offset: 0.6,
+                  //   color:  'green'
+                  // },
+                  // {
+                  //   offset: 0.8,
+                  //   color:'blue'
+                  // },
+                  //                   {
+                  //   offset: 1,
+                  //   color:'purple'
+                  // },
                 ]),
               },
             },

@@ -12,7 +12,20 @@ import echarts from '@/plugins/echarts';
 
 export default {
   name: 'TheGroupLearningTimeBar',
-  data: () => ({}),
+  data: () => ({
+    dataset: [
+      ['20211021', 72],
+      ['20211109', 70],
+      ['20211112', 65],
+      ['20211010', 59],
+      ['20211101', 56],
+      ['20211117', 56],
+      ['20211005', 54],
+      ['20211029', 53],
+      ['20211023', 52],
+      ['20211107', 51],
+    ]
+  }),
   mounted() {
     this.init();
   },
@@ -25,18 +38,7 @@ export default {
       this.bar.setOption({
         backgroundColor: 'transparent',
         dataset: {
-          source: [
-            ['20211021', 72],
-            ['20211109', 70],
-            ['20211112', 65],
-            ['20211010', 59],
-            ['20211101', 56],
-            ['20211117', 56],
-            ['20211005', 54],
-            ['20211029', 53],
-            ['20211023', 52],
-            ['20211107', 51],
-          ]
+          source: this.dataset
             .sort((a, b) => b[1] - a[1])
             .reverse(),
         },
@@ -66,9 +68,7 @@ export default {
                 fontSize: 12,
               },
             },
-            data: [72, 70, 65, 59, 56, 56, 54, 53, 52, 51]
-              .sort((a, b) => b[1] - a[1])
-              .reverse(),
+            data: this.dataset.map(row => row[1]+'小时')
           }
         ],
         series: [
