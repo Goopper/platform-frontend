@@ -13,6 +13,7 @@
 <script>
 import { getCourseTeachCount } from '@/api/statistic/baize';
 import echarts from '@/plugins/echarts';
+import color from '@/utils/color';
 
 export default {
   name: 'TheCourseCountPieChart',
@@ -45,8 +46,12 @@ export default {
       this.pieChart.setOption({
         tooltip: {},
         legend: {
-          orient: 'vertical',
-          left: 'left'
+          left: 'center',
+          type: 'scroll',
+          pageIconColor: '#fff',
+          pageTextStyle: {
+            color: '#fff'
+          }
         },
         dataset: {
           source: dataset
