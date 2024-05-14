@@ -1,6 +1,6 @@
 <template>
   <div class="chart-item w-full h-full">
-    <span class="chart-title"> 每个课程的学习最长的用户和平均值 </span>
+    <span class="chart-title"> 每个课程里每个组学习人数和平均值 </span>
     <div
       id="group-learning-duration-bar"
       class="w-full flex-grow"

@@ -1,6 +1,6 @@
 <template>
   <div class="chart-item w-full h-full">
-    <span class="chart-title"> 每组使用示例次数(按天) </span>
+    <span class="chart-title"> 每组开启实例次数(按天) </span>
     <div
       id="course-use-line"
       class="w-full flex-grow"
@@ -25,6 +25,11 @@ export default {
     this.groupList = this.data.shift();
     this.groupList.shift();
     this.dataset = this.data;
+    this.dataset.sort((a, b) => {
+      const dateA = new Date(a[0]);
+      const dateB = new Date(b[0]);
+      return dateA - dateB;
+    });
     this.getCourseUse();
   },
   methods: {
