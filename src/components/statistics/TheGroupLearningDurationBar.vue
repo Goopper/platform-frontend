@@ -8,7 +8,6 @@
   </div>
 </template>
 <script>
-import { data } from 'autoprefixer';
 import * as echarts from 'echarts';
 
 export default {
