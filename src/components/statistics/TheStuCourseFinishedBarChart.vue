@@ -11,6 +11,7 @@
 </template>
 
 <script>
+import { getStudentCourseFinishedStatus } from '@/api/statistic/baize';
 import echarts from '@/plugins/echarts';
 
 export default {
@@ -23,18 +24,29 @@ export default {
     this.init();
   },
   methods: {
-    init() {
+    async init() {
+      this.chart.showLoading({
+        text: '加载中...',
+        color: '#5b8ff9',
+        textColor: '#fff',
+        maskColor: 'transparent',
+        zlevel: 0
+      });
+      const res = await getStudentCourseFinishedStatus();
+      if (res) {
+        const dataset = [
+          ['课程', '未完成人数', '已完成人数']
+        ].concat(res.data);
+        this.renderChart(dataset);
+      }
+      this.chart.hideLoading();
+    },
+    renderChart(dataset) {
       this.chart.setOption({
         tooltip: {},
         backgroundColor: 'transparent',
         dataset: {
-          source: [
-            ['课程', '未完成人数', '已完成人数'],
-            ['平台新手入门', 12],
-            ['Linux系统', 30],
-            ['数据分析与可视化实操考试', 4, 25],
-            ['大数据技术导论', 6, 51]
-          ]
+          source: dataset
         },
         legend: {
           selectedMode: false,

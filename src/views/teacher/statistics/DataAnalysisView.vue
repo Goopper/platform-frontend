@@ -54,6 +54,7 @@
         class="w-full h-full flex-grow p-2 grid gap-2"
       >
         <div class="flex flex-col gap-3">
+          <the-recent-container-table class="h-1/2" />
           <the-group-learning-time-bar class="h-1/2" />
         </div>
         <div class="flex flex-col gap-3">
@@ -163,36 +164,5 @@ export default {
   height: 1.05rem;
   background-color: #49bcf7;
   vertical-align: text-bottom;
-}
-
-.radar {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-}
-
-.radar::before {
-  content: "";
-  position: absolute;
-  left: -100%;
-  width: 100%;
-  height: 100%; /* Adjust this value to change the thickness of the line */
-  background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(169, 169, 169, 0.1) 100%);
-  animation: radar 2s linear infinite;
-}
-
-@keyframes radar {
-  0% {
-    left: -100%;
-  }
-  50% {
-    left: 0;
-  }
-  100% {
-    left: 100%;
-  }
 }
 </style>
