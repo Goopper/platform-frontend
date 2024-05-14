@@ -33,6 +33,7 @@ declare module 'vue' {
     TheLogoutCard: typeof import('./src/components/personal/security/TheLogoutCard.vue')['default']
     TheP5Banner: typeof import('./src/components/TheP5Banner.vue')['default']
     ThePasswordModifyCard: typeof import('./src/components/personal/security/ThePasswordModifyCard.vue')['default']
+    TheStuCourseFinishedBarChart: typeof import('./src/components/statistics/TheStuCourseFinishedBarChart.vue')['default']
     TheUserBasicInfoCard: typeof import('./src/components/personal/info/TheUserBasicInfoCard.vue')['default']
   }
 }

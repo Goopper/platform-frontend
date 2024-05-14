@@ -51,7 +51,17 @@ export default {
           filterMode: 'filter',
         },
       ],
-      xAxis: { name: '时间每天已记录', type: 'category' },
+      grid: {
+        right: '5%',
+        bottom: '20%'
+      },
+      xAxis: {
+        name: '时间每天已记录',
+        type: 'category',
+        boundaryGap: false,
+        nameLocation: 'center',
+        nameGap: 24
+      },
       yAxis: { name: '使用次数', type: 'value' },
       series: [
         {

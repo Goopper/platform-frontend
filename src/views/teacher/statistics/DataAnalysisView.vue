@@ -54,15 +54,14 @@
         class="w-full h-full flex-grow p-2 grid gap-2"
       >
         <div class="flex flex-col gap-3">
-          <the-course-count-bar-chart class="h-1/2" />
           <the-group-learning-time-bar class="h-1/2" />
         </div>
         <div class="flex flex-col gap-3">
           <the-course-use-line class="h-1/2" />
-          <the-course-count-line-chart class="h-1/2" />
+          <the-course-count-pie-chart class="h-1/2" />
         </div>
         <div class="flex flex-col gap-3">
-          <the-course-count-pie-chart class="h-1/2" />
+          <the-stu-course-finished-bar-chart class="h-1/2" />
           <the-group-learning-duration-bar class="h-1/2" />
         </div>
       </div>
