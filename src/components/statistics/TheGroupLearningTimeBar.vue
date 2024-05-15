@@ -16,20 +16,28 @@ export default {
     dataset: null,
     bar: undefined
   }),
-  async created() {
-    const res = await getUserLearningTime();
-    this.dataset = res.data;
-    this.dataset.sort((a, b) => {
-      return a[1] - b[1];
-    });
+  mounted() {
     this.getTimeBar();
   },
   methods: {
-    getTimeBar() {
+    async getTimeBar() {
       this.bar = echarts.init(
         document.getElementById('group-learning-time-bar'),
         'dark'
       );
+      this.bar.showLoading({
+        text: '加载中...',
+        color: '#5b8ff9',
+        textColor: '#fff',
+        maskColor: 'transparent',
+        zlevel: 0
+      });
+      const res = await getUserLearningTime();
+        this.dataset = res.data;
+        this.dataset.sort((a, b) => {
+          return a[1] - b[1];
+        });
+      this.bar.hideLoading();
       this.bar.setOption({
         backgroundColor: 'transparent',
         dataset: {

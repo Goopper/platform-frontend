@@ -16,17 +16,25 @@ export default {
   data: () => ({
     data: [],
   }),
-  async created() {
-    const res = await getGroupLearning();
-    this.data = res.data;
+  mounted() {
     this.init();
   },
   methods: {
-    init() {
+    async init() {
       let charts = echarts.init(
         document.getElementById('group-learning-duration-bar'),
         'dark'
       );
+      charts.showLoading({
+        text: '加载中...',
+        color: '#5b8ff9',
+        textColor: '#fff',
+        maskColor: 'transparent',
+        zlevel: 0
+      });
+      const res = await getGroupLearning();
+      this.data = res.data;
+      charts.hideLoading();
       charts.setOption({
         legend: {
           data: ['平均值', '学习人数'],

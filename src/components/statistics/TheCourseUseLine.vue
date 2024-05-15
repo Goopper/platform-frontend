@@ -9,7 +9,7 @@
 </template>
 <script>
 import * as echarts from 'echarts';
-import {getCourseUse} from '@/api/statistic/baize';
+import { getCourseUse } from '@/api/statistic/baize';
 export default {
   name: 'TheCourseUseLine',
   data() {
@@ -19,25 +19,33 @@ export default {
       dataset: [],
     };
   },
-  async created() {
-    const res = await getCourseUse();
-    this.data = res.data;
-    this.groupList = this.data.shift();
-    this.groupList.shift();
-    this.dataset = this.data;
-    this.dataset.sort((a, b) => {
-      const dateA = new Date(a[0]);
-      const dateB = new Date(b[0]);
-      return dateA - dateB;
-    });
+  mounted() {
     this.getCourseUse();
   },
   methods: {
-    getCourseUse() {
+    async getCourseUse() {
       let line = echarts.init(
         document.getElementById('course-use-line'),
         'dark'
       );
+      line.showLoading({
+        text: '加载中...',
+        color: '#5b8ff9',
+        textColor: '#fff',
+        maskColor: 'transparent',
+        zlevel: 0
+      });
+      const res = await getCourseUse();
+      this.data = res.data;
+      this.groupList = this.data.shift();
+      this.groupList.shift();
+      this.dataset = this.data;
+      this.dataset.sort((a, b) => {
+        const dateA = new Date(a[0]);
+        const dateB = new Date(b[0]);
+        return dateA - dateB;
+      });
+      line.hideLoading();
       line.setOption({
         legend: {
           left: 'left',
@@ -48,7 +56,11 @@ export default {
           formatter: function (params) {
             let result = params[0].name + '<br/>';
             for (let i = 0; i < params.length; i++) {
-              result += params[i].seriesName + ' : ' + params[i].value[i + 1] + '次<br/>';
+              result +=
+                params[i].seriesName +
+                ' : ' +
+                params[i].value[i + 1] +
+                '次<br/>';
             }
             return result;
           },
@@ -76,14 +88,13 @@ export default {
           },
         },
         yAxis: { name: '使用次数', type: 'value' },
-        series:
-          this.groupList.map(name => ({
-            name: name,
-            type: 'line',
-            connectNulls: true,
-          })),
+        series: this.groupList.map((name) => ({
+          name: name,
+          type: 'line',
+          connectNulls: true,
+        })),
       });
     },
-  }
+  },
 };
 </script>
