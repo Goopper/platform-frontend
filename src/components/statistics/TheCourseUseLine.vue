@@ -51,6 +51,9 @@ export default {
           left: 'left',
           data: this.groupList,
         },
+        grid: {
+          bottom: '10%'
+        },
         tooltip: {
           trigger: 'axis',
           formatter: function (params) {

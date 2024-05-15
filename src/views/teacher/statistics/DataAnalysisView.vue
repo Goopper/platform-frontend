@@ -9,7 +9,7 @@
         id="data-analysis-title"
         class="text-white text-center text-3xl block w-full relative"
       >
-        智慧校园数字可视化系统
+        数字与信息技术学院课程可视化平台
         <div
           id="data-analysis-title-end"
           class="flex justify-center items-center"
@@ -54,8 +54,8 @@
         class="w-full h-full flex-grow p-2 grid gap-2"
       >
         <div class="flex flex-col gap-3">
-          <the-recent-container-table class="h-1/2" />
-          <the-group-learning-time-bar class="h-1/2" />
+          <the-recent-container-table class="h-1/2 max-h-1/2" />
+          <the-group-learning-time-bar class="h-1/2 min-h-1/2" />
         </div>
         <div class="flex flex-col gap-3">
           <the-course-use-line class="h-1/2" />
@@ -111,6 +111,7 @@ export default {
 #data-analysis-title {
   padding: 0.5rem;
   display: flex;
+  font-weight: bold;
   align-items: center;
   justify-content: center;
 

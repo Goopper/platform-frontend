@@ -20,8 +20,6 @@ declare module 'vue' {
     TheAccountBindCard: typeof import('./src/components/personal/info/TheAccountBindCard.vue')['default']
     TheAvatarModifyCard: typeof import('./src/components/personal/info/TheAvatarModifyCard.vue')['default']
     TheCourseContentModifyCard: typeof import('./src/components/course/TheCourseContentModifyCard.vue')['default']
-    TheCourseCountBarChart: typeof import('./src/components/statistics/TheCourseCountBarChart.vue')['default']
-    TheCourseCountLineChart: typeof import('./src/components/statistics/TheCourseCountLineChart.vue')['default']
     TheCourseCountPieChart: typeof import('./src/components/statistics/TheCourseCountPieChart.vue')['default']
     TheCourseCreationForm: typeof import('./src/components/course/TheCourseCreationForm.vue')['default']
     TheCourseUseLine: typeof import('./src/components/statistics/TheCourseUseLine.vue')['default']

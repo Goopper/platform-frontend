@@ -58,6 +58,9 @@ export default {
         dataset: {
           source: this.data,
         },
+        grid: {
+          bottom: '10%'
+        },
         xAxis: [
           {
             type: 'category',

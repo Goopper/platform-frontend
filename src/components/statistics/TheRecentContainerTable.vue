@@ -9,10 +9,10 @@
     >
       <div id="head-row">
         <div class="container-table-cell">
-          学生姓名
+          学生信息
         </div>
         <div class="container-table-cell">
-          学生学号
+          开启日期
         </div>
         <div class="container-table-cell">
           容器信息
@@ -32,48 +32,40 @@
       </div>
       <div
         v-else
-        class="w-full h-full flex flex-col gap-[.1rem]"
+        id="scroll-container"
+        class="flex flex-col gap-[.1rem] h-full relative"
       >
-        <TransitionGroup name="container-table-fade">
+        <div
+          id="scroll-target"
+          class="absolute flex flex-col gap-[.1rem]"
+        >
           <div
             v-for="item in containers"
             :key="item.id"
-            class="flex justify-between w-full h-1/4 container-table-row"
+            class="flex justify-between w-full container-table-row"
           >
             <div class="container-table-cell">
               <div>
-                {{ item.studentName }}
+                {{ item.studentName }}-{{ item.studentNumber }}
               </div>
             </div>
             <div class="container-table-cell">
               <div>
-                {{ item.studentNumber }}
+                {{ item.startTime }}
               </div>
             </div>
-            <div class="container-table-cell">
+            <div class="container-table-cell px-[.4rem]">
               <div>
                 {{ item.containerInfo }}
-                <v-tooltip
-                  activator="parent"
-                  location="top"
-                >
-                  {{ item.containerInfo }}
-                </v-tooltip>
               </div>
             </div>
-            <div class="container-table-cell">
+            <div class="container-table-cell px-[.4rem]">
               <div>
                 {{ item.taskName }}
-                <v-tooltip
-                  activator="parent"
-                  location="top"
-                >
-                  {{ item.taskName }}
-                </v-tooltip>
               </div>
             </div>
           </div>
-        </TransitionGroup>
+        </div>
       </div>
     </div>
   </div>
@@ -86,14 +78,56 @@ export default {
   name: 'TheRecentContainerTable',
   data: () => ({
     loading: false,
-    containers: []
+    containers: [],
+    tryCountLimit: 100,
+    currentTryCount: 0,
+    scrollDirection: 1,
+    scrollTarget: undefined,
+    scrollContainer: undefined,
+    tableHeadNodes: undefined
   }),
   created() {
-    this.init();
     // refresh every 5 seconds
     setInterval(() => {
       this.refreshData();
     }, 5000);
+  },
+  mounted() {
+    this.tableHeadNodes = document.getElementById('head-row').childNodes;
+    this.scrollContainer = document.getElementById('scroll-container');
+    this.init(); 
+    // 滚动动画实现
+    const containerHeight = parseInt(window.getComputedStyle(this.scrollContainer).height.replace('px',''));
+    this.getRowsTotalHeight().then((height) => {
+      const result = height - containerHeight;
+      if (result && !isNaN(result) && result > 0) {
+        const rowCount = document.querySelectorAll('.container-table-row').length;
+        const stylesheet = document.styleSheets[0];
+        const totalGap = rowCount * 0.1;
+        const keyframes =
+          `@keyframes dynamic-scroll {
+            0% {
+              transform: translateY(0);
+            }
+            1.5% {
+              transform: translateY(0);
+            }
+            50% {
+              transform: translateY(-${result}px) translateY(-${totalGap}rem);
+            }
+            51.5% {
+              transform: translateY(-${result}px) translateY(-${totalGap}rem);
+            }
+            100% {
+              transform: translateY(0);
+            }
+          }`;
+        stylesheet.insertRule(keyframes, stylesheet.cssRules.length);
+        document.getElementById('scroll-target').style.animation = `dynamic-scroll ${rowCount*3}s linear infinite`;
+      } else if (result < 0) {
+        document.getElementById('scroll-target').style.animation = 'none';
+      }
+    });
   },
   methods: {
     async init() {
@@ -120,6 +154,45 @@ export default {
           });
         }
       });
+    },
+    async getRowsTotalHeight() {
+      return new Promise(async (resolve, reject) => {
+        while (true) {
+          // sleep 100ms
+          await this.sleep(100);
+          const rows = document.querySelectorAll('.container-table-row');
+          if (rows.length > 0) {
+            let height = 0;
+            // add element height
+            for (let i = 0; i < rows.length; i++) {
+              const row = rows[i];
+              this.renderTableHeaderWidth(row);
+              height += parseInt(window.getComputedStyle(row).height.replace('px', ''));
+            }
+            resolve(height);
+            break;
+          }
+          this.currentTryCount++;
+          if (this.currentTryCount > this.tryCountLimit) {
+            reject('Exceed try count limit');
+            break;
+          }
+        }
+      });
+    },
+    renderTableHeaderWidth(row) {
+      const cells = row.childNodes;
+      const maxWidths = [0, 0, 0, 0];
+      this.tableHeadNodes.forEach((node, index) => {
+        const width = window.getComputedStyle(cells[index]).width;
+        if (maxWidths[index] < parseInt(width.replace('px', ''))) {
+          maxWidths[index] = parseInt(width.replace('px', ''));
+          node.style.width = width;
+        }
+      });
+    },
+    sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
     }
   }
 };
@@ -139,6 +212,7 @@ export default {
 
 #recent-container-table {
   padding: 0.5rem;
+  font-family: 'Yahei';
 }
 
 #head-row {
@@ -149,7 +223,6 @@ export default {
   font-weight: bold;
   background-color: rgba(255, 255, 255, 0.1);
   font-weight: bold;
-  font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
   
   div {
     width: 100%;
@@ -167,10 +240,6 @@ export default {
 
   div {
     text-align: center;
-    max-width: 5rem;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
   }
 }
 
@@ -178,5 +247,25 @@ export default {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: .1rem;
+}
+
+#scroll-container {
+  overflow: hidden;
+}
+
+#scroll-target {
+  animation: scroll 10s ease infinite;
+}
+
+@keyframes scroll {
+  10% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(0);
+  }
 }
 </style>

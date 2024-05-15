@@ -45,6 +45,8 @@ export default {
         },
         grid: {
           top: '',
+          left: '11%',
+          bottom: '10%'
         },
         xAxis: { type: 'value' },
         yAxis: [
