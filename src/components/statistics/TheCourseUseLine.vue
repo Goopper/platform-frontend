@@ -1,6 +1,8 @@
 <template>
   <div class="chart-item w-full h-full">
-    <span class="chart-title"> 每组开启实例次数(按天) </span>
+    <span class="chart-title">
+      用户使用平台次数/天
+    </span>
     <div
       id="course-use-line"
       class="w-full flex-grow"

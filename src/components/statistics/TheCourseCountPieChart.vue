@@ -1,7 +1,7 @@
 <template>
   <div class="chart-item w-full h-full">
     <span class="chart-title">
-      授课课程占比
+      课程使用平台占比
     </span>
     <div
       id="course-count-pie"
@@ -13,7 +13,6 @@
 <script>
 import { getCourseTeachCount } from '@/api/statistic/baize';
 import echarts from '@/plugins/echarts';
-import color from '@/utils/color';
 
 export default {
   name: 'TheCourseCountPieChart',

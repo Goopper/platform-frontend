@@ -1,6 +1,8 @@
 <template>
   <div class="chart-item w-full h-full">
-    <span class="chart-title"> 用户实例开启时长前10(小时) </span>
+    <span class="chart-title">
+      用户使用时长开启排名
+    </span>
     <div
       id="group-learning-time-bar"
       class="w-full flex-grow"

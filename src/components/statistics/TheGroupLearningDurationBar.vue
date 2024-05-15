@@ -1,6 +1,8 @@
 <template>
   <div class="chart-item w-full h-full">
-    <span class="chart-title"> 每个课程里每个组学习人数和平均值 </span>
+    <span class="chart-title">
+      各班级学习人数和平均学习时长
+    </span>
     <div
       id="group-learning-duration-bar"
       class="w-full flex-grow"
@@ -59,7 +61,7 @@ export default {
           source: this.data,
         },
         grid: {
-          bottom: '10%'
+          bottom: '12%'
         },
         xAxis: [
           {
@@ -67,7 +69,6 @@ export default {
             // data: ['OpenCV计算机视觉', 'Hadoop 大数据开发', '大数据导论(1911班)', '数据分析与可视化实操考试', '大数据导论(2110班)', '大数据技术导论(2110班)', '大数据导论(21111班)', '大数据技术导论(21111班)'],
             axisLabel: {
               interval: 0,
-              width: 50,
               overflow: 'truncate',
               textStyle: {
                 fontSize: 10,
@@ -78,7 +79,7 @@ export default {
         yAxis: [
           {
             type: 'value',
-            name: '课程学习人数',
+            name: '班级学习人数',
             splitLine: { show: false },
             axisTick: { show: false },
             axisLabel: {
@@ -89,7 +90,7 @@ export default {
           },
           {
             type: 'value',
-            name: '课程学习时长平均值',
+            name: '平均学习时长',
             show: true,
             axisTick: { show: false },
             axisLabel: {
@@ -129,6 +130,7 @@ export default {
           {
             name: '学习人数',
             type: 'bar',
+            barWidth: '30%',
             itemStyle: {
               normal: {
                 color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [

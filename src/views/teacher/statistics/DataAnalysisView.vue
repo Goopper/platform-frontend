@@ -9,7 +9,7 @@
         id="data-analysis-title"
         class="text-white text-center text-3xl block w-full relative"
       >
-        数字与信息技术学院课程可视化平台
+        课程实训可视化平台
         <div
           id="data-analysis-title-end"
           class="flex justify-center items-center"
@@ -104,7 +104,6 @@ export default {
   background: #000d4a url('@/assets/img/analysis/background.jpg') center center;
   background-size:cover;
   background-repeat: no-repeat;
-  font-family: SimSun;
   color: white;
 }
 

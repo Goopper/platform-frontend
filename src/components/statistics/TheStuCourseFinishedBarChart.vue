@@ -1,7 +1,7 @@
 <template>
   <div class="chart-item w-full h-full">
     <span class="chart-title">
-      学生课程完成情况
+      学生作业提交情况
     </span>
     <div
       id="course-finished-bar"
@@ -54,21 +54,29 @@ export default {
         grid: {
           left: '3%',
           right: '4%',
-          bottom: '0%',
+          bottom: '4%',
           containLabel: true
         },
         xAxis: {
           type: 'category',
           axisLabel: {
-            rotate: 15
-          }
+            interval: 0,
+            overflow: 'truncate',
+            textStyle: {
+              fontSize: 10,
+            },
+          },
         },
-        yAxis: {},
+        yAxis: {
+          type: 'value',
+          name: '学习人数'
+        },
         series: [
           {
             name: '未完成人数',
             type: 'bar',
             stack: 'x',
+            barWidth: '30%',
             label: {
               show: true,
               color: '#fff'
@@ -84,6 +92,7 @@ export default {
             name: '已完成人数',
             type: 'bar',
             stack: 'x',
+            barWidth: '30%',
             label: {
               show: true,
               color: '#fff'

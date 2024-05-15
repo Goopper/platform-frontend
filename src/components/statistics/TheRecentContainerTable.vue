@@ -1,7 +1,7 @@
 <template>
   <div class="chart-item w-full h-full">
     <span class="chart-title">
-      最近开启的实例
+      用户使用平台信息
     </span>
     <div
       id="recent-container-table"
@@ -15,7 +15,7 @@
           开启日期
         </div>
         <div class="container-table-cell">
-          容器信息
+          课程名称
         </div>
         <div class="container-table-cell">
           任务名称
