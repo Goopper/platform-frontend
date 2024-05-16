@@ -20,6 +20,7 @@ export default {
   }),
   mounted() {
     this.getTimeBar();
+    this.intervalId = setInterval(this.getTimeBar, 1000 * 60 * 40);
   },
   methods: {
     async getTimeBar() {

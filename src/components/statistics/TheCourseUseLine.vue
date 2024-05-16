@@ -23,6 +23,8 @@ export default {
   },
   mounted() {
     this.getCourseUse();
+    this.intervalId = setInterval(this.getCourseUse, 1000 * 60 * 40);
+    // clearInterval(this.intervalId);
   },
   methods: {
     async getCourseUse() {

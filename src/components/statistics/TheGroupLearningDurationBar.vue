@@ -20,6 +20,7 @@ export default {
   }),
   mounted() {
     this.init();
+    this.intervalId = setInterval(this.init, 1000 * 60 * 40);
   },
   methods: {
     async init() {
@@ -102,13 +103,6 @@ export default {
               show: true,
               lineStyle: { color: 'rgba(255,255,255,.1)' },
             }, //x轴线
-          },
-        ],
-        dataZoom: [
-          {
-            type: 'inside', // 这个 dataZoom 组件是 inside 类型
-            xAxisIndex: 0, // 这个 dataZoom 组件控制第一个 xAxis
-            filterMode: 'filter',
           },
         ],
         series: [
