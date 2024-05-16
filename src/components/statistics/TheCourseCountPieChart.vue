@@ -18,10 +18,63 @@ export default {
   name: 'TheCourseCountPieChart',
   data: () => ({
     pieChart: undefined,
+    cur: 1,
   }),
   mounted() {
     this.pieChart = echarts.init(document.getElementById('course-count-pie'), 'dark');
+    this.pieChart.setOption({
+      tooltip: {},
+      legend: {
+        left: 'center',
+        type: 'scroll',
+        pageIconColor: '#fff',
+        pageTextStyle: {
+          color: '#fff'
+        }
+      },
+      dataset: {
+        source: [
+          ['课程', '次数']
+        ]
+      },
+      backgroundColor: 'transparent',
+      series: [
+        {
+          name: '课程占比',
+          type: 'pie',
+          avoidLabelOverlap: false,
+          label: {
+            show: false,
+            position: 'center'
+          },
+          emphasis: {
+            label: {
+              show: true,
+              fontSize: 15,
+              fontWeight: 'bold'
+            }
+          },
+          labelLine: {
+            show: false
+          },
+          center: ['50%', '50%'],
+          radius: ['20%', '75%'],
+          itemStyle: {
+            borderRadius: 8
+          },
+          z: 100,
+          label: {
+            show: true,
+            position: 'inside',
+            formatter: '{d}%'
+          }
+        }
+      ],
+    });
     this.init();
+    setInterval(() => {
+      this.loadData();
+    }, 1000 * 60 * 40);
   },
   methods: {
     async init() {
@@ -32,6 +85,10 @@ export default {
         maskColor: 'transparent',
         zlevel: 0
       });
+      await this.loadData();
+      this.pieChart.hideLoading();
+    },
+    async loadData() {
       const res = await getCourseTeachCount();
       if (res) {
         const dataset = [
@@ -39,55 +96,12 @@ export default {
         ].concat(res.data);
         this.renderChart(dataset);
       }
-      this.pieChart.hideLoading();
     },
     renderChart(dataset) {
       this.pieChart.setOption({
-        tooltip: {},
-        legend: {
-          left: 'center',
-          type: 'scroll',
-          pageIconColor: '#fff',
-          pageTextStyle: {
-            color: '#fff'
-          }
-        },
         dataset: {
           source: dataset
         },
-        backgroundColor: 'transparent',
-        series: [
-          {
-            name: '课程占比',
-            type: 'pie',
-            avoidLabelOverlap: false,
-            label: {
-              show: false,
-              position: 'center'
-            },
-            emphasis: {
-              label: {
-                show: true,
-                fontSize: 15,
-                fontWeight: 'bold'
-              }
-            },
-            labelLine: {
-              show: false
-            },
-            center: ['50%', '50%'],
-            radius: ['20%', '75%'],
-            itemStyle: {
-              borderRadius: 8
-            },
-            z: 100,
-            label: {
-              show: true,
-              position: 'inside',
-              formatter: '{d}%'
-            }
-          }
-        ],
       });
     }
   }

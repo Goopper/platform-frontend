@@ -21,6 +21,68 @@ export default {
   }),
   mounted() {
     this.chart = echarts.init(document.getElementById('course-finished-bar'), 'dark');
+    this.chart.setOption({
+      tooltip: {},
+      backgroundColor: 'transparent',
+      
+      legend: {
+        selectedMode: false,
+      },
+      grid: {
+        left: '3%',
+        right: '4%',
+        bottom: '4%',
+        containLabel: true
+      },
+      xAxis: {
+        type: 'category',
+        axisLabel: {
+          interval: 0,
+          overflow: 'truncate',
+          textStyle: {
+            fontSize: 10,
+          },
+        },
+      },
+      yAxis: {
+        type: 'value',
+        name: '学习人数'
+      },
+      series: [
+        {
+          name: '未完成人数',
+          type: 'bar',
+          stack: 'x',
+          barWidth: '30%',
+          label: {
+            show: true,
+            color: '#fff'
+          },
+          emphasis: {
+            focus: 'series'
+          },
+          itemStyle: {
+            color: '#ea5c81'
+          }
+        },
+        {
+          name: '已完成人数',
+          type: 'bar',
+          stack: 'x',
+          barWidth: '30%',
+          label: {
+            show: true,
+            color: '#fff'
+          },
+          emphasis: {
+            focus: 'series'
+          },
+          itemStyle: {
+            color: '#4892ff'
+          }
+        }
+      ]
+    });
     this.init();
   },
   methods: {
@@ -32,6 +94,10 @@ export default {
         maskColor: 'transparent',
         zlevel: 0
       });
+      await this.loadData();
+      this.chart.hideLoading();
+    },
+    async loadData() {
       const res = await getStudentCourseFinishedStatus();
       if (res) {
         const dataset = [
@@ -39,72 +105,12 @@ export default {
         ].concat(res.data);
         this.renderChart(dataset);
       }
-      this.chart.hideLoading();
     },
     renderChart(dataset) {
       this.chart.setOption({
-        tooltip: {},
-        backgroundColor: 'transparent',
         dataset: {
           source: dataset
         },
-        legend: {
-          selectedMode: false,
-        },
-        grid: {
-          left: '3%',
-          right: '4%',
-          bottom: '4%',
-          containLabel: true
-        },
-        xAxis: {
-          type: 'category',
-          axisLabel: {
-            interval: 0,
-            overflow: 'truncate',
-            textStyle: {
-              fontSize: 10,
-            },
-          },
-        },
-        yAxis: {
-          type: 'value',
-          name: '学习人数'
-        },
-        series: [
-          {
-            name: '未完成人数',
-            type: 'bar',
-            stack: 'x',
-            barWidth: '30%',
-            label: {
-              show: true,
-              color: '#fff'
-            },
-            emphasis: {
-              focus: 'series'
-            },
-            itemStyle: {
-              color: '#ea5c81'
-            }
-          },
-          {
-            name: '已完成人数',
-            type: 'bar',
-            stack: 'x',
-            barWidth: '30%',
-            label: {
-              show: true,
-              color: '#fff'
-            },
-            emphasis: {
-              focus: 'series'
-            },
-            itemStyle: {
-              color: '#4892ff'
-            }
-          }
-        ]
       });
     }
   }
