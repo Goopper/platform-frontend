@@ -287,17 +287,37 @@ export default {
   watch: {
     $route: 'fetchData',
   },
+  mounted() {
+    window.addEventListener('beforeunload', this.beforeUnload);
+  },
+  beforeUnmount() {
+    window.removeEventListener('beforeunload', this.beforeUnload);
+  },
   async created() {
     await this.fetchData();
     this.loading = false;
   },
   methods: {
+    refreshWithoutPrompt() {
+      window.removeEventListener('beforeunload', this.beforeUnload);
+      this.$router.go(0);
+      this.$nextTick(() => {
+        window.addEventListener('beforeunload', this.beforeUnload);
+      });
+    },
+    beforeUnload(event) {
+      if (this.content || this.attachments.length > 0) {
+        event.preventDefault();
+        event.returnValue = '';
+      }
+    },
     //查询当前task
     async fetchData() {
-      if (localStorage.getItem('content')) {
-        this.tab='answer';
+      if (localStorage.getItem('content') || localStorage.getItem('attachment')) {
+        this.tab = 'answer';
         this.content = localStorage.getItem('content');
-        this.attachments = localStorage.getItem('attachment');
+        this.attachments = JSON.parse(localStorage.getItem('attachment'));
+        console.log( this.attachments);
         localStorage.removeItem('content');
         localStorage.removeItem('attachment');
       } else {
@@ -437,8 +457,8 @@ export default {
       this.nextRoute = null;
       this.selectedId = this.taskId;
       localStorage.setItem('content', this.content);
-      localStorage.setItem('attachment', this.attachments);
-      this.$router.go(0);
+      localStorage.setItem('attachment', JSON.stringify(this.attachments));
+      this.refreshWithoutPrompt();
     },
   },
 };
