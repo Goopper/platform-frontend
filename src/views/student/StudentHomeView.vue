@@ -120,7 +120,7 @@
               />
             </div>
           </div>
-          <div class="flex flex-col flex-grow lg:mt-4">
+          <div class="flex flex-col flex-grow lg:mt-4 md:ml-4">
             <v-btn
               v-for="year in allYears"
               :key="year"

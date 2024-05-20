@@ -15,18 +15,21 @@
     bg-color="white"
     open-strategy="multiple"
     active-strategy="single-independent"
-    class="course-aside"
+    class="course-aside flex flex-col"
   >
     <v-list-item
       v-if="isShow"
       :class="{ selected: selectedId === courseId }"
       @click="goToDetail()"
     >
-      <v-list-item-title>
+      <v-list-item-title class="text-lg font-bold p-2">
         {{ courseName }}
       </v-list-item-title>
     </v-list-item>
-    <div v-if="list && list.length > 0">
+    <div
+      v-if="list && list.length > 0"
+      class="flex-grow overflow-y-auto"
+    >
       <v-list-group
         v-for="section in list"
         :key="section.id"

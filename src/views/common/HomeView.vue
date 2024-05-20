@@ -1,7 +1,7 @@
 <template>
   <div class="flex md:flex-col overflow-y-auto">
     <!-- start -->
-    <router-view class="blg:flex-grow lg:mr-0 sm:mb-2 bmd:mr-8 lg:mb-8" />
+    <router-view class="blg:flex-grow lg:mr-0 sm:mb-2 bmd:mr-8" />
     <!-- end -->
     <div
       id="message-card-area"

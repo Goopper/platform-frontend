@@ -1,5 +1,5 @@
 <template>
-  <main>
+  <div class="h-full w-full flex flex-col">
     <!-- 导航栏 -->
     <nav>
       <v-text-field
@@ -37,43 +37,44 @@
     </h1>
 
     <!-- 课程卡片 -->
-    
-    <div
-      v-if="loading"
-      class="loader"
-    >
-      <v-progress-circular
-        indeterminate
-        :size="80"
-        :width="8"
-        color="primary"
-      />
+    <div class="flex-grow overflow-y-auto">
+      <div
+        v-if="loading"
+        class="loader"
+      >
+        <v-progress-circular
+          indeterminate
+          :size="80"
+          :width="8"
+          color="primary"
+        />
+      </div>
+      <div
+        v-else-if="courseList.length > 0"
+        class="using-box"
+      >
+        <custom-course-card
+          v-for="course in courseList"
+          :key="course.id"
+          :course="course"
+          @refresh="loadData"
+        />
+      </div>
+      <div
+        v-else
+        class="p-4 flex flex-col justify-center items-center"
+      >
+        <v-icon
+          size="100px"
+          class="text-gray-400 mt-8"
+          icon="mdi-signal-off"
+        />
+        <p class="font-bold text-lg text-gray-400">
+          无课程
+        </p>
+      </div>
     </div>
-    <div
-      v-else-if="courseList.length > 0"
-      class="using-box"
-    >
-      <custom-course-card
-        v-for="course in courseList"
-        :key="course.id"
-        :course="course"
-        @refresh="loadData"
-      />
-    </div>
-    <div
-      v-else
-      class="p-4 flex flex-col justify-center items-center"
-    >
-      <v-icon
-        size="100px"
-        class="text-gray-400 mt-8"
-        icon="mdi-signal-off"
-      />
-      <p class="font-bold text-lg text-gray-400">
-        无课程
-      </p>
-    </div>
-  </main>
+  </div>
 </template>
 
 <script>
@@ -163,15 +164,14 @@ h1 {
   margin: 1em 0;
 }
 
-// 使用中的所有课程卡片
+// 课程卡片列表
 .using-box {
-  overflow: auto;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
   grid-auto-rows: min-content;
   grid-auto-columns: min-content;
+  justify-items: center;
   grid-gap: 1em;
-  height: 88%;
   padding: 0 0 2em 0 ;
 }
 
@@ -222,7 +222,7 @@ h1 {
 
     .using-card {
       display: flex;
-      width: auto;
+      width: 100%;
     }
 
     .title-more {
