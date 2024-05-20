@@ -1,12 +1,13 @@
 <template>
   <!-- 课程里学生学习进度框 -->
-  <main>
+  <div class="flex flex-col w-full bg-background border p-6">
     <!-- 课程操作栏 -->
-    <nav>
+    <div>
       <!-- 选择课程 -->
-      <div class="course-select">
+      <div class="grid gap-2 grid-cols-3 sm:grid-cols-2">
         <v-select
           v-model="courseId"
+          class="sm:col-span-2"
           label="选择课程"
           :items="courseList"
           item-title="name"
@@ -15,36 +16,30 @@
           density="compact"
           :loading="loading"
         />
-      </div>
-      <div class="right-select">
         <!-- 选择小组 -->
-        <div class="group-select">
-          <v-select
-            v-model="groupId"
-            label="选择小组"
-            :items="groupList"
-            item-title="name"
-            item-value="id"
-            variant="outlined"
-            density="compact"
-            :loading="loading"
-          />
-        </div>
-        <!-- 排序顺序 -->
-        <div class="sort-select">
-          <v-select
-            v-model="orderId"
-            label="选择排序"
-            :items="orderList"
-            item-title="name"
-            item-value="id"
-            variant="outlined"
-            density="compact"
-            :loading="loading"
-          />
-        </div>
+        <v-select
+          v-model="groupId"
+          label="选择小组"
+          :items="groupList"
+          item-title="name"
+          item-value="id"
+          variant="outlined"
+          density="compact"
+          :loading="loading"
+        />
+        <!-- 排序方式 -->
+        <v-select
+          v-model="orderId"
+          label="选择排序"
+          :items="orderList"
+          item-title="name"
+          item-value="id"
+          variant="outlined"
+          density="compact"
+          :loading="loading"
+        />
       </div>
-    </nav>
+    </div>
     <!-- 学生信息卡片 -->
     <div class="student-cards">
       <div
@@ -60,46 +55,48 @@
       </div>
       <div
         v-else-if="showStudentCards && loading === false"
-        class="course-students-card"
+        id="student-cards"
+        class="grid gap-4 justify-items-center"
       >
         <div
-          v-for="studentCard in studentCardsList"
-          :key="studentCard.id"
+          v-for="student in students"
+          :key="student.id"
+          class="stu-cards gap-2"
+          @click="goStudentDetail(student.id)"
         >
-          <div
-            class="stu-cards"
-            @click="goStudentDetail(studentCard.id)"
-          >
-            <section>
-              <h1>{{ studentCard.name }}</h1>
+          <section class="flex-grow h-full flex flex-col justify-between">
+            <div>
+              <h1>{{ student.name }}</h1>
               <span>{{ groupName() }}</span>
-              <p>{{ studentCard.taskName }}</p>
-              <span>{{
-                timeAndSection(studentCard.lastUpdate, studentCard.sectionName)
-              }}</span>
-            </section>
-            <div class="image-circular">
-              <img
-                :src="studentCard.avatar"
-                alt=""
-              >
-              <v-progress-circular
-                :model-value="
-                  processNumber(studentCard.finishedTask, studentCard.totalTask)
-                "
-                :size="48"
-                :width="6"
-                :color="
-                  processColor(
-                    processNumber(studentCard.finishedTask, studentCard.totalTask)
-                  )
-                "
-              >
-                {{
-                  processNumber(studentCard.finishedTask, studentCard.totalTask)
-                }}
-              </v-progress-circular>
             </div>
+            <p class="flex-grow">
+              {{ student.taskName }}
+            </p>
+            <span class="text-ellipsis">{{
+              timeAndSection(student.lastUpdate, student.sectionName)
+            }}</span>
+          </section>
+          <div class="image-circular">
+            <img
+              :src="student.avatar"
+              alt=""
+            >
+            <v-progress-circular
+              class="w-[3rem] h-[3rem]"
+              :model-value="
+                processNumber(student.finishedTask, student.totalTask)
+              "
+              :width="6"
+              :color="
+                processColor(
+                  processNumber(student.finishedTask, student.totalTask)
+                )
+              "
+            >
+              {{
+                processNumber(student.finishedTask, student.totalTask)
+              }}
+            </v-progress-circular>
           </div>
         </div>
       </div>
@@ -117,7 +114,7 @@
         </p>
       </div>
     </div>
-  </main>
+  </div>
 </template>
 
 <script>
@@ -134,7 +131,7 @@ export default {
     courseId: null,
     groupId: null,
     orderId: null,
-    studentCardsList: [],
+    students: [],
     showStudentCards: true,
     loading: true,
   }),
@@ -158,7 +155,6 @@ export default {
   },
   async created() {
     // 获取教师的课程列表
-
     const course = await getCourseList();
     const group = await getGroupList();
     console.log(course, group);
@@ -189,11 +185,11 @@ export default {
         this.showStudentCards = true;
         this.loading = false;
         if (this.orderId === 2) {
-          this.studentCardsList = res.data.sort((a, b) => {
+          this.students = res.data.sort((a, b) => {
             return a.name.localeCompare(b.name);
           });
         } else {
-          this.studentCardsList = res.data;
+          this.students = res.data;
         }
       }
     },
@@ -253,16 +249,35 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-main {
-  display: flex;
-  flex-direction: column;
-  padding: 2em;
-  width: 100%;
-  background-color: white;
-  border: 1px solid #e0e0e0;
-  height: 100%;
+#student-cards {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  @media screen and (min-width: 1440px){
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  @media screen and (min-width: 1680px){
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  @media screen and (max-width: 1440px) {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+
+  @media screen and (max-width: 1280px) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @media screen and (max-width: 768px){
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @media screen and (max-width: 600px){
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
 }
 
+<<<<<<< HEAD
 //选择框
 nav {
   display: flex;
@@ -302,13 +317,20 @@ nav {
   justify-content: center;
   align-items: center;
 }
+=======
+>>>>>>> e1c692e6d10643b043e4919570aafe1ee315f6d8
 .stu-cards {
   display: flex;
+  justify-content: space-between;
   border: 1px solid #e0e0e0;
   border-radius: 4px;
   padding: 1em;
-  width: 14em;
-  height: 11em;
+  width: 100%;
+  height: 11rem;
+}
+
+.student-cards{
+  overflow: auto;
 }
 .student-cards{
   overflow: auto;
@@ -317,6 +339,7 @@ nav {
 .stu-cards:hover {
   cursor: pointer;
 }
+
 .loader {
   display: flex;
   justify-content: center;
@@ -324,6 +347,7 @@ nav {
   height: 50vh;
 }
 
+<<<<<<< HEAD
 //缩小时改变大小
 @media (min-width: 820px) and (max-width: 1280px) {
   .right-select {
@@ -383,15 +407,17 @@ nav {
   }
 }
 
+=======
+>>>>>>> e1c692e6d10643b043e4919570aafe1ee315f6d8
 // 图片和进度条
 .image-circular {
-  width: 24%;
+  width: 3rem;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 
   img {
-    border-radius: 2em;
+    border-radius: 100vw;
   }
 }
 
@@ -400,10 +426,6 @@ nav {
 }
 
 // 学生一些信息
-section {
-  width: 76%;
-}
-
 h1 {
   font-size: 1.4em;
 }
@@ -427,7 +449,6 @@ section p {
   white-space: normal;
   word-wrap: break-word;
   line-height: 1em;
-  height: 4em;
   max-width: 100%;
 }
 
