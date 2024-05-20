@@ -22,18 +22,62 @@
         <v-tab
           class="sm:w-1/2"
           to="/"
+          @click="selectedTab = 'null'"
         >
           首页
         </v-tab>
         <v-tab
           class="sm:hidden"
           to="/course"
+          @click="selectedTab = 'null'"
         >
           课程
         </v-tab>
+        <v-menu
+          offset="4"
+          open-on-hover
+        >
+          <template #activator="{ props }">
+            <v-tab
+              v-bind="props"
+              class="sm:hidden"
+              to="/plugin"
+              :class="{ 'v-tab--active': selectedTab === 'plugin' }"
+            >
+              训练场
+              <v-icon>mdi-menu-down</v-icon>
+            </v-tab>
+          </template>
+          <v-list
+            class="plugin-list sm:hidden white-background"
+            bg-color="white"
+          >
+            <v-list-item>
+              <v-btn
+                variant="text"
+                block
+                @click="navigateTo('/plugin/frontend')"
+              >
+                前端练习
+              </v-btn>
+            </v-list-item>
+            <v-list-item>
+              <v-btn
+                variant="text"
+                block
+                tile
+                @click="navigateTo('/plugin/backend')"
+              >
+                后端练习
+              </v-btn>
+            </v-list-item>
+          </v-list>
+        </v-menu>
+
         <v-tab
           class="sm:w-1/2"
           to="/personal"
+          @click="selectedTab = 'null'"
         >
           个人中心
         </v-tab>
@@ -140,6 +184,7 @@ export default {
   data: () => ({
     userStore: useUserStore(),
     hasNewMessage: false,
+    selectedTab: null,
   }),
   computed: {
     user() {
@@ -176,7 +221,11 @@ export default {
     handleLogoutClick() {
       logout();
       mitt.emit('unauthorized');
-    }
+    },
+    navigateTo(route) {
+      this.selectedTab = 'plugin';
+      this.$router.push(route);
+    },
   },
 };
 </script>
@@ -205,4 +254,14 @@ export default {
     left: calc(100% - 8px);
   }
 }
+.plugin-list{
+  padding: 0;
+  > .v-list-item {
+    padding: 0;
+  }
+  > .v-list-item--density-default:not(.v-list-item--nav).v-list-item--one-line {
+    padding-inline: 0.25em;
+  }
+}
+
 </style>
