@@ -208,6 +208,7 @@ export default {
     userStore: useUserStore(),
     hasNewMessage: false,
     selectedTab: null,
+    installPrompt: undefined
   }),
   computed: {
     user() {
@@ -257,6 +258,11 @@ export default {
       this.selectedTab = 'plugin';
       this.$router.push(route);
     },
+    installApp() {
+      if (this.installPrompt) {
+        this.installPrompt.prompt();
+      }
+    }
   },
 };
 </script>
