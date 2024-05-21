@@ -14,6 +14,7 @@
           item-value="id"
           variant="outlined"
           density="compact"
+          theme="light"
           :loading="loading"
           :disable="fetch"
         />
@@ -26,6 +27,7 @@
           item-value="id"
           variant="outlined"
           density="compact"
+          theme="light"
           :loading="loading"
           :disable="fetch"
         />
@@ -38,6 +40,7 @@
           item-value="id"
           variant="outlined"
           density="compact"
+          theme="light"
           :loading="loading"
           :disable="fetch"
         />

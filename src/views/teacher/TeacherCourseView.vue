@@ -21,6 +21,7 @@
         variant="outlined"
         density="compact"
         hide-details
+        theme="light"
         :loading="loading"
       />
       <router-link to="create">
