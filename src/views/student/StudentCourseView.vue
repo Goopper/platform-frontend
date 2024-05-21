@@ -24,6 +24,7 @@
           density="compact"
           label="课程类型"
           variant="outlined"
+          theme="light"
           :loading="loading"
         >
           <template #append>
@@ -49,7 +50,10 @@
         color="primary"
       />
     </div>
-    <div v-else-if="learningCourseList.length > 0">
+    <div
+      v-else-if="learningCourseList.length > 0"
+      class="overflow-y-auto max-h-96 mb-4"
+    >
       <custom-horizontal-course-card
         v-for="course in learningCourseList"
         :key="course.id"
@@ -96,6 +100,7 @@
           density="compact"
           label="课程类型"
           variant="outlined"
+          theme="light"
           :loading="loading"
         >
           <template #append>
@@ -121,7 +126,10 @@
         color="primary"
       />
     </div>
-    <div v-else-if="selectableCourseList.length > 0">
+    <div
+      v-else-if="selectableCourseList.length > 0"
+      class="overflow-y-auto max-h-96 mb-4"
+    >
       <custom-horizontal-course-card
         v-for="course in selectableCourseList"
         :key="course.id"
