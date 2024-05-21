@@ -15,6 +15,7 @@
           variant="outlined"
           density="compact"
           :loading="loading"
+          :disable="fetch"
         />
         <!-- 选择小组 -->
         <v-select
@@ -26,6 +27,7 @@
           variant="outlined"
           density="compact"
           :loading="loading"
+          :disable="fetch"
         />
         <!-- 排序方式 -->
         <v-select
@@ -37,6 +39,7 @@
           variant="outlined"
           density="compact"
           :loading="loading"
+          :disable="fetch"
         />
       </div>
     </div>
@@ -135,22 +138,28 @@ export default {
     showStudentCards: true,
     loading: true,
   }),
+  computed: {
+    fetch() {
+      if (this.orderId != null && this.groupId != null && this.courseId != null) {
+        return this.fetchStudentList();
+      } else {
+        return false;
+      }
+    },
+  },
   watch: {
     // 选择框选择后触发获取当前选择的id
     orderId() {
       this.loading = true;
       this.showStudentCards = false;
-      this.fetchStudentList();
     },
     groupId() {
       this.loading = true;
       this.showStudentCards = false;
-      this.fetchStudentList();
     },
     courseId() {
       this.loading = true;
       this.showStudentCards = false;
-      this.fetchStudentList();
     },
   },
   async created() {
@@ -166,7 +175,6 @@ export default {
     this.courseId = this.courseList[0].id;
     this.groupId = this.groupList[0].id;
     this.orderId = this.orderList[0].id;
-    await this.fetchStudentList();
     this.loading = false;
   },
   methods: {
