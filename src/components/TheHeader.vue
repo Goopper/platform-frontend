@@ -51,6 +51,21 @@
     <div
       class="h-2/3 flex items-center justify-end w-1/6 space-x-2 sm:hidden grow"
     >
+      <!-- install -->
+      <v-tooltip
+        v-if="installPrompt"
+        text="点击图标安装应用程序"
+      >
+        <template #activator="{ props }">
+          <v-icon
+            
+            v-bind="props"
+            icon="mdi-inbox-arrow-down-outline"
+            size="large"
+            @click="installApp"
+          />
+        </template>
+      </v-tooltip>
       <!-- message -->
       <v-badge 
         v-if="hasNewMessage"
@@ -148,6 +163,8 @@ export default {
   data: () => ({
     userStore: useUserStore(),
     hasNewMessage: false,
+    selectedTab: null,
+    installPrompt: undefined
   }),
   computed: {
     user() {
@@ -180,10 +197,27 @@ export default {
       }
     });
   },
+  mounted() {
+    window.addEventListener('beforeinstallprompt', (e) => {
+      // Prevent Chrome 67 and earlier from automatically showing the prompt
+      e.preventDefault();
+      // Stash the event so it can be triggered later.
+      this.installPrompt = e;
+    });
+  },
   methods: {
     handleLogoutClick() {
       logout();
       mitt.emit('unauthorized');
+    },
+    navigateTo(route) {
+      this.selectedTab = 'plugin';
+      this.$router.push(route);
+    },
+    installApp() {
+      if (this.installPrompt) {
+        this.installPrompt.prompt();
+      }
     }
   },
 };

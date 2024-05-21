@@ -34,6 +34,12 @@
           </v-icon>
           统计记录
         </v-tab>
+        <v-tab to="/personal/about">
+          <v-icon>
+            mdi-information-slab-box
+          </v-icon>
+          其他
+        </v-tab>
       </v-tabs>
     </div>
     <!-- cards -->
@@ -55,6 +61,8 @@ export default {
     roleId() {
       return this.userStore.roleId;
     },
+  },
+  created() {
   }
 };
 </script>
