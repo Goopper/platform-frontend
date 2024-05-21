@@ -67,7 +67,8 @@
           class="stu-cards gap-2"
           @click="goStudentDetail(student.id)"
         >
-          <section class="flex-grow h-full flex flex-col justify-between">
+          <!-- left -->
+          <section class="flex-grow h-full flex flex-col justify-between overflow-x-hidden">
             <div>
               <h1>{{ student.name }}</h1>
               <span>{{ groupName() }}</span>
@@ -75,10 +76,11 @@
             <p class="flex-grow">
               {{ student.taskName }}
             </p>
-            <span class="text-ellipsis">{{
+            <span class="overflow-hidden text-overflow-ellipsis whitespace-normal line-clamp-1">{{
               timeAndSection(student.lastUpdate, student.sectionName)
             }}</span>
           </section>
+          <!-- right -->
           <div class="image-circular">
             <img
               :src="student.avatar"
