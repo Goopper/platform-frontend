@@ -34,6 +34,7 @@
             &nbsp;js
           </v-tab>
         </v-tabs>
+
         <div class="select">
           <v-select
             v-model="theme"
@@ -49,6 +50,39 @@
               <span>Theme : </span>
             </template>
           </v-select>
+          <v-btn
+            icon="mdi-history"
+            variant="text"
+            density="compact"
+            @click="dialog = true"
+          />
+          <v-dialog
+            v-model="dialog"
+            max-width="290"
+          >
+            <v-card theme="light">
+              <v-card-title class="headline">
+                警告⚠
+              </v-card-title>
+              <v-card-text>是否清空当前所写的所有代码?</v-card-text>
+              <v-card-actions>
+                <v-spacer />
+                <v-btn
+                  text
+                  @click="dialog = false"
+                >
+                  取消
+                </v-btn>
+                <v-btn
+                  color="red darken-1"
+                  text
+                  @click="(clearCode(), dialog = false)"
+                >
+                  确定
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
         </div>
       </div>
       <!-- 编辑器内容 -->
@@ -103,11 +137,11 @@ import cssWorker from 'monaco-editor/esm/vs/language/css/css.worker?worker';
 import htmlWorker from 'monaco-editor/esm/vs/language/html/html.worker?worker';
 import tsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker';
 
-
 export default {
   name: 'FrontendPluginView',
   data() {
     return {
+      dialog: false,
       previewFrame: null,
       tab: null,
       htmlBase: `<!DOCTYPE html>
@@ -120,6 +154,8 @@ export default {
 </body>
 </html>
       `,
+      cssBase: '/* css code here */',
+      jsBase: '//js code here',
       isShowHtml: true,
       isShowCss: true,
       isShowJs: true,
@@ -141,7 +177,6 @@ export default {
     this.isShowJs = false;
     this.basicFrontendSyntax();
     window.addEventListener('beforeunload', this.saveEditorContent);
-
   },
   //删除window和localStorage
   beforeUnmount() {
@@ -155,7 +190,15 @@ export default {
     updatePreview(htmlEditor, cssEditor, jsEditor) {
       const html = htmlEditor;
       const css = '<style>' + cssEditor + '</style>';
-      const js = '<script>' + jsEditor + '</scr' + 'ipt>';
+      const js =  `
+    <script>
+      window.onerror = function(message, source, lineno, colno, error) {
+      };
+      try {
+        ${jsEditor}
+      } catch (error) {
+      }
+    </scr` + 'ipt>';
       this.htmlContent = htmlEditor;
       this.cssContent = cssEditor;
       this.jsContent = jsEditor;
@@ -198,7 +241,7 @@ export default {
       const cssEditor = monaco.editor.create(
         document.getElementById('cssEditor'),
         {
-          value: cssContent == 'null' ? '/* css code here */' : cssContent ?? '/* css code here */',
+          value: cssContent == 'null' ? this.cssBase : cssContent ?? this.cssBase,
           language: 'css',
           theme: this.theme,
           automaticLayout: true,
@@ -207,25 +250,25 @@ export default {
       const jsEditor = monaco.editor.create(
         document.getElementById('jsEditor'),
         {
-          value: jsContent== 'null' ? '//js code here' : jsContent ?? '//js code here',
+          value: jsContent== 'null' ? this.jsBase : jsContent ?? this.jsBase,
           language: 'javascript',
           theme: this.theme,
           automaticLayout: true,
         }
       );
       this.previewFrame = document.getElementById('preview');
-
+      this.updatePreview(this.htmlBase, this.cssBase, this.jsBase);
       //创建iframe
       //分别把三个合为一个
-      htmlEditor.onDidChangeModelContent(() =>
-        this.updatePreview(htmlEditor.getValue(), cssEditor.getValue(), jsEditor.getValue()),
-      );
-      cssEditor.onDidChangeModelContent(() =>
-        this.updatePreview(htmlEditor.getValue(), cssEditor.getValue(), jsEditor.getValue()),
-      );
-      jsEditor.onDidChangeModelContent(() =>
-        this.updatePreview(htmlEditor.getValue(), cssEditor.getValue(), jsEditor.getValue()),
-      );
+        htmlEditor.onDidChangeModelContent(() =>
+          this.updatePreview(htmlEditor.getValue(), cssEditor.getValue(), jsEditor.getValue()),
+        );
+        cssEditor.onDidChangeModelContent(() =>
+          this.updatePreview(htmlEditor.getValue(), cssEditor.getValue(), jsEditor.getValue()),
+        );
+        jsEditor.onDidChangeModelContent(() =>
+          this.updatePreview(htmlEditor.getValue(), cssEditor.getValue(), jsEditor.getValue()),
+        );
     },
     //保存编辑器内容
     saveEditorContent() {
@@ -236,16 +279,27 @@ export default {
     //加载按钮
     reloadIframe() {
       this.isLoading = true;
-      if (localStorage.getItem('htmlContent') && localStorage.getItem('cssContent') && localStorage.getItem('jsContent')) {
-        this.updatePreview(localStorage.getItem('htmlContent'), localStorage.getItem('cssContent'), localStorage.getItem('jsContent'));
-      } else if (this.htmlContent && this.cssContent && this.jsContent){
+      console.log(this.htmlContent, this.cssContent, this.jsContent);
+      if (this.htmlContent && this.cssContent && this.jsContent) {
         this.updatePreview(this.htmlContent, this.cssContent, this.jsContent);
-      }else {
-        this.updatePreview(this.htmlBase, '/* css code here */', '//js code here');
+        this.isLoading = false;
+      } else if (localStorage.getItem('htmlContent') && localStorage.getItem('cssContent') && localStorage.getItem('jsContent')){
+        this.updatePreview(localStorage.getItem('htmlContent'), localStorage.getItem('cssContent'), localStorage.getItem('jsContent'));
+        this.isLoading = false;
+      } else {
+        this.updatePreview(this.htmlBase, this.cssBase, this.jsBase);
+        this.isLoading = false;
       }
 
-      this.isLoading = false;
     },
+    //清空代码
+    clearCode() {
+      window.removeEventListener('beforeunload', this.saveEditorContent);
+      localStorage.removeItem('htmlContent');
+      localStorage.removeItem('cssContent');
+      localStorage.removeItem('jsContent');
+      this.$router.go(0);
+    }
   },
 };
 </script>
@@ -278,7 +332,7 @@ main {
     .select{
       display: flex;
       align-items: center;
-      width: 12em;
+      width: 15.25em;
       height: 2.5em;
       padding-right: 0.75em;
       p{
