@@ -191,20 +191,19 @@ export const routes = [
           requireRole: Role.ROLE_TEACHER
         }
       },
-       {
-         path: 'plugin',
-         redirect: '/plugin/frontend',
-         component: PluginMainView,
-         children: [
-            {
-              path: 'frontend',
-              component: FrontendPluginView,
-           },
-           {
-              path: 'backend',
-              component: BackendPluginView,
-           }
-           
+      {
+        path: 'plugin',
+        redirect: '/plugin/frontend',
+        component: PluginMainView,
+        children: [
+          {
+            path: 'frontend',
+            component: FrontendPluginView,
+          },
+          {
+            path: 'backend',
+            component: BackendPluginView,
+          }
         ]
       }
     ]

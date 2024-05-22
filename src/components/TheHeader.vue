@@ -163,6 +163,8 @@ export default {
   data: () => ({
     userStore: useUserStore(),
     hasNewMessage: false,
+    selectedTab: null,
+    installPrompt: undefined
   }),
   computed: {
     user() {
@@ -208,6 +210,11 @@ export default {
       logout();
       mitt.emit('unauthorized');
     },
+    installApp() {
+      if (this.installPrompt) {
+        this.installPrompt.prompt();
+      }
+    }
   },
 };
 </script>
