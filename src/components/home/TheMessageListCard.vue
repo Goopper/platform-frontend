@@ -1,10 +1,10 @@
 <template>
   <div
     id="message-card-area"
-    class="border flex flex-col bg-secondary overflow-hidden flex-grow"
+    class="border flex flex-col bg-secondary overflow-hidden flex-grow sm:max-h-[640px]"
   >
     <!-- message -->
-    <div class="grow overflow-y-auto sm:max-h-[400px]">
+    <div class="grow overflow-y-auto">
       <div
         v-if="loading"
         class="flex justify-center my-8"
