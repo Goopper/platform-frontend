@@ -14,6 +14,7 @@ declare module 'vue' {
     CustomFloatBackButton: typeof import('./src/components/CustomFloatBackButton.vue')['default']
     CustomHorizontalCourseCard: typeof import('./src/components/CustomHorizontalCourseCard.vue')['default']
     CustomMessageCard: typeof import('./src/components/CustomMessageCard.vue')['default']
+    CustomPluginCard: typeof import('./src/components/plugin/CustomPluginCard.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     StatisticEntryCard: typeof import('./src/components/personal/statistic/StatisticEntryCard.vue')['default']
@@ -30,10 +31,10 @@ declare module 'vue' {
     TheHeader: typeof import('./src/components/TheHeader.vue')['default']
     TheInstallAppCard: typeof import('./src/components/personal/about/TheInstallAppCard.vue')['default']
     TheLogoutCard: typeof import('./src/components/personal/security/TheLogoutCard.vue')['default']
+    TheMessageListCard: typeof import('./src/components/home/TheMessageListCard.vue')['default']
     TheP5Banner: typeof import('./src/components/TheP5Banner.vue')['default']
     ThePasswordModifyCard: typeof import('./src/components/personal/security/ThePasswordModifyCard.vue')['default']
-    TheRecentContainerTable: typeof import('./src/components/statistics/TheRecentContainerTable.vue')['default']
-    TheStuCourseFinishedBarChart: typeof import('./src/components/statistics/TheStuCourseFinishedBarChart.vue')['default']
+    ThePluginListCard: typeof import('./src/components/home/ThePluginListCard.vue')['default']
     TheUserBasicInfoCard: typeof import('./src/components/personal/info/TheUserBasicInfoCard.vue')['default']
   }
 }
