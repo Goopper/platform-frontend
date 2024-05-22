@@ -18,7 +18,6 @@ declare module 'vue' {
     RouterView: typeof import('vue-router')['RouterView']
     StatisticEntryCard: typeof import('./src/components/personal/statistic/StatisticEntryCard.vue')['default']
     TheAccountBindCard: typeof import('./src/components/personal/info/TheAccountBindCard.vue')['default']
-    TheAppInfoCard: typeof import('./src/components/personal/about/TheAppInfoCard.vue')['default']
     TheAvatarModifyCard: typeof import('./src/components/personal/info/TheAvatarModifyCard.vue')['default']
     TheCourseContentModifyCard: typeof import('./src/components/course/TheCourseContentModifyCard.vue')['default']
     TheCourseCreationForm: typeof import('./src/components/course/TheCourseCreationForm.vue')['default']
