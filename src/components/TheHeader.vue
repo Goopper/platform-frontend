@@ -208,18 +208,6 @@ export default {
       logout();
       mitt.emit('unauthorized');
     },
-<<<<<<< HEAD
-=======
-    navigateTo(route) {
-      this.selectedTab = 'plugin';
-      this.$router.push(route);
-    },
-    installApp() {
-      if (this.installPrompt) {
-        this.installPrompt.prompt();
-      }
-    }
->>>>>>> 8e09a4bca2f8e02316cdf32dae1c38ca0a1a67c3
   },
 };
 </script>
