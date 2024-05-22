@@ -290,48 +290,6 @@ export default {
   }
 }
 
-<<<<<<< HEAD
-//选择框
-nav {
-  display: flex;
-  justify-content: space-between;
-}
-
-.course-select {
-  width: 22%;
-}
-
-// 右侧选择框
-.right-select {
-  width: 30%;
-  display: flex;
-}
-
-.group-select {
-  width: 80%;
-  min-width: 11em;
-  padding-right: 1.5em;
-}
-
-.sort-select {
-  width: 55%;
-  min-width: 8em;
-}
-
-// 课程学生卡片
-.course-students-card {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
-  grid-gap: 1em;
-  overflow: auto;
-}
-.course-students-card > div {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-=======
->>>>>>> e1c692e6d10643b043e4919570aafe1ee315f6d8
 .stu-cards {
   display: flex;
   justify-content: space-between;
@@ -360,68 +318,6 @@ nav {
   height: 50vh;
 }
 
-<<<<<<< HEAD
-//缩小时改变大小
-@media (min-width: 820px) and (max-width: 1280px) {
-  .right-select {
-    width: 100%;
-    padding-left: 1.5em;
-  }
-
-  .course-select {
-    width: 70%;
-  }
-}
-
-@media (min-width: 1024px) and (max-width: 1600px) {
-  .course-students-card {
-    grid-template-columns: 1fr 1fr 1fr;
-  }
-  .right-select {
-    width: 44%;
-  }
-}
-
-@media (max-width: 1024px) {
-  .course-students-card {
-    grid-template-columns: 1fr 1fr;
-    grid-gap: 0.5em;
-    height: 96%;
-  }
-  nav {
-    display: inline;
-  }
-  .stu-cards {
-    width: 70%;
-  }
-  .right-select {
-    width: 100%;
-
-    .group-select {
-      min-width: 0;
-    }
-    .sort-select {
-      min-width: 0;
-    }
-  }
-  .course-select {
-    width: 100%;
-  }
-}
-@media (max-width: 500px) {
-  .course-students-card {
-    grid-template-columns: 1fr;
-    height: 96%;
-    overflow: auto;
-  }
-
-  .stu-cards {
-    width: 90%;
-  }
-}
-
-=======
->>>>>>> e1c692e6d10643b043e4919570aafe1ee315f6d8
 // 图片和进度条
 .image-circular {
   width: 3rem;

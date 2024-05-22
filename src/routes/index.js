@@ -29,8 +29,6 @@ import TaskCreateView from '@/views/teacher/course/TaskCreateView.vue';
 import SectionCreateView from '@/views/teacher/course/SectionCreateView.vue';
 import DataAnalysisView from '@/views/teacher/statistics/DataAnalysisView.vue';
 import FrontendPluginView from '@/views/plugin/FrontendPluginView.vue';
-import PluginMainView from '@/views/plugin/PluginMainView.vue';
-import BackendPluginView from '@/views/plugin/BackendPluginView.vue';
 import AboutView from '@/views/common/personal/AboutView.vue';
 
 // 路由定义

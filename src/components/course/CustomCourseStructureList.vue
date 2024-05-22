@@ -23,21 +23,13 @@
       class="py-4"
       @click="goToDetail()"
     >
-<<<<<<< HEAD
-      <v-list-item-title class="font-bold text-lg">
-=======
       <v-list-item-title class="text-lg font-bold p-2">
->>>>>>> e1c692e6d10643b043e4919570aafe1ee315f6d8
         {{ courseName }}
       </v-list-item-title>
     </v-list-item>
     <div
       v-if="list && list.length > 0"
-<<<<<<< HEAD
-      class="overflow-y-auto"
-=======
       class="flex-grow overflow-y-auto"
->>>>>>> e1c692e6d10643b043e4919570aafe1ee315f6d8
     >
       <v-list-group
         v-for="section in list"
