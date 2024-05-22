@@ -32,6 +32,7 @@ import AboutView from '@/views/common/personal/AboutView.vue';
 import FrontendPluginView from '@/views/plugin/FrontendPluginView.vue';
 import PluginMainView from '@/views/plugin/PluginMainView.vue';
 import BackendPluginView from '@/views/plugin/BackendPluginView.vue';
+import VuePluginView from '@/views/plugin/VuePluginView.vue';
 import AboutView from '@/views/common/personal/AboutView.vue';
 
 // 路由定义
@@ -206,6 +207,10 @@ export const routes = [
       {
         path: 'backend',
         component: BackendPluginView,
+      },
+      {
+        path: 'vue',
+        component: VuePluginView,
       }
     ]
   },
