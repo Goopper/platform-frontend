@@ -12,6 +12,7 @@
 <script>
 import backendPluginCover from '@/assets/img/backend-plugin-cover.svg';
 import frontendPluginCover from '@/assets/img/frontend-plugin-cover.svg';
+import vuePluginCover from '@/assets/img/vue-plugin-cover.svg';
 
 export default {
   name: 'ThePluginListCard',
@@ -28,6 +29,12 @@ export default {
         cover: backendPluginCover,
         alt: '后端接口测试封面',
         route: '/plugin/backend'
+      },
+      {
+        name: 'vue练习环境',
+        cover: vuePluginCover,
+        alt: 'vue练习环境封面',
+        route: '/plugin/vue'
       }
     ]
   })
