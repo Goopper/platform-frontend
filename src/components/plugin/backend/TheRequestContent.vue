@@ -148,6 +148,10 @@ watch(monacoTheme, (theme) => {
   mitt.emit('updateMonacoTheme', theme);
 });
 
+mitt.on('updateFormData', (formData) => {
+  request.value.body.formData = formData;
+}); 
+
 async function sendRequest() {
   loading.value = true;
   // clean
@@ -158,6 +162,10 @@ async function sendRequest() {
     .filter(header => header.key !== '' && header.value !== '');
   target.body.formData = target.body.formData
     .filter(formData => formData.key !== '' && (formData.value !== '' || formData.files.length > 0));
+  // load file
+  target.body.formData.forEach((formData, index) => {
+    formData.files = request.value.body.formData[index].files;
+  });
   // do request
   const res = await backendPluginRequest(target).catch(err => {
     // http error

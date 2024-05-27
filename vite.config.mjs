@@ -54,5 +54,16 @@ export default defineConfig({
   },
   server: {
     port: 3000
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'monaco-editor': ['monaco-editor'],
+          'p5': ['p5'],
+          'vendor': ['mitt', 'vue', 'vue-router', 'axios', 'vuetify', 'nprogress', 'pinia', 'unplugin-fonts']
+        }
+      }
+    }
   }
 });
