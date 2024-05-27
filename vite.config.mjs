@@ -64,6 +64,7 @@ export default defineConfig({
       output: {
         manualChunks: {
           'echarts': ['echarts'],
+          'monaco-editor': ['monaco-editor'],
           'p5': ['p5'],
           'vendor': ['mitt', 'vue', 'vue-router', 'axios', 'vuetify', 'nprogress', 'pinia', 'unplugin-fonts']
         }
