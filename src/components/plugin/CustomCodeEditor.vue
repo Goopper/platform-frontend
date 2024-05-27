@@ -18,6 +18,7 @@ import { javascript } from '@codemirror/lang-javascript';
 import { css } from '@codemirror/lang-css';
 import { html } from '@codemirror/lang-html';
 import { json } from '@codemirror/lang-json';
+import { EditorView } from '@codemirror/view';
 
 const code = defineModel({
   type: String
@@ -48,7 +49,7 @@ function getLanguage() {
   }
 }
 
-const extensions = [getLanguage()];
+const extensions = [getLanguage(),EditorView.lineWrapping];
 </script>
 
 <style>
