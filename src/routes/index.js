@@ -32,6 +32,8 @@ import PluginMainView from '@/views/plugin/PluginMainView.vue';
 import BackendPluginView from '@/views/plugin/BackendPluginView.vue';
 import VuePluginView from '@/views/plugin/VuePluginView.vue';
 import AboutView from '@/views/common/personal/AboutView.vue';
+import TaskBatchCorrectView from '@/views/teacher/correct/TaskBatchCorrectView.vue';
+import TaskBatchSelectView from '@/views/teacher/correct/TaskBatchSelectView.vue';
 
 // 路由定义
 export const routes = [
@@ -186,7 +188,20 @@ export const routes = [
           requireRole: Role.ROLE_TEACHER
         }
       },
-      
+      {
+        path: '/batch/correct',
+        component: TaskBatchCorrectView,
+        meta: {
+          requireRole: Role.ROLE_TEACHER
+        }
+      },
+      {
+        path: '/batch/select',
+        component: TaskBatchSelectView,
+        meta: {
+          requireRole: Role.ROLE_TEACHER
+        }
+      },
     ]
   },
   {
