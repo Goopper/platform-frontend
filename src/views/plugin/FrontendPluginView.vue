@@ -132,7 +132,6 @@
 <script>
 import * as monaco from 'monaco-editor';
 import editorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker';
-import jsonWorker from 'monaco-editor/esm/vs/language/json/json.worker?worker';
 import cssWorker from 'monaco-editor/esm/vs/language/css/css.worker?worker';
 import htmlWorker from 'monaco-editor/esm/vs/language/html/html.worker?worker';
 import tsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker';
@@ -214,9 +213,6 @@ export default {
       //其他语言
       self.MonacoEnvironment = {
         getWorker(_, label) {
-          if (label === 'json') {
-            return new jsonWorker();
-          }
           if (label === 'css' || label === 'scss' || label === 'less') {
             return new cssWorker();
           }
@@ -279,7 +275,6 @@ export default {
     //加载按钮
     reloadIframe() {
       this.isLoading = true;
-      console.log(this.htmlContent, this.cssContent, this.jsContent);
       if (this.htmlContent && this.cssContent && this.jsContent) {
         this.updatePreview(this.htmlContent, this.cssContent, this.jsContent);
         this.isLoading = false;
@@ -306,7 +301,8 @@ export default {
 <style lang="scss" scoped>
 main {
   display: flex;
-  height: 100%;
+  overflow-y: auto;
+  height: 100vh;
   background: white;
 }
 //前端编辑器
@@ -333,7 +329,6 @@ main {
       display: flex;
       align-items: center;
       width: 15.25em;
-      height: 2.5em;
       padding-right: 0.75em;
       p{
         font-size: 1em;
@@ -351,7 +346,6 @@ main {
   flex: 1;
   border: #e3e3e3 1px solid;
   #preview{
-    height: 94%;
     width: 100%;
   }
 }
