@@ -383,6 +383,7 @@ export default {
                 color: 'success',
                 icon: '$success',
               });
+              this.tab='attachment';
               this.fetchData();
             } else {
               mitt.emit('showToast', {
