@@ -13,7 +13,10 @@ nProgress.configure({ showSpinner: false });
 
 export const whiteList = [
   '/login',
-  '/oauth/callback/github'
+  '/oauth/callback/github',
+  '/plugin/backend',
+  '/plugin/frontend',
+  '/plugin/vue',
 ];
 
 export const router = createRouter({
@@ -32,11 +35,17 @@ router.beforeEach(async (to, from) => {
 
   // permission check
   if (!whiteList.includes(to.path)) {
+    // need authentication
     const userStore = useUserStore();
-    
+
+    // localStorage don't have token
+    if (!localStorage.getItem(LOCAL_STORAGE_TOKEN_KEY)) {
+      return '/login';
+    }
+
     // unauthenticated and not in white list
     // if has localStorage token, try to load user info
-    if (!userStore.isLoggedIn && localStorage.getItem(LOCAL_STORAGE_TOKEN_KEY)) {
+    if (!userStore.isLoggedIn) {
       // try to load user info
       await userStore.loadUserInfo();
       nProgress.inc(0.5);

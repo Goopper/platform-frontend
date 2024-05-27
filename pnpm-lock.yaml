@@ -38,9 +38,6 @@ dependencies:
   mitt:
     specifier: ^3.0.1
     version: 3.0.1
-  monaco-editor:
-    specifier: ^0.48.0
-    version: 0.48.0
   nprogress:
     specifier: ^0.2.0
     version: 0.2.0
@@ -5542,13 +5539,6 @@ packages:
     resolution:
       {
         integrity: sha512-vKivATfr97l2/QBCYAkXYDbrIWPM2IIKEl7YPhjCvKlG3kE2gm+uBo6nEXK3M5/Ffh/FLpKExzOQ3JJoJGFKBw==,
-      }
-    dev: false
-
-  /monaco-editor@0.48.0:
-    resolution:
-      {
-        integrity: sha512-goSDElNqFfw7iDHMg8WDATkfcyeLTNpBHQpO8incK6p5qZt5G/1j41X0xdGzpIkGojGXM+QiRQyLjnfDVvrpwA==,
       }
     dev: false
 

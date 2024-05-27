@@ -184,16 +184,18 @@ export default {
       this.hasNewMessage = false;
     });
     getMessageList().then((res) => {
-      const messages = res.data.list;
-      if (messages && messages.length > 0) {
-        messages.forEach((item) => {
-          if (!item.isRead) {
-            mitt.emit('hasNewMessage');
-            return;
-          }
-        });
-      } else {
-        mitt.emit('noNewMessage');
+      if (res && res.data) {
+        const messages = res.data.list;
+        if (messages && messages.length > 0) {
+          messages.forEach((item) => {
+            if (!item.isRead) {
+              mitt.emit('hasNewMessage');
+              return;
+            }
+          });
+        } else {
+          mitt.emit('noNewMessage');
+        }
       }
     });
   },

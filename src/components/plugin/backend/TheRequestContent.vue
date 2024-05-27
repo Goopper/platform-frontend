@@ -77,21 +77,6 @@
           inline
         />
       </v-tab>
-      <div class="flex justify-center items-center ml-auto mr-2 w-[15rem]">
-        <v-select
-          v-model="monacoTheme"
-          :items="monacoThemes"
-          variant="outlined"
-          hide-details
-          density="compact"
-          theme="light"
-          tile
-        >
-          <template #prepend>
-            <span>Theme:</span>
-          </template>
-        </v-select>
-      </div>
     </v-tabs>
     <!-- content -->
     <v-window
@@ -138,14 +123,9 @@ const headersCount = computed(() => request.value.headers.filter(header => heade
 
 const loading = ref(false);
 const tab = ref('params');
-const monacoTheme = ref('vs-dark');
-const monacoThemes = ref(['vs', 'vs-dark', 'hc-black']);
 
 watch(tab, () => {
   mitt.emit('loadJson', request.value.body.json);
-});
-watch(monacoTheme, (theme) => {
-  mitt.emit('updateMonacoTheme', theme);
 });
 
 mitt.on('updateFormData', (formData) => {
