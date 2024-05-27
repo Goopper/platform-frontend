@@ -3,6 +3,8 @@ import Components from 'unplugin-vue-components/vite';
 import Vue from '@vitejs/plugin-vue';
 import Vuetify, { transformAssetUrls } from 'vite-plugin-vuetify';
 import { VitePWA } from 'vite-plugin-pwa';
+import { visualizer } from 'rollup-plugin-visualizer';
+import { nodePolyfills } from 'vite-plugin-node-polyfills';
 
 // Utilities
 import { defineConfig } from 'vite';
@@ -35,7 +37,13 @@ export default defineConfig({
       devOptions: {
         enabled: true
       }
-    })
+    }),
+    // 打包体积分析
+    visualizer({
+      open: true,
+      filename: 'visualizer.html' //分析图生成的文件名
+    }),
+    nodePolyfills()
   ],
   define: { 'process.env': {} },
   resolve: {

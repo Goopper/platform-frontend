@@ -1,9 +1,10 @@
 <template>
-  <Repl :editor="Monaco" />
+  <Repl :editor="CodeMirror" />
 </template>
 <script>
 import { Repl } from '@vue/repl';
-import Monaco from '@vue/repl/monaco-editor';
+import CodeMirror from '@vue/repl/codemirror-editor';
+
 export default {
   name: 'VuePluginView',
   components: {
@@ -11,7 +12,7 @@ export default {
   },
   setup() {
     return {
-      Monaco
+      CodeMirror
     };
   }
 };

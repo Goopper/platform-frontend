@@ -27,10 +27,7 @@ import StudentPerformanceView from '@/views/teacher/StudentPerformanceView.vue';
 import StudentDetailView from '@/views/teacher/StudentDetailView.vue';
 import TaskCreateView from '@/views/teacher/course/TaskCreateView.vue';
 import SectionCreateView from '@/views/teacher/course/SectionCreateView.vue';
-import FrontendPluginView from '@/views/plugin/FrontendPluginView.vue';
 import PluginMainView from '@/views/plugin/PluginMainView.vue';
-import BackendPluginView from '@/views/plugin/BackendPluginView.vue';
-import VuePluginView from '@/views/plugin/VuePluginView.vue';
 import AboutView from '@/views/common/personal/AboutView.vue';
 
 // 路由定义
@@ -196,15 +193,15 @@ export const routes = [
     children: [
       {
         path: 'frontend',
-        component: FrontendPluginView,
+        component: () => import ('@/views/plugin/FrontendPluginView.vue'),
       },
       {
         path: 'backend',
-        component: BackendPluginView,
+        component: () => import ('@/views/plugin/BackendPluginView.vue'),
       },
       {
         path: 'vue',
-        component: VuePluginView,
+        component: () => import ('@/views/plugin/VuePluginView.vue'),
       }
     ]
   },
