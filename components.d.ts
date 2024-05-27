@@ -8,6 +8,7 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     CustomAttachmentCard: typeof import('./src/components/CustomAttachmentCard.vue')['default']
+    CustomCodeEditor: typeof import('./src/components/plugin/CustomCodeEditor.vue')['default']
     CustomCourseCard: typeof import('./src/components/course/CustomCourseCard.vue')['default']
     CustomCourseStructureList: typeof import('./src/components/course/CustomCourseStructureList.vue')['default']
     CustomDeviceCard: typeof import('./src/components/CustomDeviceCard.vue')['default']
