@@ -67,7 +67,7 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          'monaco-editor': ['monaco-editor'],
+          'code-mirror': ['codemirror','vue-codemirror'],
           'p5': ['p5'],
           'vendor': ['mitt', 'vue', 'vue-router', 'axios', 'vuetify', 'nprogress', 'pinia', 'unplugin-fonts']
         }

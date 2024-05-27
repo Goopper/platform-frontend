@@ -23,3 +23,5 @@ pnpm-debug.log*
 
 # build output
 dev-dist/
+
+visualizer.html
