@@ -14,6 +14,7 @@ function buildRequestBody(body) {
                 formData.append(item.key, item.value);
             } else {
                 item.files.forEach(file => {
+                    console.log(file);
                     formData.append(item.key, file);
                 });
             }

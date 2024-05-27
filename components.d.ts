@@ -8,6 +8,7 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     CustomAttachmentCard: typeof import('./src/components/CustomAttachmentCard.vue')['default']
+    CustomCodeEditor: typeof import('./src/components/plugin/CustomCodeEditor.vue')['default']
     CustomCourseCard: typeof import('./src/components/course/CustomCourseCard.vue')['default']
     CustomCourseStructureList: typeof import('./src/components/course/CustomCourseStructureList.vue')['default']
     CustomDeviceCard: typeof import('./src/components/CustomDeviceCard.vue')['default']
@@ -36,12 +37,10 @@ declare module 'vue' {
     TheRequestBodyContent: typeof import('./src/components/plugin/backend/request/TheRequestBodyContent.vue')['default']
     TheRequestContent: typeof import('./src/components/plugin/backend/TheRequestContent.vue')['default']
     TheRequestHeaderContent: typeof import('./src/components/plugin/backend/request/TheRequestHeaderContent.vue')['default']
-    TheRequestNoneBodyContent: typeof import('./src/components/plugin/backend/body/TheRequestNoneBodyContent.vue')['default']
     TheRequestParamContent: typeof import('./src/components/plugin/backend/request/TheRequestParamContent.vue')['default']
     TheRequestResult: typeof import('./src/components/plugin/backend/TheRequestResult.vue')['default']
     TheResponseHeaderContent: typeof import('./src/components/plugin/backend/response/TheResponseHeaderContent.vue')['default']
     TheResponseJsonContent: typeof import('./src/components/plugin/backend/response/TheResponseJsonContent.vue')['default']
-    TheResponseRawContent: typeof import('./src/components/plugin/backend/response/TheResponseRawContent.vue')['default']
     TheUserBasicInfoCard: typeof import('./src/components/personal/info/TheUserBasicInfoCard.vue')['default']
   }
 }

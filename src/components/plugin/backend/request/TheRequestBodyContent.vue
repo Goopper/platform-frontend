@@ -1,5 +1,5 @@
 <template>
-  <div class="flex justify-start items-center gap-2 h-10">
+  <div class="flex justify-start items-center gap-2 h-10 min-h-10">
     <!-- title -->
     <span class="text-gray-500 text-sm">
       Content-Type
@@ -72,7 +72,6 @@
     <v-window-item value="json">
       <the-json-content
         v-model="body"
-        :theme="monacoTheme"
       />
     </v-window-item>
   </v-window>

@@ -75,18 +75,21 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import mitt from '@/plugins/mitt';
 import { newFormDataTemplate } from '@/utils/backend-plugin';
 
 const body = defineModel({
   type: Object
 });
-
 const types = ref([
   'text',
   'file'
 ]);
+
+watch(() => body.value.formData, () => {
+  mitt.emit('updateFormData', body.value.formData);
+},{ deep:true });
 
 // clean files
 body.value.formData.forEach((formData) => {
