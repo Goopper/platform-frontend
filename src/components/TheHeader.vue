@@ -32,6 +32,13 @@
           课程
         </v-tab>
         <v-tab
+          v-if="roleName === 'teacher'"
+          class="sm:hidden"
+          to="/teacher/correct/batch/select"
+        >
+          批改作业
+        </v-tab>
+        <v-tab
           class="sm:w-1/2"
           to="/personal"
         >
