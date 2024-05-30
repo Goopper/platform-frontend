@@ -74,7 +74,7 @@ import mitt from '@/plugins/mitt';
 const request = defineModel({
   type: Object
 });
-const response = ref(null);
+const response = ref(request.value.response);
 const tab = ref('json');
 
 watch(request, () => {
