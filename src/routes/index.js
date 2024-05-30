@@ -32,6 +32,7 @@ import PluginMainView from '@/views/plugin/PluginMainView.vue';
 import AboutView from '@/views/common/personal/AboutView.vue';
 import TaskBatchCorrectView from '@/views/teacher/correct/TaskBatchCorrectView.vue';
 import TaskBatchSelectView from '@/views/teacher/correct/TaskBatchSelectView.vue';
+import CorrectDetailView from '@/views/teacher/correct/CorrectDetailView.vue';
 
 // 路由定义
 export const routes = [
@@ -169,7 +170,7 @@ export const routes = [
         ]
       },
       {
-        path: 'teacher/correct/:messageId',
+        path: 'teacher/correct/:id',
         component: TaskCorrectView,
         meta: {
           requireRole: Role.ROLE_TEACHER,
@@ -195,7 +196,17 @@ export const routes = [
         component: TaskBatchCorrectView,
         meta: {
           requireRole: Role.ROLE_TEACHER
-        }
+        },
+        children: [
+          {
+            path: ':correctId',
+            component: CorrectDetailView,
+            meta: {
+              requireRole: Role.ROLE_TEACHER,
+              routeConfirm: true
+            }
+          }
+        ]
       },
       {
         path: '/batch/select',
