@@ -196,7 +196,7 @@ export default {
       confirmBatchDialog: false,
       inBatchDialog : false,
       saveStore: useSaveStore(),
-      finishCorrectedCount: 0,
+      finishCorrectedCount: Number(localStorage.getItem('finishCounts')) || 0,
     };
   },
   computed: {
@@ -232,7 +232,6 @@ export default {
         this.score = null;
         this.correctId = this.$route.params.correctId;
         const res = await getAnswerByCorrectId(this.correctId);
-        console.log(res.data);
         this.correct = res.data;
         this.answer = res.data.answer;
         if (JSON.parse(localStorage.getItem('checkCorrects')).length > 1 && this.inBatchDialog) {
@@ -253,8 +252,12 @@ export default {
         localStorage.removeItem('score');
         localStorage.removeItem('comment');
         this.saveStore.setSaveState(this.inBatchDialog=true);
-        this.$router.push('/batch/select');
+        this.$router.push('/teacher/correct/batch/select');
+        localStorage.removeItem('finishCounts');
       } else {
+        setTimeout(() => {
+          this.$router.go(0);
+        }, 1000);
         return;
       }
     },
@@ -292,16 +295,19 @@ export default {
     },
     //提交单独批改
     clickSubmitCorrect() {
+      localStorage.removeItem('finishCounts');
       TaskIndividualCorrection(this.correctId, this.comment, this.score);
       this.confirmDialog = false;
-      this.finishCorrectedCount += 1;
+      localStorage.setItem('finishCounts', this.finishCorrectedCount += 1);
       this.backToSelect();
+
     },
     //提交多选批改
     clickSubmitBatchCorrect() {
+      localStorage.removeItem('finishCounts');
       TaskBatchCorrection(this.checkCorrects, this.comment, this.score);
       this.confirmBatchDialog = false;
-      this.finishCorrectedCount += this.checkCorrects.length;
+      localStorage.setItem('finishCounts', this.finishCorrectedCount += this.checkCorrects.length);
       this.backToSelect();
     },
   },

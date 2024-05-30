@@ -72,11 +72,17 @@
             color="primary"
           />
         </div>
-        <div v-else>
-          <v-table>
+        <div
+          v-else
+          class="table-container"
+        >
+          <v-table
+            fixed-footer
+            theme="light"
+          >
             <thead
+              class="dark-theme"
               density="comfortable"
-              class="bg-primary-important text-white"
               hover
             >
               <tr>
@@ -90,7 +96,8 @@
                 <th class="status-select">
                   <v-select
                     v-model="statusSelected"
-                    class="bg-primary-important text-white"
+                    theme="dark"
+                    class="text-white"
                     :items="statusList"
                     item-title="name"
                     item-value="id"
@@ -107,6 +114,8 @@
                 <th class="group-select">
                   <v-select
                     v-model="groupSelected"
+                    theme="dark"
+                    class="text-white"
                     :items="groupList"
                     item-title="name"
                     item-value="id"
@@ -141,6 +150,8 @@
               <tr
                 v-for="correct in correctList"
                 :key="correct.id"
+                :class="{ 'tr-hover': correct.corrected }"
+                @click="correct.corrected && ToCorrectedAnswer(correct.id)"
               >
                 <td>
                   <v-checkbox
@@ -180,14 +191,14 @@
               </p>
             </div>
           </div>
-          <v-pagination
-            v-if="!correctList.length === 0"
-            v-model="currentPage"
-            :length="pages"
-          />
         </div>
       </div>
     </main>
+    <v-pagination
+      v-model="currentPage"
+      class="pagination"
+      :length="pages"
+    />
   </div>
 </template>
 <script>
@@ -287,9 +298,8 @@ export default {
     //跳转作业批改按钮
     toBatchCorrect() {
       this.$router.push({
-        path: '/batch/correct',
+        path: '/teacher/correct/batch/correct',
       });
-      console.log(this.correctsId);
       localStorage.setItem('correctsId', JSON.stringify(this.correctsId));
     },
     //计算时间
@@ -340,12 +350,18 @@ export default {
         this.isLoading = false;
       });
     },
+    ToCorrectedAnswer(id) {
+      this.$router.push({
+        path: `/teacher/correct/${id}`,
+      });
+    },
   },
 };
 </script>
 <style lang="scss" scoped>
 main {
   background-color: white;
+  height: 92%;
 }
 .choose-table {
   display: flex;
@@ -373,6 +389,13 @@ p {
 .group-select {
   width: 12vw;
 }
+.correct-list{
+  height: 86%;
+  overflow: auto;
+}
+.table-container{
+  overflow: auto;
+}
 tbody {
   background: white;
   color: #383838;
@@ -386,8 +409,18 @@ tbody {
     }
   }
 }
+.pagination{
+  background: white;
+}
+.dark-theme{
+  background: #212121;
+  color: white;
+}
 .corrected {
   text-align: center;
+}
+.tr-hover:hover{
+  cursor: pointer;
 }
 .noData{
   display: flex;
