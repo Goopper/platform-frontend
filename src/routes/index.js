@@ -175,7 +175,7 @@ export const routes = [
         meta: {
           requireRole: Role.ROLE_TEACHER,
           routeConfirm: true
-        }
+        },
       },
       {
         path: 'teacher/student/performance',
@@ -192,7 +192,7 @@ export const routes = [
         }
       },
       {
-        path: '/batch/correct',
+        path: 'teacher/correct/batch/correct',
         component: TaskBatchCorrectView,
         meta: {
           requireRole: Role.ROLE_TEACHER
@@ -209,7 +209,7 @@ export const routes = [
         ]
       },
       {
-        path: '/batch/select',
+        path: 'teacher/correct/batch/select',
         component: TaskBatchSelectView,
         meta: {
           requireRole: Role.ROLE_TEACHER

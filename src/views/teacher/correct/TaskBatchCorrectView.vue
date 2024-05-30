@@ -1,7 +1,7 @@
 <template>
   <div class="main">
     <div class="back-button">
-      <custom-float-back-button back-url="/batch/select" />
+      <custom-float-back-button back-url="/teacher/correct/batch/select" />
     </div>
     <div class="correct-list">
       <v-list
@@ -38,6 +38,14 @@
               @click.stop
             />
           </template>
+          <template #append>
+            <v-icon
+              v-if="correct.corrected"
+              color="green"
+            >
+              mdi-check-circle-outline
+            </v-icon>
+          </template>
         </v-list-item>
       </v-list>
     </div>
@@ -65,7 +73,6 @@ export default {
       if (newVal) {
         this.checkCorrects = this.correctsId;
         localStorage.setItem('checkCorrects', JSON.stringify(this.checkCorrects));
-        console.log(localStorage.getItem('checkCorrects'));
       } else {
         this.checkCorrects = [];
         localStorage.removeItem('checkCorrects');
@@ -78,7 +85,7 @@ export default {
   async created() {
     if (localStorage.getItem('correctsId') === null) {
       this.$router.push({
-        path: '/batch/select',
+        path: '/teacher/correct/batch/select',
       });
     } else {
       this.correctsId = JSON.parse(localStorage.getItem('correctsId'));
@@ -103,7 +110,11 @@ export default {
 .list-item {
   display: flex;
 }
+.v-list-item{
+  display: flex;
+}
 .v-list-item-title {
+  width: 7em;
   max-width: 8em;
 }
 .v-list-item--active {
