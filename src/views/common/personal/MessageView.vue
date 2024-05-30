@@ -147,15 +147,6 @@
           />
         </div>
         <v-card-text>
-          <p class="font-bold text-lg">
-            {{ targetMessage.title }}
-            <span
-              v-if="targetMessage.typeId === typeCorrectId && targetMessage.isRead"
-              class="font-bold text-green-600"
-            >
-              (作业已批改)
-            </span>
-          </p>
           <p
             class="mt-2 whitespace-pre-wrap"
             v-text="targetMessage.content"
@@ -164,7 +155,7 @@
             发送日期：{{ sendDate }}
           </p>
         </v-card-text>
-        <v-card-actions v-if="targetMessage.typeId === typeCorrectId && !targetMessage.isRead">
+        <v-card-actions v-if="targetMessage.typeId === typeCorrectId">
           <v-btn
             variant="flat"
             class="ms-auto"
@@ -191,13 +182,18 @@ export default {
     types: MessageType.ALL,
     typeCorrectId: MessageType.CORRECT.id,
     type: null,
-    loading: true,
+    loading: false,
     dialog: false,
     targetMessage: {},
   }),
   computed: {
     sendDate() {
       return this.targetMessage.date.replace('T', ' ');
+    }
+  },
+  watch: {
+    page() {
+      this.searchMessage();
     }
   },
   created() {
@@ -207,13 +203,20 @@ export default {
     });
   },
   methods: {
-    searchMessage() {
-      getMessageList(this.page, this.title, this.type).then(res => {
+    async searchMessage() {
+      this.loading = true;
+      const res = await getMessageList(this.page, this.title, this.type);
+      if (res && res.data) {
         this.messages = res.data.list;
         this.page = res.data.page;
         this.totalPage = res.data.totalPage;
-        this.loading = false;
-      });
+      } else {
+        this.messages = [];
+        this.page = 1;
+        this.totalPage = 1;
+        mitt.emit('showToast', { title: '获取消息失败', color: 'error', icon: '$error' });
+      }
+      this.loading = false;
     },
     handleMessageCardClick(message) {
       this.targetMessage = message;
@@ -221,17 +224,13 @@ export default {
     },
     handleMessageClose() {
       this.dialog = false;
-      if (this.targetMessage.typeId === this.typeCorrectId) {
-        return;
-      }
       const targetId = this.targetMessage.id;
       receiveOneMessage(targetId).then(() => {
         this.targetMessage.isRead = true;
       });
     },
     handleMessageToCorrect() {
-      const messageId = this.targetMessage.id;
-      this.$router.push(`/teacher/correct/${messageId}`);
+      this.$router.push('/teacher/correct/batch/select');
     }
   }
 };
