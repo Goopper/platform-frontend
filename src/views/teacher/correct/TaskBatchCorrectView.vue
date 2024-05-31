@@ -25,7 +25,7 @@
           :key="correct.answerId"
           class="list-item"
           item-color="black"
-          :to="`/batch/correct/${correct.answerId}`"
+          :to="`/teacher/correct/batch/correct/${correct.answerId}`"
         >
           <v-list-item-title>
             {{ correct.taskName }}
@@ -91,9 +91,9 @@ export default {
       this.correctsId = JSON.parse(localStorage.getItem('correctsId'));
       const res = await getTaskNameByIds(this.correctsId);
       this.correctList = res.data;
-       if (this.$route.path === '/batch/correct' && this.correctList.length > 0) {
+       if (this.$route.path === '/teacher/correct/batch/correct' && this.correctList.length > 0) {
       this.$router.push({
-        path: `/batch/correct/${this.correctList[0].answerId}`,
+        path: `/teacher/correct/batch/correct/${this.correctList[0].answerId}`,
       });
     }
     }
