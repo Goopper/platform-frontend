@@ -9,9 +9,9 @@
         theme="light"
       >
         <v-list-item class="checkAll">
-          <template #prepend>
+          <p>
             全选
-          </template>
+          </p>
           <template #append>
             <v-checkbox
               v-model="checkAll"
@@ -38,14 +38,12 @@
               @click.stop
             />
           </template>
-          <template #append>
-            <v-icon
-              v-if="correct.corrected"
-              color="green"
-            >
-              mdi-check-circle-outline
-            </v-icon>
-          </template>
+          <v-icon
+            v-if="correct.corrected"
+            color="green"
+          >
+            mdi-check-circle-outline
+          </v-icon>
         </v-list-item>
       </v-list>
     </div>
@@ -105,17 +103,21 @@ export default {
   display: flex;
 }
 .v-list {
+  widows: 100%;
   padding: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 .list-item {
   display: flex;
-}
-.v-list-item{
-  display: flex;
-}
-.v-list-item-title {
-  width: 7em;
-  max-width: 8em;
+  justify-content: space-between;
+  > * {
+    display: flex;
+  }
+  .v-list-item-title{
+    padding-right: 1em;
+  }
 }
 .v-list-item--active {
   background-color: #383838; /* 你的颜色 */
@@ -130,6 +132,11 @@ export default {
 }
 .checkAll{
   border-bottom: 1px solid #e0e0e0;
+  display: flex;
+  justify-content: space-between;
+  p{
+    font-weight: bold;
+  }
 }
 //作业详情样式
 .correct {
@@ -137,5 +144,15 @@ export default {
   background: white;
   border: 1px solid #e0e0e0;
   border-left: 0;
+}
+@media (max-width: 1200px) {
+  .v-list-item--density-compact:not(.v-list-item--nav).v-list-item--one-line{
+    padding-inline: 4px;
+  }
+.list-item{
+  .v-list-item-title{
+    padding-right: 0;
+  }
+}
 }
 </style>
