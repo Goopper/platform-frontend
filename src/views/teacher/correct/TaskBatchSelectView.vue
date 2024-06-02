@@ -1,13 +1,11 @@
 <template>
-  <div>
-    <div class="back-button">
-      <custom-float-back-button />
-    </div>
-    <main>
+  <div class="flex flex-col h-full w-full">
+    <custom-float-back-button />
+    <main class="flex-grow h-0 flex flex-col">
       <div class="choose-table">
         <v-select
           v-model="courseSelected"
-          class="max-w-[15vw]"
+          class="class-select max-w-[16vw]"
           label="课程"
           :items="courseList"
           item-title="name"
@@ -52,15 +50,15 @@
           搜索
         </v-btn>
         <v-btn
+          class="to-correct"
           prepend-icon="mdi-pencil"
-          :disabled="correctsId.length === 0"
+          :disabled="selectedItem.length === 0"
           @click="toBatchCorrect"
         >
           前往批改选中作业
         </v-btn>
       </div>
-      <div class="correct-list">
-        <!-- 加载动画 -->
+      <div class="flex-grow h-0 flex">
         <div
           v-if="isLoading"
           class="loader flex-grow overflow-y-auto"
@@ -74,30 +72,35 @@
         </div>
         <div
           v-else
-          class="table-container"
+          class="table-container flex-grow overflow-y-auto"
         >
-          <v-table
+          <v-data-table
+            v-model="correctsId"
+            item-value="id"
+            class="h-full border overflow-auto"
             fixed-footer
+            fixed-header
             theme="light"
+            hover
+            :loading="isLoading"
+            :headers="headers"
+            items-per-page="10"
+            :items="correctList"
+            return-object
           >
-            <thead
-              class="dark-theme"
-              density="comfortable"
-              hover
-            >
-              <tr>
-                <th class="w-[3.5vw]">
-                  <v-checkbox
-                    v-model="checkAll"
-                    density="compact"
-                    hide-details
+            <template #headers="{ columns,allSelected, selectAll, someSelected }">
+              <tr class="text-white">
+                <td>
+                  <v-checkbox-btn
+                    :indeterminate="someSelected && !allSelected"
+                    :model-value="allSelected"
+                    @update:model-value="selectAll(!allSelected)"
                   />
-                </th>
-                <th class="status-select">
+                </td>
+                <td>
                   <v-select
                     v-model="statusSelected"
                     theme="dark"
-                    class="text-white"
                     :items="statusList"
                     item-title="name"
                     item-value="id"
@@ -110,101 +113,109 @@
                       <span class="select-font">状态:</span>
                     </template>
                   </v-select>
-                </th>
-                <th class="group-select">
+                </td>
+                <td>
                   <v-select
                     v-model="groupSelected"
                     theme="dark"
-                    class="text-white"
                     :items="groupList"
                     item-title="name"
                     item-value="id"
                     density="compact"
                     variant="solo"
                     flat
+                    show-select
                     hide-details
                   >
                     <template #prepend>
                       <span class="select-font">小组:</span>
                     </template>
                   </v-select>
-                </th>
-                <th>
-                  <p>学生/学号</p>
-                </th>
-                <th>
-                  <p>课程名称</p>
-                </th>
-                <th>
-                  <p>章节名称</p>
-                </th>
-                <th>
-                  <p>任务名称</p>
-                </th>
-                <th>
-                  <p>提交时间</p>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr
-                v-for="correct in correctList"
-                :key="correct.id"
-                :class="{ 'tr-hover': correct.corrected }"
-                @click="correct.corrected && ToCorrectedAnswer(correct.id)"
-              >
-                <td>
-                  <v-checkbox
-                    v-model="correctsId"
-                    :disabled="correct.corrected"
-                    density="compact"
-                    :value="correct.id"
-                    hide-details
-                  />
                 </td>
-                <td
-                  :style="{ color: correctColor(correct.corrected) }"
-                  class="corrected"
+                <template
+                  v-for="column in columns"
+                  :key="column.key"
                 >
-                  {{ correctName(correct.corrected) }}
-                </td>
-                <td>{{ correct.groupName }}</td>
-                <td>{{ correct.studentName }} / {{ correct.number }}</td>
-                <td>{{ correct.courseName }}</td>
-                <td>{{ correct.sectionName }}</td>
-                <td>{{ correct.taskName }}</td>
-                <td>{{ getDaysAgo(correct.submitTime) }}</td>
+                  <td
+                    v-show="column.title"
+                    class="min-w-[150px]"
+                  >
+                    <span class="mr-2 text-lg font-black">{{ column.title }}</span>
+                  </td>
+                </template>
               </tr>
-            </tbody>
-          </v-table>
-          <div v-if="correctList.length === 0">
-            <div
-              class="noData"
-            >
+            </template>
+            <template #loading>
+              <v-skeleton-loader type="table-row@10" />
+            </template>
+            <template #no-data>
               <v-icon
-                size="120px"
-                class="text-gray-400"
-                icon="mdi-message-off-outline"
+                size="100px"
+                class="text-gray-400 mt-8"
+                icon="mdi-sort-variant-off"
               />
               <p class="font-bold text-lg text-gray-400">
-                无数据
+                暂时没有学生成绩数据
               </p>
-            </div>
-          </div>
+            </template>
+            <template #bottom>
+              <v-pagination
+                v-model="currentPage"
+                class="pagination"
+                :length="pages"
+              />
+            </template>
+            <template #item.check="{ internalItem, isSelected, toggleSelect,item }">
+              <v-checkbox-btn
+                :model-value="isSelected(internalItem) && !item.corrected"
+                @update:model-value="showItem(internalItem,toggleSelect)"
+              />
+            </template>
+            <template #item.corrected="{ item }">
+              <span :style="{ color: getColor(item) }">
+                {{ getCorrected(item.corrected) }}
+              </span>
+            </template>
+            <template #item.group="{item}">
+              {{ item.groupName }}
+            </template>
+            <template #item.student="{item}">
+              {{ item.studentName }} ({{ item.number }})
+            </template>
+            <template #item.course="{item}">
+              {{ item.courseName }}
+            </template>
+            <template #item.section="{item}">
+              {{ item.sectionName }}
+            </template>
+            <template #item.task="{item}">
+              {{ item.taskName }}
+            </template>
+            <template #item.time="{item}">
+              {{ getDaysAgo(item.submitTime) }}
+            </template>
+            <template #item.goto="{item}">
+              <v-btn
+                v-show="item.corrected"
+                class="text-green-500"
+                variant="text"
+                @click="ToCorrectedAnswer(item.id)"
+              >
+                查看批改结果
+              </v-btn>
+            </template>
+          </v-data-table>
         </div>
       </div>
     </main>
-    <v-pagination
-      v-model="currentPage"
-      class="pagination"
-      :length="pages"
-    />
   </div>
 </template>
 <script>
 import CustomFloatBackButton from '@/components/CustomFloatBackButton.vue';
 import { getCourseList, getGroupList } from '@/api/course';
 import { getAnswer } from '@/api/correct';
+import mitt from '@/plugins/mitt';
+
 export default {
   name: 'TaskBatchSelectView',
   components: {
@@ -219,8 +230,70 @@ export default {
         { id: true, name: '已批改' },
         { id: false, name: '未批改' },
       ],
+      headers: [
+        {
+          title: '',
+          key:'check'
+        },
+        {
+          title: '',
+          value: item => {
+            if (item.corrected) {
+              return '已批改';
+            } else {
+              return '未批改';
+            }
+          },
+          key: 'corrected',
+          sortable: false,
+
+        },
+        {
+          title: '',
+          value: 'groupName',
+          key : 'group',
+          sortable: false,
+        },
+        {
+          title: '姓名(学号)',
+          value: item => {
+            return item.studentName + (item.number);
+          },
+          key : 'student',
+          sortable: false,
+        },
+        {
+          title: '课程名称',
+          value: 'courseName',
+          key:'course',
+          sortable: false,
+        },
+        {
+          title: '章节名称',
+          value: 'sectionName',
+          key:'section',
+          sortable: false,
+        },
+        {
+          title: '任务名称',
+          value: 'taskName',
+          key:'task',
+          sortable: false,
+        },
+        {
+          title: '提交时间',
+          value: 'submitTime',
+          key:'time',
+          sortable: false,
+        },
+        {
+          title: '操作',
+          key: 'goto',
+          sortable: false,
+        }
+      ],
       correctList: [],
-      correctsId:[],
+      correctsId: [],
       courseSelected: null,
       statusSelected: null,
       groupSelected: null,
@@ -232,6 +305,11 @@ export default {
       currentPage: 1,
       pages: 1,
     };
+  },
+  computed: {
+    selectedItem() {
+      return this.correctsId.filter(this.filterItem);
+    }
   },
   watch: {
     courseSelected() {
@@ -247,33 +325,37 @@ export default {
       this.selectIdForCorrect();
     },
     studentName() {
-      if (this.studentName === null && this.sectionName === null && this.taskName === null) {
+      if (
+        this.studentName === null &&
+        this.sectionName === null &&
+        this.taskName === null
+      ) {
         this.currentPage = 1;
         this.selectIdForCorrect();
       }
     },
     sectionName() {
-      if (this.studentName === null && this.sectionName === null && this.taskName === null) {
+      if (
+        this.studentName === null &&
+        this.sectionName === null &&
+        this.taskName === null
+      ) {
         this.currentPage = 1;
         this.selectIdForCorrect();
       }
     },
     taskName() {
-      if (this.studentName === null && this.sectionName === null && this.taskName === null) {
+      if (
+        this.studentName === null &&
+        this.sectionName === null &&
+        this.taskName === null
+      ) {
         this.currentPage = 1;
         this.selectIdForCorrect();
       }
     },
     currentPage() {
       this.selectIdForCorrect();
-    },
-    //全选
-    checkAll(newVal) {
-      if (newVal) {
-        this.correctsId = this.correctList.filter(correct => !correct.corrected).map(correct => correct.id);
-      } else {
-        this.correctsId = [];
-      }
     },
   },
   async created() {
@@ -297,10 +379,11 @@ export default {
     },
     //跳转作业批改按钮
     toBatchCorrect() {
+      const ids=this.selectedItem.map(item=> item.id);
       this.$router.push({
         path: '/teacher/correct/batch/correct',
       });
-      localStorage.setItem('correctsId', JSON.stringify(this.correctsId));
+      localStorage.setItem('correctsId', JSON.stringify(ids));
     },
     //计算时间
     getDaysAgo(submitTime) {
@@ -311,7 +394,7 @@ export default {
         return Math.ceil(diffTime / 1000) + '秒前';
       } else if (diffTime < 1000 * 60 * 60) {
         return Math.ceil(diffTime / (1000 * 60)) + '分钟前';
-      } else if ( diffTime < 1000 * 60 * 60 * 24) {
+      } else if (diffTime < 1000 * 60 * 60 * 24) {
         return Math.ceil(diffTime / (1000 * 60 * 60)) + '小时前';
       } else {
         return Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + '天前';
@@ -343,7 +426,7 @@ export default {
         courseId: this.courseSelected,
         corrected: this.statusSelected,
         groupId: this.groupSelected,
-        page : this.currentPage,
+        page: this.currentPage,
       }).then((res) => {
         this.correctList = res.data.list;
         this.pages = res.data.totalPage;
@@ -355,87 +438,53 @@ export default {
         path: `/teacher/correct/${id}`,
       });
     },
+    getCorrected(item) {
+      if (item) {
+        return '已批改';
+      } else {
+        return '未批改';
+      }
+    },
+    getColor(item) {
+      if (item.corrected) {
+        return 'green';
+      } else {
+        return 'orange';
+      }
+    },
+    showItem(item, toggleSelect) {
+      if (item.raw.corrected) {
+        mitt.emit('showToast', { title: '作业已批改', color: 'warning', icon: '$warning' });
+        return;
+      }
+      toggleSelect(item);
+    },
+    filterItem(item) {
+      return !item.corrected;
+    }
   },
 };
 </script>
 <style lang="scss" scoped>
-main {
-  background-color: white;
-  height: 92%;
-}
 .choose-table {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1em;
-  border-bottom: 1px solid #e0e0e0;
-  > * {
-    margin: 0 0.5em;
-  }
-}
-.course-select {
-  display: flex;
-  justify-content: space-between;
+  padding: 1em 0;
   > * {
     margin-left: 1em;
   }
+  .class-select {
+    margin: 0;
+  }
 }
-p {
-  font-size: 1.2em;
+.text-white{
+  background: #212121;
 }
 .status-select {
   width: 11vw;
 }
 .group-select {
   width: 12vw;
-}
-.correct-list{
-  height: 86%;
-  overflow: auto;
-}
-.table-container{
-  overflow: auto;
-}
-tbody {
-  background: white;
-  color: #383838;
-  height: 100%;
-  tr {
-    td {
-      max-width: 7em;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-  }
-}
-.pagination{
-  background: white;
-}
-.dark-theme{
-  background: #212121;
-  color: white;
-}
-.corrected {
-  text-align: center;
-}
-.tr-hover:hover{
-  cursor: pointer;
-}
-.noData{
-  display: flex;
-  flex-direction: column;
-  text-align: center;
-  justify-content: center ;
-  align-items: center;
-  background: white;
-  height: 56vh;
-}
-.loader {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: #fafafa;
-  height: 68vh;
 }
 </style>
