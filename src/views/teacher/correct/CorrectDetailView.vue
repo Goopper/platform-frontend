@@ -33,7 +33,7 @@
         <p>无附件</p>
       </div>
     </div>
-    <div class="comment border-b p-4">
+    <div class="comment p-4">
       <v-textarea
         v-model="comment"
         theme="light"
@@ -139,7 +139,7 @@
           <v-list-item
             v-for="correctSimple in correctList"
             :key="correctSimple.answerId"
-            :to="`/batch/correct/${correctSimple.answerId}`"
+            :to="`/teacher/correct/batch/correct/${correctSimple.answerId}`"
           >
             {{ correctSimple.taskName }}
             <template #append>
@@ -319,6 +319,7 @@ export default {
   height: 100%;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
 }
 //标题和按钮的样式
 .title,.bottom-bar{
@@ -330,7 +331,7 @@ export default {
 .title {
   background: #383838;
   padding: 0.5em 1.5em;
-  height: 65px;
+  height: 66px;
   > * {
     color: white;
     overflow: hidden;
@@ -351,8 +352,9 @@ export default {
 }
 //底部按钮样式
 .bottom-bar {
-  height: 8%;
+  height: 5em;
   background: #f5f5f5;
+  border-top: 1px solid #e0e0e0;
   .batch-correction {
     margin-left: 1em;
   }
@@ -374,16 +376,15 @@ export default {
 }
 //内容样式
 .content {
-  height: 17%;
+  height: 20%;
   p {
     font-weight: bold;
   }
 }
 //评语样式
 .comment {
-  border-bottom: 1px solid #e0e0e0;
   padding: 0.75em 0.5em;
-  height: 28%;
+  height: 24%;
 }
 //单附件样式
 .attachment-card{
