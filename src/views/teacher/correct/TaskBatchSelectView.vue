@@ -1,6 +1,5 @@
 <template>
   <div class="flex flex-col h-full w-full">
-    <custom-float-back-button />
     <main class="flex-grow h-0 flex flex-col">
       <div class="choose-table">
         <v-select
@@ -45,7 +44,8 @@
         />
         <v-btn
           prepend-icon="mdi-magnify"
-          @click="searchCorrect"
+          flat
+          @click="loadAnswers"
         >
           搜索
         </v-btn>
@@ -53,6 +53,7 @@
           class="to-correct"
           prepend-icon="mdi-pencil"
           :disabled="selectedItem.length === 0"
+          flat
           @click="toBatchCorrect"
         >
           前往批改选中作业
@@ -61,7 +62,7 @@
       <div class="flex-grow h-0 flex">
         <div
           v-if="isLoading"
-          class="loader flex-grow overflow-y-auto"
+          class="loader flex-grow overflow-y-auto flex h-full items-center justify-center"
         >
           <v-progress-circular
             indeterminate
@@ -77,20 +78,22 @@
           <v-data-table
             v-model="correctsId"
             item-value="id"
+            item-selectable="selectable"
             class="h-full border overflow-auto"
             fixed-footer
+            show-select
             fixed-header
             theme="light"
             hover
             :loading="isLoading"
             :headers="headers"
             items-per-page="10"
-            :items="correctList"
+            :items="answers"
             return-object
           >
             <template #headers="{ columns,allSelected, selectAll, someSelected }">
               <tr class="text-white">
-                <td>
+                <td class="pl-2">
                   <v-checkbox-btn
                     :indeterminate="someSelected && !allSelected"
                     :model-value="allSelected"
@@ -106,11 +109,12 @@
                     item-value="id"
                     variant="solo"
                     density="compact"
+                    class="text-lg font-black"
                     flat
                     hide-details
                   >
                     <template #prepend>
-                      <span class="select-font">状态:</span>
+                      <span class="select-font">状态</span>
                     </template>
                   </v-select>
                 </td>
@@ -123,12 +127,13 @@
                     item-value="id"
                     density="compact"
                     variant="solo"
+                    class="text-lg font-black"
                     flat
                     show-select
                     hide-details
                   >
                     <template #prepend>
-                      <span class="select-font">小组:</span>
+                      <span class="select-font">小组</span>
                     </template>
                   </v-select>
                 </td>
@@ -155,20 +160,14 @@
                 icon="mdi-sort-variant-off"
               />
               <p class="font-bold text-lg text-gray-400">
-                暂时没有学生成绩数据
+                未查询到对应的数据
               </p>
             </template>
             <template #bottom>
               <v-pagination
                 v-model="currentPage"
-                class="pagination"
+                class="pagination border-t"
                 :length="pages"
-              />
-            </template>
-            <template #item.check="{ internalItem, isSelected, toggleSelect,item }">
-              <v-checkbox-btn
-                :model-value="isSelected(internalItem) && !item.corrected"
-                @update:model-value="showItem(internalItem,toggleSelect)"
               />
             </template>
             <template #item.corrected="{ item }">
@@ -177,32 +176,53 @@
               </span>
             </template>
             <template #item.group="{item}">
-              {{ item.groupName }}
+              <span class="break-all">
+                {{ item.groupName }}
+              </span>
             </template>
             <template #item.student="{item}">
-              {{ item.studentName }} ({{ item.number }})
+              <span class="break-all">
+                {{ item.studentName }} 
+                <span class="text-gray-500">
+                  ({{ item.number }})
+                </span>
+              </span>
             </template>
             <template #item.course="{item}">
-              {{ item.courseName }}
+              <span class="break-all">
+                {{ item.courseName }}
+              </span>
             </template>
             <template #item.section="{item}">
-              {{ item.sectionName }}
+              <span class="break-all">
+                {{ item.sectionName }}
+              </span>
             </template>
             <template #item.task="{item}">
-              {{ item.taskName }}
+              <span class="break-all">
+                {{ item.taskName }}
+              </span>
             </template>
             <template #item.time="{item}">
-              {{ getDaysAgo(item.submitTime) }}
+              <span class="text-gray-500">
+                {{ getDaysAgo(item.submitTime) }}
+              </span>
             </template>
             <template #item.goto="{item}">
               <v-btn
-                v-show="item.corrected"
+                v-if="item.corrected"
                 class="text-green-500"
-                variant="text"
-                @click="ToCorrectedAnswer(item.id)"
+                variant="outlined"
+                @click="toCorrectedAnswer(item.id)"
               >
                 查看批改结果
               </v-btn>
+              <span
+                v-else
+                class="text-gray-500"
+              >
+                无
+              </span>
             </template>
           </v-data-table>
         </div>
@@ -211,16 +231,12 @@
   </div>
 </template>
 <script>
-import CustomFloatBackButton from '@/components/CustomFloatBackButton.vue';
 import { getCourseList, getGroupList } from '@/api/course';
 import { getAnswer } from '@/api/correct';
 import mitt from '@/plugins/mitt';
 
 export default {
   name: 'TaskBatchSelectView',
-  components: {
-    CustomFloatBackButton,
-  },
   data() {
     return {
       groupList: [{ id: null, name: '全部' }],
@@ -231,10 +247,6 @@ export default {
         { id: false, name: '未批改' },
       ],
       headers: [
-        {
-          title: '',
-          key:'check'
-        },
         {
           title: '',
           value: item => {
@@ -292,7 +304,7 @@ export default {
           sortable: false,
         }
       ],
-      correctList: [],
+      answers: [],
       correctsId: [],
       courseSelected: null,
       statusSelected: null,
@@ -358,7 +370,7 @@ export default {
       this.selectIdForCorrect();
     },
   },
-  async created() {
+  created() {
     //获取老师的授课列表
     getCourseList().then((res) => {
       this.courseList = res.data;
@@ -367,11 +379,8 @@ export default {
     getGroupList().then((res) => {
       this.groupList = this.groupList.concat(res.data);
     });
-    this.isLoading = true;
-    const res = await getAnswer({ corrected: null });
-    this.correctList = res.data.list;
-    this.pages = res.data.totalPage;
-    this.isLoading = false;
+    this.loadAnswers();
+    mitt.on('refreshAnswerList', this.loadAnswers);
   },
   methods: {
     correctColor(corrected) {
@@ -400,18 +409,27 @@ export default {
         return Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + '天前';
       }
     },
-    searchCorrect() {
+    async loadAnswers() {
       this.isLoading = true;
-      getAnswer({
+      const res = await getAnswer({
         courseId: this.courseSelected,
         studentName: this.studentName,
         sectionName: this.sectionName,
         taskName: this.taskName,
-      }).then((res) => {
-        this.correctList = res.data.list;
-        this.pages = res.data.totalPage;
-        this.isLoading = false;
+        corrected: this.statusSelected,
+        groupId: this.groupSelected,
+        page: this.currentPage,
       });
+      if (res && res.data) {
+        this.answers = res.data.list;
+        this.answers.forEach((item) => {
+          item.selectable = !item.corrected;
+        });
+        this.pages = res.data.totalPage;
+      } else {
+        mitt.emit('showToast', { title: '获取作业列表失败', color: 'error', icon: '$error' });
+      }
+      this.isLoading = false;
     },
     correctName(correct) {
       if (correct == false) {
@@ -421,19 +439,9 @@ export default {
       }
     },
     selectIdForCorrect() {
-      this.isLoading = true;
-      getAnswer({
-        courseId: this.courseSelected,
-        corrected: this.statusSelected,
-        groupId: this.groupSelected,
-        page: this.currentPage,
-      }).then((res) => {
-        this.correctList = res.data.list;
-        this.pages = res.data.totalPage;
-        this.isLoading = false;
-      });
+      this.loadAnswers();
     },
-    ToCorrectedAnswer(id) {
+    toCorrectedAnswer(id) {
       this.$router.push({
         path: `/teacher/correct/${id}`,
       });
@@ -470,7 +478,7 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1em 0;
+  padding-bottom: 1em;
   > * {
     margin-left: 1em;
   }

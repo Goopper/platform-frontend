@@ -171,7 +171,6 @@ export default {
     // 获取教师的课程列表
     const course = await getCourseList();
     const group = await getGroupList();
-    console.log(course, group);
     if (course == [] || group == []) {
       this.loading = false;
     }

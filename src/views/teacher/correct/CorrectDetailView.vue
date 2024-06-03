@@ -1,27 +1,54 @@
 <template>
   <div
-    v-if="correct"
-    class="main"
+    v-if="!loading"
+    class="flex flex-col h-full"
   >
-    <div class="title">
-      <h3 :title="answer.taskName">
+    <div class="bg-primary text-white font-bold flex justify-between items-center px-4 py-3.5 text-lg">
+      <h3
+        :title="answer.taskName"
+        class="break-all truncate max-w-[15rem]"
+      >
+        <v-tooltip
+          activator="parent"
+          location="top"
+          :text="answer.taskName"
+        />
         {{ answer.taskName }}
       </h3>
-      <p :title="answer.courseName + ' - ' + answer.sectionName">
+      <p
+        :title="answer.courseName + ' - ' + answer.sectionName"
+        class="break-all truncate max-w-[15rem]"
+      >
+        <v-tooltip
+          activator="parent"
+          location="top"
+          :text="answer.courseName+' - '+answer.sectionName"
+        />
         <span>{{ answer.courseName }}</span> -
         <span>{{ answer.sectionName }}</span>
       </p>
     </div>
-    <div class="content">
-      <p>题目内容 :</p>
-      {{ correct.taskContent }}
+    <div class="p-4 flex-grow">
+      <p class="font-bold">
+        题目内容 :
+      </p>
+      <p class="break-all whitespace-pre max-h-16 overflow-y-auto">
+        {{ correct.taskContent }}
+      </p>
     </div>
-    <div class="answer">
-      <p>学生提交的答案 :</p>
-      {{ correct.answerContent }}
+    <div class="border-t p-4 flex-grow">
+      <p class="font-bold">
+        学生提交的答案 :
+      </p>
+      <p class="break-all whitespace-pre max-h-16 overflow-y-auto">
+        {{ correct.answerContent }}
+      </p>
     </div>
-    <div class="attachments">
-      <div v-if="correct.attachments.length > 0">
+    <div class="border-t p-2 overflow-y-auto">
+      <div
+        v-if="correct.attachments.length > 0"
+        class="gap-2 flex flex-col"
+      >
         <custom-attachment-card
           v-for="attachment in correct.attachments"
           :key="attachment.id"
@@ -29,26 +56,36 @@
           :attachment="attachment"
         />
       </div>
-      <div v-else>
-        <p>无附件</p>
+      <div
+        v-else
+        class="flex justify-center items-center"
+      >
+        <v-icon
+          size="50px"
+          class="text-gray-400"
+          icon="mdi-attachment-off"
+        />
+        <p class="font-bold text-lg text-gray-400">
+          无附件
+        </p>
       </div>
     </div>
-    <div class="comment p-4">
+    <div class="p-4 flex flex-col border-t overflow-auto">
       <v-textarea
         v-model="comment"
         theme="light"
         no-resize
-        rows="2"
         density="compact"
         clearable
         flat
         hide-details
+        auto-grow
         :maxlength="200"
         variant="solo"
         label="评语（最多200字）"
       />
     </div>
-    <div class="bottom-bar flex p-4 bg-background-important">
+    <div class="flex p-2 bg-background-important h-auto border-t">
       <div class="flex-grow" />
       <v-text-field
         v-model="score"
@@ -65,10 +102,9 @@
       >
         <template #append>
           <v-btn
-            class="individual-correction"
-            color="white"
-            variant="flat"
+            variant="outlined"
             :disabled="disable"
+            class="mr-4"
             flat
             @click="handleSubmitCorrect"
           >
@@ -88,7 +124,7 @@
   </div>
   <div
     v-else
-    class="loader"
+    class="flex flex-col justify-center items-center h-full"
   >
     <v-progress-circular
       indeterminate
@@ -176,8 +212,9 @@ import {
   TaskBatchCorrection,
 } from '@/api/correct';
 import CustomAttachmentCard from '@/components/CustomAttachmentCard.vue';
-import { useSaveStore } from '@/store/common/save';
 import mitt from '@/plugins/mitt';
+import { useSaveStore } from '@/store/common/save';
+
 export default {
   name: 'CorrectDetailView',
   components: {
@@ -188,6 +225,7 @@ export default {
       correctId: null,
       correct: null,
       answer: null,
+      loading: false,
       comment: '',
       rawScore: null,
       checkCorrects: [],
@@ -195,8 +233,8 @@ export default {
       confirmDialog: false,
       confirmBatchDialog: false,
       inBatchDialog : false,
-      saveStore: useSaveStore(),
       finishCorrectedCount: Number(localStorage.getItem('finishCounts')) || 0,
+      saveStore: useSaveStore(),
     };
   },
   computed: {
@@ -229,15 +267,26 @@ export default {
   watch: {
     $route: {
       async handler() {
+        this.loading = true;
         this.score = null;
         this.correctId = this.$route.params.correctId;
         const res = await getAnswerByCorrectId(this.correctId);
-        this.correct = res.data;
-        this.answer = res.data.answer;
+        if (res && res.data) {
+          this.correct = res.data;
+          this.answer = res.data.answer;
+        } else {
+          mitt.emit('showToast', {
+            title: '获取作业详情失败',
+            color: 'error',
+            icon: '$error',
+          });
+          this.$router.push('/teacher/correct/batch/select');
+        }
         if (JSON.parse(localStorage.getItem('checkCorrects')).length > 1 && this.inBatchDialog) {
           this.score = localStorage.getItem('score');
           this.comment = localStorage.getItem('comment');
         }
+        this.loading = false;
       },
       immediate: true,
     },
@@ -253,6 +302,7 @@ export default {
         localStorage.removeItem('comment');
         this.saveStore.setSaveState(this.inBatchDialog=true);
         this.$router.push('/teacher/correct/batch/select');
+        mitt.emit('refreshAnswerList');
         localStorage.removeItem('finishCounts');
       } else {
         setTimeout(() => {
@@ -300,7 +350,6 @@ export default {
       this.confirmDialog = false;
       localStorage.setItem('finishCounts', this.finishCorrectedCount += 1);
       this.backToSelect();
-
     },
     //提交多选批改
     clickSubmitBatchCorrect() {
@@ -313,104 +362,3 @@ export default {
   },
 };
 </script>
-<style lang="scss" scoped>
-//主内容
-.main {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-//标题和按钮的样式
-.title,.bottom-bar{
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-//标题样式
-.title {
-  background: #383838;
-  padding: 0.5em 1.5em;
-  height: 66px;
-  > * {
-    color: white;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  h3 {
-    font-size: 1.25em;
-  }
-  p {
-    width: 30vw;
-    text-align: right;
-  }
-  span {
-    font-size: 0.9em;
-    width: 5vw;
-  }
-}
-//底部按钮样式
-.bottom-bar {
-  height: 5em;
-  background: #f5f5f5;
-  border-top: 1px solid #e0e0e0;
-  .batch-correction {
-    margin-left: 1em;
-  }
-}
-//内容,提交答案,附件公共样式
-.content,.answer,.attachments{
-  border-bottom: 1px solid #e0e0e0;
-  padding: 1em 1.5em;
-  overflow: auto;
-  word-wrap: break-word;
-}
-//提交答案和附件公共样式
-.answer,
-.attachments {
-  height: 20%;
-  p {
-    font-weight: bold;
-  }
-}
-//内容样式
-.content {
-  height: 20%;
-  p {
-    font-weight: bold;
-  }
-}
-//评语样式
-.comment {
-  padding: 0.75em 0.5em;
-  height: 24%;
-}
-//单附件样式
-.attachment-card{
-  margin-bottom: 0.5em;
-}
-//禁用的按钮样式
-.individual-correction.v-btn--disabled {
-  background-color: white !important; /* 修改禁用时的背景色 */
-  color: #7d7d7d !important; /* 修改禁用时的文本颜色 */
-}
-//多选弹框list样式
-.v-list {
-  border: 1px solid #e0e0e0;
-  border-bottom: 0;
-  padding: 0;
-  height: 10em;
-  overflow: auto;
-  .v-list-item {
-    border-bottom: 1px solid #e0e0e0;
-  }
-}
-//加载样式
-.loader {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 50vh;
-}
-</style>

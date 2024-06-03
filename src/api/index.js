@@ -24,7 +24,12 @@ export function request(config) {
             const status = err.response.status;
             // error code 400: invalid request
             if (data.code === 400) {
-                mitt.emit('showToast', { title: data.message, color: 'error', icon: '$error', duration: 2000 });
+                if (data.message === 'Access Denied') {
+                    mitt.emit('showToast', { title: '无权访问', color: 'error', icon: '$error', duration: 2000 });
+                    window.location.href = '/';
+                } else {
+                    mitt.emit('showToast', { title: data.message, color: 'error', icon: '$error', duration: 2000 });
+                }
             }
             // error code 403: unauthorized, redirect to login page
             if (status === 403) {

@@ -8,13 +8,14 @@
         density="compact"
         theme="light"
       >
-        <v-list-item class="checkAll">
-          <p>
+        <v-list-item class="checkAll h-14">
+          <p class="text-xl">
             全选
           </p>
           <template #append>
             <v-checkbox
               v-model="checkAll"
+              density="compat"
               value="correct.answerId"
               hide-details
             />
@@ -28,15 +29,17 @@
           :to="`/teacher/correct/batch/correct/${correct.answerId}`"
         >
           <v-list-item-title>
-            {{ correct.taskName }}
+            <span>{{ correct.taskName }}</span>
           </v-list-item-title>
           <template #prepend>
-            <v-checkbox
-              v-model="checkCorrects"
-              :value="correct.answerId"
-              hide-details
-              @click.stop
-            />
+            <div class="w-10">
+              <v-checkbox
+                v-model="checkCorrects"
+                :value="correct.answerId"
+                hide-details
+                @click.stop
+              />
+            </div>
           </template>
           <v-icon
             v-if="correct.corrected"
@@ -50,6 +53,18 @@
     <div class="correct">
       <router-view />
     </div>
+    <v-overlay
+      v-model="loading"
+      class="align-center justify-center"
+      persistent
+      contained
+    >
+      <v-progress-circular
+        color="primary"
+        size="100"
+        indeterminate
+      />
+    </v-overlay>
   </div>
 </template>
 <script>
@@ -64,6 +79,7 @@ export default {
       checkAll:false,
       correctList: [],
       checkCorrects: [],
+      loading: false
     };
   },
   watch: {
@@ -87,13 +103,19 @@ export default {
       });
     } else {
       this.correctsId = JSON.parse(localStorage.getItem('correctsId'));
+      this.loading = true;
       const res = await getTaskNameByIds(this.correctsId);
-      this.correctList = res.data;
-       if (this.$route.path === '/teacher/correct/batch/correct' && this.correctList.length > 0) {
-      this.$router.push({
-        path: `/teacher/correct/batch/correct/${this.correctList[0].answerId}`,
-      });
-    }
+      if (res && res.data) {
+        this.correctList = res.data;
+      } else {
+        mitt.emit('showToast', { title: '获取作业列表失败', color: 'error', icon: '$error' });
+      }
+      this.loading = false;
+      if (this.$route.path === '/teacher/correct/batch/correct' && this.correctList.length > 0) {
+        this.$router.push({
+          path: `/teacher/correct/batch/correct/${this.correctList[0].answerId}`,
+        });
+      }
     }
   },
 };

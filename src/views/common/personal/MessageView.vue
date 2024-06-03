@@ -148,7 +148,7 @@
         </div>
         <v-card-text>
           <p
-            class="mt-2 whitespace-pre-wrap"
+            class="mt-2 whitespace-pre"
             v-text="targetMessage.content"
           />
           <p class="text-sm mt-4 mb-2 text-gray-500">
@@ -161,6 +161,14 @@
             class="ms-auto"
             text="前往批改作业"
             @click="handleMessageToCorrect"
+          />
+        </v-card-actions>
+        <v-card-actions v-else-if="targetMessage.answerId !== null">
+          <v-btn
+            variant="flat"
+            class="ms-auto"
+            text="查看具体批改结果"
+            @click="handleMessageToCorrectResult"
           />
         </v-card-actions>
       </v-card>
@@ -230,8 +238,16 @@ export default {
       });
     },
     handleMessageToCorrect() {
+      const targetId = this.targetMessage.id;
+      receiveOneMessage(targetId).then(() => {
+        this.targetMessage.isRead = true;
+      });
       this.$router.push('/teacher/correct/batch/select');
-    }
+    },
+    handleMessageToCorrectResult() {
+      const targetId = this.targetMessage.answerId;
+      this.$router.push(`/teacher/correct/${targetId}`);
+    },
   }
 };
 </script>

@@ -11,14 +11,18 @@
     />
   </div>
   <main v-else>
-    <div class="course">
+    <div class="course flex flex-col">
       <div class="title-type">
         <h1>{{ course.name }}</h1>
         <span>{{ course.type }}</span>
       </div>
-      <p>授课老师 : {{ course.teacher }}</p>
-      <div class="desc">
-        <p>{{ course.desc }}</p>
+      <p class="text-gray-500">
+        授课老师 : {{ course.teacher }}
+      </p>
+      <div class="desc flex-grow overflow-y-auto h-0">
+        <p class="break-all">
+          {{ course.desc }}
+        </p>
         <v-img
           :src="course.cover"
           alt="课程图片"
@@ -84,10 +88,10 @@ export default {
   width: 100%;
   height: 50%;
   > p{
-  padding: 2em 0;
-  font-size: 0.75em;
-  font-weight: bold;
- }
+    padding: 0.5rem 0;
+    font-size: 0.75em;
+    font-weight: bold;
+  }
  }
  .title-type{
   display: flex;
@@ -112,8 +116,7 @@ export default {
  .desc{
   display: flex;
   justify-content: space-between;
-  text-indent: 2em;
-    height: 40%;
+  height: 40%;
   p{
     width: 70%;
     overflow: auto;

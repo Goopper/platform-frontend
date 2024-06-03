@@ -17,10 +17,39 @@
         <h1>{{ task.name }}</h1>
         <p>{{ submitTypeName }}</p>
         <span>
-          <v-icon
-            v-if="task.status"
-            color="green"
-          >mdi-check-circle-outline</v-icon>
+          <v-tooltip
+            v-if="task.corrected"
+            text="作业已批改"
+          >
+            <template #activator="{ props }">
+              <v-icon
+                v-bind="props"
+                color="green"
+              >mdi-check-circle-outline</v-icon>
+            </template>
+          </v-tooltip>
+          <v-tooltip
+            v-else-if="task.status && task.submitTypeId !== 3"
+            text="作业已提交，等待批改中..."
+          >
+            <template #activator="{ props }">
+              <v-icon
+                v-bind="props"
+                color="green"
+              >mdi-upload-circle-outline</v-icon>
+            </template>
+          </v-tooltip>
+          <v-tooltip
+            v-else-if="task.submitTypeId === 3"
+            text="作业已完成"
+          >
+            <template #activator="{ props }">
+              <v-icon
+                v-bind="props"
+                color="green"
+              >mdi-check-circle-outline</v-icon>
+            </template>
+          </v-tooltip>
         </span>
       </div>
       <p>{{ task.content }}</p>
@@ -43,6 +72,13 @@
         >
           答题区
         </v-tab>
+        <v-btn
+          v-if="task.corrected"
+          variant="outlined"
+          @click="handleCorrectResultClick"
+        >
+          查看做题结果
+        </v-btn>
       </v-tabs>
       <v-window
         v-model="tab"
@@ -317,7 +353,6 @@ export default {
         this.tab = 'answer';
         this.content = localStorage.getItem('content');
         this.attachments = JSON.parse(localStorage.getItem('attachment'));
-        console.log( this.attachments);
         localStorage.removeItem('content');
         localStorage.removeItem('attachment');
       } else {
@@ -461,6 +496,11 @@ export default {
       localStorage.setItem('attachment', JSON.stringify(this.attachments));
       this.refreshWithoutPrompt();
     },
+    handleCorrectResultClick() {
+      this.$router.push({
+        path: `/teacher/correct/${this.taskId}`,
+      });
+    }
   },
 };
 </script>

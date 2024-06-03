@@ -18,7 +18,7 @@
             <p class="font-bold">
               学生答案:
             </p>
-            <div class="h-0 flex-grow overflow-y-auto break-words">
+            <div class="h-0 flex-grow overflow-y-auto break-words whitespace-pre">
               {{ correct.answerContent }}
             </div>
           </div>
@@ -40,7 +40,7 @@
             </div>
             <div
               v-if="correct.comment"
-              class="overflow-y-auto h-0 flex-grow break-words"
+              class="overflow-y-auto h-0 flex-grow break-words whitespace-pre"
             >
               {{ correct.comment }}
             </div>
