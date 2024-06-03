@@ -261,11 +261,10 @@ export default {
       const isChanged = this.score !== null || this.comment !== '';
       if (this.checkCorrects  != null && this.batchDialogStatus) {
         this.saveStore.setSaveState(isChanged);
-        return isChanged;
       } else {
         this.saveStore.setSaveState(!isChanged);
-        return !isChanged;
       }
+      return this.score === null || this.loading;
     },
   },
   //使用watch在切换路由时切换作业详情
@@ -315,8 +314,8 @@ export default {
           color: 'success',
           icon: '$success',
         });
-        mitt.emit('refreshAnswerList');
         this.$router.push('/teacher/correct/batch/select');
+        mitt.emit('refreshAnswerList');
         localStorage.removeItem('checkCorrects');
         localStorage.removeItem('IncompleteCorrects');
       } else {
