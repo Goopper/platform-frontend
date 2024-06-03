@@ -193,12 +193,12 @@
           variant="flat"
           class="ms-auto"
           text="确认"
-          @click="(clickSubmitBatchCorrect(),inBatchDialog = false,confirmBatchDialog = false)"
+          @click="(clickSubmitBatchCorrect(),confirmBatchDialog = false)"
         />
         <v-btn
           variant="outlined"
           text="取消"
-          @click="(confirmBatchDialog = false,inBatchDialog = false)"
+          @click="(confirmBatchDialog = false,batchDialogStatus = false)"
         />
       </v-card-actions>
     </v-card>
@@ -225,15 +225,20 @@ export default {
       correctId: null,
       correct: null,
       answer: null,
-      loading: false,
-      comment: '',
       rawScore: null,
+      comment: '',
+      //多选的作业列表
       checkCorrects: [],
+      //在批量批改里面选中的多选列表
       correctList: [],
+      loading: false,
+      //两个确认框
       confirmDialog: false,
       confirmBatchDialog: false,
-      inBatchDialog : false,
-      finishCorrectedCount: Number(localStorage.getItem('finishCounts')) || 0,
+      //批量批改的状态
+      batchDialogStatus: false,
+      //批改完的作业
+      finishCounts: 0,
       saveStore: useSaveStore(),
     };
   },
@@ -253,8 +258,8 @@ export default {
       },
     },
     disable() {
-      const isChanged = this.score !== null;
-      if (this.checkCorrects.length > 1 && this.inBatchDialog) {
+      const isChanged = this.score !== null || this.comment !== '';
+      if (this.checkCorrects  != null && this.batchDialogStatus) {
         this.saveStore.setSaveState(isChanged);
         return isChanged;
       } else {
@@ -269,7 +274,9 @@ export default {
       async handler() {
         this.loading = true;
         this.score = null;
+        this.comment = '';
         this.correctId = this.$route.params.correctId;
+        
         const res = await getAnswerByCorrectId(this.correctId);
         if (res && res.data) {
           this.correct = res.data;
@@ -282,29 +289,37 @@ export default {
           });
           this.$router.push('/teacher/correct/batch/select');
         }
-        if (JSON.parse(localStorage.getItem('checkCorrects')).length > 1 && this.inBatchDialog) {
+        if (JSON.parse(localStorage.getItem('checkCorrects')) != null && this.batchDialogStatus) {
           this.score = localStorage.getItem('score');
           this.comment = localStorage.getItem('comment');
+        } else {
+          this.score = null;
+          this.comment = '';
         }
         this.loading = false;
       },
       immediate: true,
     },
   },
+  //刷新页面的时候清空checkCorrects
+  beforeUnmount() {
+    localStorage.removeItem('checkCorrects');
+  },
   methods: {
     //返回到查看批改作业页面
     backToSelect() {
-      if (
-        this.finishCorrectedCount ===
-        JSON.parse(localStorage.getItem('correctsId')).length
-      ) {
-        localStorage.removeItem('score');
-        localStorage.removeItem('comment');
-        this.saveStore.setSaveState(this.inBatchDialog=true);
+      if (JSON.parse(localStorage.getItem('IncompleteCorrects')).length === this.finishCounts) {
+        this.saveStore.setSaveState(this.batchDialogStatus=true);
+        mitt.emit('showToast', {
+          title: '批改完成',
+          color: 'success',
+          icon: '$success',
+        });
         this.$router.push('/teacher/correct/batch/select');
-        mitt.emit('refreshAnswerList');
-        localStorage.removeItem('finishCounts');
+        localStorage.removeItem('checkCorrects');
+        localStorage.removeItem('IncompleteCorrects');
       } else {
+        localStorage.removeItem('checkCorrects');
         setTimeout(() => {
           this.$router.go(0);
         }, 1000);
@@ -313,20 +328,27 @@ export default {
     },
     //展开确认框
     handleSubmitCorrect() {
+      if (this.score === null) {
+        mitt.emit('showToast', {
+          title: '请输入分数',
+          color: 'error',
+          icon: '$error',
+        });
+        return;
+      }
       this.confirmDialog = true;
     },
     //展开多选确认框
     async handleSubmitBatchCorrect() {
-      let id = this.$route.params.correctId;
       this.checkCorrects = JSON.parse(localStorage.getItem('checkCorrects'));
-      if (this.checkCorrects.length === 0) {
+      if (this.checkCorrects === null || this.checkCorrects.length == 0) {
         mitt.emit('showToast', {
           title: '请选择作业',
           color: 'error',
           icon: '$error',
         });
         return;
-      } else if (this.checkCorrects.includes(id)) {
+      } else if (!this.checkCorrects.includes(Number(this.correctId))) {
         // 如果 correctId 不在 checkCorrects 列表中，那么就显示一个提示，并返回
         mitt.emit('showToast', {
           title: '当前任务不在批量批改列表里',
@@ -337,7 +359,7 @@ export default {
       } else {
         const res = await getTaskNameByIds(this.checkCorrects);
         this.correctList = res.data;
-        this.inBatchDialog = true;
+        this.batchDialogStatus = true;
         this.confirmBatchDialog = true;
         localStorage.setItem('score', this.score);
         localStorage.setItem('comment', this.comment);
@@ -345,18 +367,17 @@ export default {
     },
     //提交单独批改
     clickSubmitCorrect() {
-      localStorage.removeItem('finishCounts');
       TaskIndividualCorrection(this.correctId, this.comment, this.score);
       this.confirmDialog = false;
-      localStorage.setItem('finishCounts', this.finishCorrectedCount += 1);
+      this.finishCounts++;
       this.backToSelect();
     },
     //提交多选批改
     clickSubmitBatchCorrect() {
-      localStorage.removeItem('finishCounts');
       TaskBatchCorrection(this.checkCorrects, this.comment, this.score);
       this.confirmBatchDialog = false;
-      localStorage.setItem('finishCounts', this.finishCorrectedCount += this.checkCorrects.length);
+      this.finishCounts += this.checkCorrects.length;
+      console.log(this.finishCounts);
       this.backToSelect();
     },
   },

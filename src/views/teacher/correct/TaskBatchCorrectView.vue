@@ -15,7 +15,7 @@
           <template #append>
             <v-checkbox
               v-model="checkAll"
-              density="compat"
+              density="compact"
               value="correct.answerId"
               hide-details
             />
@@ -41,12 +41,6 @@
               />
             </div>
           </template>
-          <v-icon
-            v-if="correct.corrected"
-            color="green"
-          >
-            mdi-check-circle-outline
-          </v-icon>
         </v-list-item>
       </v-list>
     </div>
@@ -70,6 +64,7 @@
 <script>
 //修改列表添加单独多选功能后显示批量批改页面在有页面里添加多选的显示
 import { getTaskNameByIds } from '@/api/correct';
+import mitt from '@/plugins/mitt';
 export default {
   name: 'TaskBatchSelectView',
   data() {
@@ -85,7 +80,13 @@ export default {
   watch: {
     checkAll(newVal) {
       if (newVal) {
-        this.checkCorrects = this.correctsId;
+        if(localStorage.getItem('IncompleteCorrects') !== null){
+          let incompleteCorrects = JSON.parse(localStorage.getItem('IncompleteCorrects'));
+          let ids = incompleteCorrects.map(item => item.answerId);
+          this.checkCorrects = ids;
+        } else {
+          this.checkCorrects = this.correctsId;
+        }
         localStorage.setItem('checkCorrects', JSON.stringify(this.checkCorrects));
       } else {
         this.checkCorrects = [];
@@ -93,7 +94,7 @@ export default {
       }
     },
     checkCorrects() {
-      localStorage.setItem('checkCorrects',JSON.stringify(this.checkCorrects));
+      localStorage.setItem('checkCorrects', JSON.stringify(this.checkCorrects));
     }
   },
   async created() {
@@ -106,7 +107,13 @@ export default {
       this.loading = true;
       const res = await getTaskNameByIds(this.correctsId);
       if (res && res.data) {
-        this.correctList = res.data;
+        this.correctList = res.data.filter(item => !item.corrected);
+        localStorage.setItem('IncompleteCorrects', JSON.stringify(this.correctList));
+        if(this.correctList.length > 0){
+          this.$router.push({
+            path: `/teacher/correct/batch/correct/${this.correctList[0].answerId}`,
+          });
+        }
       } else {
         mitt.emit('showToast', { title: '获取作业列表失败', color: 'error', icon: '$error' });
       }
@@ -133,12 +140,8 @@ export default {
 }
 .list-item {
   display: flex;
-  justify-content: space-between;
   > * {
     display: flex;
-  }
-  .v-list-item-title{
-    padding-right: 1em;
   }
 }
 .v-list-item--active {
