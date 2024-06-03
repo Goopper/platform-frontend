@@ -27,6 +27,7 @@
       <router-link to="create">
         <v-btn
           text
+          flat
           prepend-icon="mdi-pencil"
         >
           创建课程

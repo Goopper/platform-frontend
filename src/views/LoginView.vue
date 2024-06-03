@@ -156,6 +156,12 @@ export default {
           await this.userStore.loadUserInfo();
           // redirect to home
           this.goToMain();
+        } else {
+          mitt.emit('showToast', {
+            title: '登陆失败！请检查学号/工号和密码是否正确',
+            color: 'error',
+            icon: '$error',
+          });
         }
       }
 

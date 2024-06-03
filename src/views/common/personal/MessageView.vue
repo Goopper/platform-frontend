@@ -147,10 +147,20 @@
           />
         </div>
         <v-card-text>
+          <p class="font-bold text-lg">
+            {{ targetMessage.title }}
+          </p>
           <p
-            class="mt-2 whitespace-pre"
+            v-if="targetMessage.typeId !== typeCorrectResultId"
+            class="mt-2 whitespace-break-spaces"
             v-text="targetMessage.content"
           />
+          <p
+            v-else
+            class="mt-2 whitespace-break-spaces"
+          >
+            您的作业已经被批改，请查看批改结果
+          </p>
           <p class="text-sm mt-4 mb-2 text-gray-500">
             发送日期：{{ sendDate }}
           </p>
@@ -189,6 +199,7 @@ export default {
     title: '',
     types: MessageType.ALL,
     typeCorrectId: MessageType.CORRECT.id,
+    typeCorrectResultId: MessageType.CORRECT_RESULT.id,
     type: null,
     loading: false,
     dialog: false,

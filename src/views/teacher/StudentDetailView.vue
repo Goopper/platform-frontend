@@ -7,7 +7,7 @@
     <!-- 主要 -->
     <div
       v-if="studentInfo"
-      class="detail-main"
+      class="detail-main mb-[10rem] md:mb-0 md:overflow-y-auto"
       :data="studentInfo"
     >
       <!-- 用来左右布局 -->
@@ -36,6 +36,7 @@
               <template #activator="{ props: activatorProps }">
                 <v-btn
                   v-bind="activatorProps"
+                  class="sm:mt-2"
                 >
                   修改用户密码
                 </v-btn>
@@ -96,7 +97,7 @@
         :course="courseDetail"
         show-progress
       />
-      <div class="course-list">
+      <div class="course-list md:min-h-[360px]">
         <CustomCourseStructureList 
           :course-id="courseId"
           :student-id="studentInfo.id"
@@ -250,7 +251,7 @@ strong {
 }
 @media (max-width: 800px) {
   .student-info{
-    padding-left: 20px;
+    padding-left: 1rem;
   }
 }
 @media (max-width: 770px){
@@ -264,6 +265,9 @@ strong {
   }
   .basic-info .v-icon{
     display: none;
+  }
+  .student-info{
+    padding-left: 0;
   }
 }
 </style>

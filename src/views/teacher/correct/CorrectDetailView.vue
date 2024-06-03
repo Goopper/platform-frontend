@@ -32,7 +32,7 @@
       <p class="font-bold">
         题目内容 :
       </p>
-      <p class="break-all whitespace-pre max-h-16 overflow-y-auto">
+      <p class="break-all whitespace-break-spaces max-h-16 overflow-y-auto">
         {{ correct.taskContent }}
       </p>
     </div>
@@ -40,7 +40,7 @@
       <p class="font-bold">
         学生提交的答案 :
       </p>
-      <p class="break-all whitespace-pre max-h-16 overflow-y-auto">
+      <p class="break-all whitespace-break-spaces max-h-16 overflow-y-auto">
         {{ correct.answerContent }}
       </p>
     </div>
@@ -315,6 +315,7 @@ export default {
           color: 'success',
           icon: '$success',
         });
+        mitt.emit('refreshAnswerList');
         this.$router.push('/teacher/correct/batch/select');
         localStorage.removeItem('checkCorrects');
         localStorage.removeItem('IncompleteCorrects');

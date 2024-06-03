@@ -18,7 +18,7 @@
             <p class="font-bold">
               学生答案:
             </p>
-            <div class="h-0 flex-grow overflow-y-auto break-words whitespace-pre">
+            <div class="h-0 flex-grow overflow-y-auto break-words whitespace-break-spaces">
               {{ correct.answerContent }}
             </div>
           </div>
@@ -40,7 +40,7 @@
             </div>
             <div
               v-if="correct.comment"
-              class="overflow-y-auto h-0 flex-grow break-words whitespace-pre"
+              class="overflow-y-auto h-0 flex-grow break-words whitespace-break-spaces"
             >
               {{ correct.comment }}
             </div>
@@ -58,10 +58,11 @@
               </p>
             </div>
           </div>
-          <div class="p-4 border-t h-0 flex-grow overflow-y-auto">
+          <div class="p-4 border-t h-0 flex-grow flex flex-col gap-2">
+            <span class="font-bold">学生提交的附件:</span>
             <div
               v-if="correct.attachments && correct.attachments.length > 0"
-              class="flex flex-col gap-4"
+              class="flex flex-col gap-4 overflow-y-auto"
             >
               <custom-attachment-card
                 v-for="attachment in correct.attachments"

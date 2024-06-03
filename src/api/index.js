@@ -38,7 +38,7 @@ export function request(config) {
             }   
         } else {
             // axios error (timeout maybe)
-            mitt.emit('showToast', { title: err.message, color: 'error', icon: '$error', duration: 2000 });
+            mitt.emit('showToast', { title: `网络错误：${err.message}`, color: 'error', icon: '$error', duration: 2000 });
         }
     });
     return instance(config);
