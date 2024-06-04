@@ -1,6 +1,6 @@
 <template>
   <v-btn
-    class="absolute left-12 top-28 sm:static"
+    class="bsm:absolute bsm:left-12 bsm:top-28 sm:block"
     variant="text"
     size="48"
     :loading="loading"
