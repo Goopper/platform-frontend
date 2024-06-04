@@ -55,6 +55,8 @@
 <script>
 import { getCourseInfo } from '@/api/course';
 import CustomAttachmentCard from '@/components/CustomAttachmentCard.vue';
+import mitt from '@/plugins/mitt';
+
 export default {
   name: 'CourseInfoView',
   components: { CustomAttachmentCard },
@@ -70,8 +72,14 @@ export default {
   },
   methods: {
     async getCourseInfo() {
+      this.loading = true;
       const res = await getCourseInfo(this.courseId);
-      this.course = res.data;
+      if (res && res.data) {
+        this.course = res.data;
+      } else {
+        mitt.emit('showToast', { title: '获取课程信息失败！', color: 'error', icon: '$error' });
+        this.$router.replace('/course');
+      }
       this.loading = false;
     },
   },

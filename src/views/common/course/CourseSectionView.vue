@@ -34,14 +34,25 @@
           readonly
         />
       </div>
-      <div v-else>
-        当前章节没有任务
+      <div
+        v-else
+        class="flex items-center flex-col"
+      >
+        <v-icon
+          size="100px"
+          class="text-gray-400 mt-8"
+          icon="mdi-clipboard-text-off-outline"
+        />
+        <p class="font-bold text-lg text-gray-400">
+          本章节没有任务
+        </p>
       </div>
     </div>
   </main>
 </template>
 <script>
 import { getSectionDetail } from '@/api/course';
+import mitt from '@/plugins/mitt';
 export default {
   name: 'CourseSectionView',
   data() {
@@ -58,12 +69,17 @@ export default {
     this.fetchData();
   },
   methods: {
-    fetchData() {
+    async fetchData() {
+      this.loading = true;
       this.sectionId = this.$route.params.sectionId;
-      getSectionDetail(this.sectionId).then((res) => {
+      const res = await getSectionDetail(this.sectionId);
+      if (res && res.data) {
         this.section = res.data;
-        this.loading = false;
-      });
+      } else {
+        mitt.emit('showToast', { title: '获取章节信息失败！', color: 'error', icon: '$error' });
+        this.$router.replace('/course');
+      }
+      this.loading = false;
     }
   },
 };
