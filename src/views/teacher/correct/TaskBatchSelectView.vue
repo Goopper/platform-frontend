@@ -101,41 +101,54 @@
                   />
                 </td>
                 <td>
-                  <v-select
-                    v-model="statusSelected"
-                    theme="dark"
-                    :items="statusList"
-                    item-title="name"
-                    item-value="id"
-                    variant="solo"
-                    density="compact"
-                    class="text-lg font-black"
-                    flat
-                    hide-details
-                  >
-                    <template #prepend>
-                      <span class="select-font">状态</span>
+                  <v-menu>
+                    <template #activator="{ props }">
+                      <div class="flex">
+                        <span class="mr-2 text-lg font-black">状态</span>
+                        <v-btn
+                          density="compact"
+                          icon="mdi-menu-down"
+                          theme="dark"
+                          v-bind="props"
+                        />
+                      </div>
                     </template>
-                  </v-select>
+                    <v-list theme="dark">
+                      <v-list-item
+                        v-for="(item, index) in statusList"
+                        :key="index"
+                        :value="index"
+                        @click="statusSelected = item.id"
+                      >
+                        <v-list-item-title>{{ item.name }}</v-list-item-title>
+                      </v-list-item>
+                    </v-list>
+                  </v-menu>
                 </td>
                 <td>
-                  <v-select
-                    v-model="groupSelected"
-                    theme="dark"
-                    :items="groupList"
-                    item-title="name"
-                    item-value="id"
-                    density="compact"
-                    variant="solo"
-                    class="text-lg font-black"
-                    flat
-                    show-select
-                    hide-details
-                  >
-                    <template #prepend>
-                      <span class="select-font">小组</span>
+                  <v-menu>
+                    <template #activator="{ props }">
+                      <div class="flex">
+                        <span class="mr-2 text-lg font-black">小组</span>
+                        <v-btn
+                          icon="mdi-menu-down"
+                          density="compact"
+                          theme="dark"
+                          v-bind="props"
+                        />
+                      </div>
                     </template>
-                  </v-select>
+                    <v-list theme="dark">
+                      <v-list-item
+                        v-for="(item, index) in groupList"
+                        :key="index"
+                        :value="index"
+                        @click="groupSelected = item.id"
+                      >
+                        <v-list-item-title>{{ item.name }}</v-list-item-title>
+                      </v-list-item>
+                    </v-list>
+                  </v-menu>
                 </td>
                 <template
                   v-for="column in columns"
@@ -171,12 +184,15 @@
               />
             </template>
             <template #item.corrected="{ item }">
-              <span :style="{ color: getColor(item) }">
+              <span
+                class="selected"
+                :style="{ color: getColor(item) }"
+              >
                 {{ getCorrected(item.corrected) }}
               </span>
             </template>
             <template #item.group="{item}">
-              <span class="break-all">
+              <span class="break-all selected">
                 {{ item.groupName }}
               </span>
             </template>
@@ -189,17 +205,17 @@
               </span>
             </template>
             <template #item.course="{item}">
-              <span class="break-all">
+              <span class="nowrap-ellipsis">
                 {{ item.courseName }}
               </span>
             </template>
             <template #item.section="{item}">
-              <span class="break-all">
+              <span class="nowrap-ellipsis">
                 {{ item.sectionName }}
               </span>
             </template>
             <template #item.task="{item}">
-              <span class="break-all">
+              <span class="nowrap-ellipsis">
                 {{ item.taskName }}
               </span>
             </template>
@@ -494,5 +510,12 @@ export default {
 }
 .group-select {
   width: 12vw;
+}
+.nowrap-ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: inline-block;
+  max-width: 8vw;
 }
 </style>
