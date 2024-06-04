@@ -282,6 +282,7 @@ import { uploadAttachment } from '@/api/attachment';
 import { getTaskDetail } from '@/api/course';
 import { deleteAttachment } from '@/api/attachment';
 import { useUserStore } from '@/store/user';
+
 export default {
   name: 'CourseTaskView',
   components: { CustomAttachmentCard },
@@ -332,9 +333,8 @@ export default {
   beforeUnmount() {
     window.removeEventListener('beforeunload', this.beforeUnload);
   },
-  async created() {
-    await this.fetchData();
-    this.loading = false;
+  created() {
+    this.fetchData();
   },
   methods: {
     refreshWithoutPrompt() {
@@ -352,6 +352,7 @@ export default {
     },
     //查询当前task
     async fetchData() {
+      this.loading = true;
       if (localStorage.getItem('content') || localStorage.getItem('attachment')) {
         this.tab = 'answer';
         this.content = localStorage.getItem('content');
@@ -366,15 +367,21 @@ export default {
       }
       this.taskId = this.$route.params.taskId;
       const res = await getTaskDetail(this.taskId);
-      this.task = res.data;
-      if (this.task.submitTypeId === 4) {
+      if (res && res.data) {
+        this.task = res.data;
+        if (this.task.submitTypeId === 4) {
         this.submitTypeName = '文本与可选附件提交';
-      } else {
-        this.submitTypeName = '无需提交';
-        if (!this.task.status && this.userStore.role.name === 'student') {
-          submitTaskAnswer(this.task.id,'',[]);
+        } else {
+          this.submitTypeName = '无需提交';
+          if (!this.task.status && this.userStore.role.name === 'student') {
+            submitTaskAnswer(this.task.id,'',[]);
+          }
         }
+      } else {
+        mitt.emit('showToast', { title: '获取任务信息失败！', color: 'error', icon: '$error' });
+        this.$router.replace('/course');
       }
+      this.loading = false;
     },
     //上传附件按钮
     handleUploadClick() {
