@@ -257,6 +257,10 @@ export default {
     },
     handleMessageToCorrectResult() {
       const targetId = this.targetMessage.answerId;
+      const messageId = this.targetMessage.id;
+      receiveOneMessage(messageId).then(() => {
+        this.targetMessage.isRead = true;
+      });
       this.$router.push(`/teacher/correct/${targetId}`);
     },
   }

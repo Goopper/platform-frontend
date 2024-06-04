@@ -66,6 +66,7 @@
             </p>
             <v-btn
               variant="outlined"
+              class="sm:hidden"
               @click="goToDetail(currentCourse.course.id)"
             >
               继续学习
@@ -88,7 +89,7 @@
       </div>
     </div>
     <!-- year lean performance -->
-    <div class="bg-secondary p-4 border flex flex-col mt-8">
+    <div class="bg-secondary p-4 border flex flex-col bsm:mt-8 sm:mt-2">
       <div
         v-if="performanceLoading"
         class="flex justify-center my-8"
