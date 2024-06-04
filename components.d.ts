@@ -28,6 +28,8 @@ declare module 'vue' {
     TheDeviceListCard: typeof import('./src/components/personal/security/TheDeviceListCard.vue')['default']
     TheEmailModifyCard: typeof import('./src/components/personal/info/TheEmailModifyCard.vue')['default']
     TheFormDataContent: typeof import('./src/components/plugin/backend/body/TheFormDataContent.vue')['default']
+    TheGroupLearningDurationBar: typeof import('./src/components/statistics/TheGroupLearningDurationBar.vue')['default']
+    TheGroupLearningTimeBar: typeof import('./src/components/statistics/TheGroupLearningTimeBar.vue')['default']
     TheHeader: typeof import('./src/components/TheHeader.vue')['default']
     TheInstallAppCard: typeof import('./src/components/personal/about/TheInstallAppCard.vue')['default']
     TheJsonContent: typeof import('./src/components/plugin/backend/body/TheJsonContent.vue')['default']
@@ -36,6 +38,7 @@ declare module 'vue' {
     TheP5Banner: typeof import('./src/components/TheP5Banner.vue')['default']
     ThePasswordModifyCard: typeof import('./src/components/personal/security/ThePasswordModifyCard.vue')['default']
     ThePluginListCard: typeof import('./src/components/home/ThePluginListCard.vue')['default']
+    TheRecentContainerTable: typeof import('./src/components/statistics/TheRecentContainerTable.vue')['default']
     TheRequestBodyContent: typeof import('./src/components/plugin/backend/request/TheRequestBodyContent.vue')['default']
     TheRequestContent: typeof import('./src/components/plugin/backend/TheRequestContent.vue')['default']
     TheRequestHeaderContent: typeof import('./src/components/plugin/backend/request/TheRequestHeaderContent.vue')['default']
@@ -43,6 +46,7 @@ declare module 'vue' {
     TheRequestResult: typeof import('./src/components/plugin/backend/TheRequestResult.vue')['default']
     TheResponseHeaderContent: typeof import('./src/components/plugin/backend/response/TheResponseHeaderContent.vue')['default']
     TheResponseJsonContent: typeof import('./src/components/plugin/backend/response/TheResponseJsonContent.vue')['default']
+    TheStuCourseFinishedBarChart: typeof import('./src/components/statistics/TheStuCourseFinishedBarChart.vue')['default']
     TheUserBasicInfoCard: typeof import('./src/components/personal/info/TheUserBasicInfoCard.vue')['default']
   }
 }

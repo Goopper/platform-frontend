@@ -37,7 +37,7 @@
       >
         <div
           id="scroll-target"
-          class="absolute flex flex-col gap-[.1rem]"
+          class="absolute flex flex-col gap-[.1rem] w-full"
         >
           <div
             v-for="item in containers"
@@ -235,7 +235,8 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 100%;
+  width: 0;
+  flex-grow: 1;
   font-size: .9rem;
 
   div {

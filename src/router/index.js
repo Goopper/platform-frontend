@@ -17,6 +17,7 @@ export const whiteList = [
   '/plugin/backend',
   '/plugin/frontend',
   '/plugin/vue',
+  '/data/analysis'
 ];
 
 export const router = createRouter({
