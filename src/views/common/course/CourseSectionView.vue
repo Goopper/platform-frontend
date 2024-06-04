@@ -13,7 +13,9 @@
   <main v-else>
     <div class="section-main">
       <h1>{{ section.name }}</h1>
-      <p>{{ section.desc }}</p>
+      <p class="whitespace-break-spaces">
+        {{ section.desc }}
+      </p>
     </div>
     <div class="task_target">
       <h2>任务目标 :</h2>
