@@ -16,7 +16,7 @@
       <div class="title-state">
         <h1>{{ task.name }}</h1>
         <p>{{ submitTypeName }}</p>
-        <span>
+        <span v-if="userStore.role.name==='student'">
           <v-tooltip
             v-if="task.corrected"
             text="作业已批改"
@@ -52,7 +52,9 @@
           </v-tooltip>
         </span>
       </div>
-      <p>{{ task.content }}</p>
+      <p class="whitespace-break-spaces">
+        {{ task.content }}
+      </p>
     </div>
     <!-- 答题区和附件 -->
     <div class="answer-attachment">
@@ -318,6 +320,7 @@ export default {
       //离开加载
       isLeaveDialog: false,
       loading: true,
+      userStore: useUserStore()
     };
   },
   watch: {
@@ -368,7 +371,7 @@ export default {
         this.submitTypeName = '文本与可选附件提交';
       } else {
         this.submitTypeName = '无需提交';
-        if (!this.task.status && useUserStore().role.name == 'student') {
+        if (!this.task.status && this.userStore.role.name === 'student') {
           submitTaskAnswer(this.task.id,'',[]);
         }
       }
@@ -461,8 +464,8 @@ export default {
     },
     //权限判断
     isAuthority() {
-      const role = useUserStore().role.name;
-      if (role == 'student') {
+      const role = this.userStore.role.name;
+      if (role === 'student') {
         return false;
       } else {
         return true;
@@ -470,7 +473,7 @@ export default {
     },
     //判断是否显示答题区
     isShowTab(submitTypeId) {
-      const role = useUserStore().role.name;
+      const role = this.userStore.role.name;
       if (submitTypeId === 3 || role == 'teacher') {
         return false;
       } else {

@@ -20,7 +20,7 @@
         授课老师 : {{ course.teacher }}
       </p>
       <div class="desc flex-grow overflow-y-auto h-0">
-        <p class="break-all">
+        <p class="break-all whitespace-break-spaces">
           {{ course.desc }}
         </p>
         <v-img
