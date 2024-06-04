@@ -81,7 +81,7 @@ export default {
             type: 'inside', // 这个 dataZoom 组件是 inside 类型
             xAxisIndex: 0, // 这个 dataZoom 组件控制第一个 xAxis
             filterMode: 'filter',
-            startValue: this.dataset.length - 7,
+            startValue: 0,
             endValue: this.dataset.length - 1,
           },
         ],
