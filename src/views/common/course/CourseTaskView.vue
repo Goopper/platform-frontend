@@ -523,9 +523,10 @@ main {
 }
 .task-main {
   padding: 2em;
+  height: 50%;
   > p {
-    margin: 2em 0;
-    height: 56%;
+    margin: 2em 0 0 0;
+    height: 88%;
     overflow: auto;
   }
   .title-state {
