@@ -16,7 +16,11 @@ export default {
   },
   methods: {
     draw() {
-      drawBanner('banner');
+      try {
+        drawBanner('banner');
+      } catch (error) {
+        console.log(error);
+      }
     }
   },
 };
