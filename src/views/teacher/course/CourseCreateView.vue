@@ -118,16 +118,21 @@ export default {
       this.loading = false;
     },
     async createCourse(course) {
-      // 1. upload cover
-      course = await this.uploadCover(course);
+      // 1. check cover is a url
+      const { cover } = course;
+      if (typeof cover !== 'string') {
+        // not a url. upload cover
+        course = await this.uploadCover(course);
+      }
 
       // 2. create course
       const creationResult = await createCourse(course);
       if (creationResult) {
         mitt.emit('showToast', { title: '创建课程成功！', color: 'success', icon: '$success' });
-        // this.course.id = creationResult.data.id;
+        console.log('creationResult', creationResult);
+        course.id = creationResult.data;
         // move to next step
-        // this.activeStep = 2;
+        this.activeStep = 2;
       } else {
         mitt.emit('showToast', { title: '创建课程失败。', color: 'error', icon: '$error' });
         this.loading = false;
