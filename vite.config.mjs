@@ -21,18 +21,34 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       manifest: {
+        id: 'app.goopper.top',
         name: 'Goopper 计算机实训平台',
+        launch_handler: {
+          client_mode: 'auto',
+        },
+        orientation: 'portrait-primary',
         short_name: 'Goopper',
         description: 'Goopper 计算机实训平台',
         theme_color: '#1f1f1f',
+        lang: 'zh-CN',
+        edge_side_panel: '512',
+        categories: ['education'],
+        dir: 'ltr',
         icons: [
           {
             src: 'logo.svg',
             sizes: 'any',
             type: 'image/svg+xml',
             purpose: 'any'
-          }
-        ]
+          },
+          {
+            src: 'logo.svg',
+            sizes: '512x512',
+            type: 'image/svg+xml',
+            purpose: 'any'
+          },
+        ],
+        screenshots: [],
       },
       devOptions: {
         enabled: true
